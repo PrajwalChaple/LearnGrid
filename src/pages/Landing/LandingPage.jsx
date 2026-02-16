@@ -81,7 +81,10 @@ export const LandingPage = () => {
             <section className="relative pt-20 pb-16 overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-indigo-50 via-white to-purple-50 -z-10" />
                 <div className="max-w-6xl mx-auto px-6 text-center">
-
+                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 text-xs font-semibold mb-8">
+                        <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-pulse" />
+                        v2.0 is now live
+                    </div>
 
                     <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-tight mb-6">
                         The Smart Learning<br />
