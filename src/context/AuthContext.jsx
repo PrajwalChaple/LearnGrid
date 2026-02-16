@@ -1,55 +1,92 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import {
+    registerWithEmail,
+    loginWithEmail,
+    loginWithGoogle,
+    logoutUser,
+    subscribeToAuthChanges,
+    resetPassword
+} from '../auth';
+import { formatErrorMessage } from '../ui';
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-    // Initialize user from localStorage if available, or default to null (or a demo user if you prefer)
-    const [user, setUser] = useState(() => {
-        const savedUser = localStorage.getItem('learngrid_user');
-        return savedUser ? JSON.parse(savedUser) : null;
-    });
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [authError, setAuthError] = useState(null);
 
-    const login = (email, password) => {
-        const users = JSON.parse(localStorage.getItem('learngrid_users') || '[]');
-        const foundUser = users.find(u => u.email === email && u.password === password);
+    useEffect(() => {
+        const unsubscribe = subscribeToAuthChanges((currentUser) => {
+            setUser(currentUser);
+            setLoading(false);
+        });
+        return () => unsubscribe();
+    }, []);
 
-        if (foundUser) {
-            setUser(foundUser);
-            localStorage.setItem('learngrid_user', JSON.stringify(foundUser));
-            return { success: true };
+    const login = async (email, password) => {
+        setAuthError(null);
+        const { user, error } = await loginWithEmail(email, password);
+        if (error) {
+            const msg = formatErrorMessage(error.code);
+            setAuthError(msg);
+            return { success: false, message: msg };
         }
-        return { success: false, message: 'Invalid email or password' };
-    };
-
-    const register = (userData) => {
-        const users = JSON.parse(localStorage.getItem('learngrid_users') || '[]');
-        const existingUser = users.find(u => u.email === userData.email);
-
-        if (existingUser) {
-            return { success: false, message: 'User already exists' };
-        }
-
-        const newUser = { ...userData, id: Date.now() };
-        users.push(newUser);
-        localStorage.setItem('learngrid_users', JSON.stringify(users));
-
-        setUser(newUser);
-        localStorage.setItem('learngrid_user', JSON.stringify(newUser));
         return { success: true };
     };
 
-    const logout = () => {
-        setUser(null);
-        localStorage.removeItem('learngrid_user');
+    const register = async (userData) => {
+        setAuthError(null);
+        const { user, error } = await registerWithEmail(userData); // expects { email, password, name }
+        if (error) {
+            const msg = formatErrorMessage(error.code);
+            setAuthError(msg);
+            return { success: false, message: msg };
+        }
+        return { success: true, user };
     };
 
-    // For demo purposes, we can set a default user if none exists, 
-    // but for "Register" to work as expected, we should start empty or respect the registration.
-    // However, the prompt implies they want to see the name they registered with.
+    const loginGoogle = async () => {
+        setAuthError(null);
+        const { user, error } = await loginWithGoogle();
+        if (error) {
+            const msg = formatErrorMessage(error.code);
+            setAuthError(msg);
+            return { success: false, message: msg };
+        }
+        return { success: true };
+    };
+
+    const logout = async () => {
+        await logoutUser();
+        setUser(null);
+    };
+
+    const forgotPassword = async (email) => {
+        setAuthError(null);
+        const { success, error } = await resetPassword(email);
+        if (error) {
+            const msg = formatErrorMessage(error.code);
+            setAuthError(msg);
+            return { success: false, message: msg };
+        }
+        return { success: true };
+    };
+
+    const value = {
+        user,
+        loading,
+        authError,
+        login,
+        register,
+        loginGoogle,
+        logout,
+        forgotPassword
+    };
 
     return (
-        <AuthContext.Provider value={{ user, login, register, logout }}>
-            {children}
+        <AuthContext.Provider value={value}>
+            {!loading && children}
         </AuthContext.Provider>
     );
 }

@@ -2,6 +2,7 @@ import React from 'react';
 import { AuthProvider } from './context/AuthContext';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { DashboardLayout } from './layouts/DashboardLayout';
+import { StaticLayout } from './layouts/StaticLayout';
 import { LandingPage } from './pages/Landing/LandingPage';
 import { Login } from './pages/Auth/Login';
 import { Register } from './pages/Auth/Register';
@@ -12,6 +13,16 @@ import { Announcements } from './pages/Announcements/Announcements';
 import { Calendar } from './pages/Calendar/Calendar';
 import { Profile } from './pages/Profile/Profile';
 import { Settings } from './pages/Settings/Settings';
+import { Features } from './pages/Static/Features';
+import { Pricing } from './pages/Static/Pricing';
+import { Integrations } from './pages/Static/Integrations';
+import { Blog } from './pages/Static/Blog';
+import { Help } from './pages/Static/Help';
+import { Community } from './pages/Static/Community';
+import { PrivacyPolicy } from './pages/Static/PrivacyPolicy';
+import { TermsOfService } from './pages/Static/TermsOfService';
+import { CookiePolicy } from './pages/Static/CookiePolicy';
+import { About } from './pages/Static/About';
 
 function App() {
   return (
@@ -24,6 +35,20 @@ function App() {
           {/* Auth Pages */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+
+          {/* Static pages with shared layout */}
+          <Route element={<StaticLayout />}>
+            <Route path="/features" element={<Features />} />
+            <Route path="/pricing" element={<Pricing />} />
+            <Route path="/integrations" element={<Integrations />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/help" element={<Help />} />
+            <Route path="/community" element={<Community />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms-of-service" element={<TermsOfService />} />
+            <Route path="/cookie-policy" element={<CookiePolicy />} />
+            <Route path="/about" element={<About />} />
+          </Route>
 
           {/* Protected dashboard routes */}
           <Route element={<DashboardLayout />}>

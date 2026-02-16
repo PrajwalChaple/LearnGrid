@@ -4,8 +4,9 @@ import { Search, Bell, Menu } from 'lucide-react';
 
 export function Navbar({ onMenuClick }) {
   const { user } = useAuth();
-  const initials = user?.name ? user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : 'U';
-  const firstName = user?.name?.split(' ')[0] || 'User';
+  const displayName = user?.displayName || user?.name || 'User';
+  const initials = displayName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+  const firstName = displayName.split(' ')[0];
 
   return (
     <header className="navbar">
