@@ -21,7 +21,7 @@ export function DashboardLayout() {
         <Navbar onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />
 
         <main className="content-area">
-          <div className="container animate-fade-in">
+          <div className="content-container animate-fade-in">
             <Outlet />
           </div>
         </main>
@@ -42,17 +42,28 @@ export function DashboardLayout() {
 
         .main-content {
           flex: 1;
-          margin-left: 270px; /* Sidebar width */
+          margin-left: 270px;
           display: flex;
           flex-direction: column;
           min-width: 0;
           transition: margin-left var(--transition-normal);
+          background-color: #f8fafc;
         }
 
         .content-area {
           flex: 1;
-          padding: var(--spacing-lg) 0;
+          padding: 2rem;
           overflow-x: hidden;
+          max-width: 1600px;
+          margin: 0 auto;
+          width: 100%;
+        }
+
+        .content-container {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 0 var(--spacing-md);
+          width: 100%;
         }
 
         .overlay {
@@ -64,6 +75,14 @@ export function DashboardLayout() {
             margin-left: 0;
           }
 
+          .content-area {
+            padding: 1rem;
+          }
+
+          .content-container {
+            padding: 0;
+          }
+
           .overlay {
             display: block;
             position: fixed;
@@ -71,6 +90,7 @@ export function DashboardLayout() {
             background-color: rgba(0, 0, 0, 0.5);
             z-index: 45;
             animation: fadeIn 0.2s ease-out;
+            backdrop-filter: blur(4px);
           }
         }
       `}</style>

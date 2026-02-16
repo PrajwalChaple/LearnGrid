@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { BookOpen, AlertCircle, Calendar, MessageSquare, ArrowRight, TrendingUp } from 'lucide-react';
+import { BookOpen, AlertCircle, Calendar, MessageSquare, ArrowRight, TrendingUp, MoreHorizontal, Clock, CheckCircle2 } from 'lucide-react';
 
 const defaultStats = [
-  { label: 'Total Notes', value: '0', icon: BookOpen, gradient: 'linear-gradient(135deg, #6366f1, #818cf8)', bg: '#eef2ff' },
-  { label: 'Assignments', value: '0', icon: AlertCircle, gradient: 'linear-gradient(135deg, #f97316, #fb923c)', bg: '#fff7ed' },
-  { label: 'Upcoming', value: '0', icon: Calendar, gradient: 'linear-gradient(135deg, #10b981, #34d399)', bg: '#ecfdf5' },
-  { label: 'Announcements', value: '0', icon: MessageSquare, gradient: 'linear-gradient(135deg, #a855f7, #c084fc)', bg: '#faf5ff' },
+  { label: 'Total Notes', value: '0', icon: BookOpen, color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-100' },
+  { label: 'Assignments', value: '0', icon: AlertCircle, color: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-100' },
+  { label: 'Pending Tasks', value: '0', icon: Clock, color: 'text-rose-600', bg: 'bg-rose-50', border: 'border-rose-100' },
+  { label: 'Announcements', value: '0', icon: MessageSquare, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100' },
 ];
 
 export function DashboardHome() {
@@ -15,8 +15,14 @@ export function DashboardHome() {
   const navigate = useNavigate();
   const [statsData, setStatsData] = useState(defaultStats);
   const [activities, setActivities] = useState([]);
+  const [greeting, setGreeting] = useState('Good morning');
 
   useEffect(() => {
+    const hour = new Date().getHours();
+    if (hour < 12) setGreeting('Good morning');
+    else if (hour < 18) setGreeting('Good afternoon');
+    else setGreeting('Good evening');
+
     const savedNotes = JSON.parse(localStorage.getItem('learngrid_notes') || '[]');
     const savedAssignments = JSON.parse(localStorage.getItem('learngrid_assignments') || '[]');
     const savedAnnouncements = JSON.parse(localStorage.getItem('learngrid_announcements') || '[]');
@@ -29,354 +35,151 @@ export function DashboardHome() {
     ]);
 
     const allActivities = [
-      ...savedNotes.slice(0, 3).map(n => ({ id: 'n-' + n.id, title: `Uploaded: ${n.title}`, time: n.date, icon: BookOpen, path: '/notes' })),
-      ...savedAssignments.slice(0, 3).map(a => ({ id: 'a-' + a.id, title: a.title, time: a.deadline, icon: AlertCircle, path: '/assignments' })),
-      ...savedAnnouncements.slice(0, 2).map(a => ({ id: 'an-' + a.id, title: a.title, time: a.date, icon: MessageSquare, path: '/announcements' })),
-    ].slice(0, 6);
+      ...savedNotes.slice(0, 3).map(n => ({ id: 'n-' + n.id, type: 'note', title: n.title, sub: 'New note uploaded', time: n.date, icon: BookOpen, color: 'bg-indigo-100 text-indigo-600', path: '/notes' })),
+      ...savedAssignments.slice(0, 3).map(a => ({ id: 'a-' + a.id, type: 'assignment', title: a.title, sub: `Due: ${a.deadline}`, time: a.deadline, icon: AlertCircle, color: 'bg-orange-100 text-orange-600', path: '/assignments' })),
+      ...savedAnnouncements.slice(0, 2).map(a => ({ id: 'an-' + a.id, type: 'announcement', title: a.title, sub: 'Posted announcement', time: a.date, icon: MessageSquare, color: 'bg-purple-100 text-purple-600', path: '/announcements' })),
+    ].sort((a, b) => new Date(b.time) - new Date(a.time)).slice(0, 5);
+
     setActivities(allActivities);
   }, []);
 
   return (
-    <div className="dashboard-home">
-      <div className="welcome-banner animate-fade-in">
-        <div className="welcome-content">
-          <span className="welcome-tag">📚 Welcome back!</span>
-          <h1>Hello, {user?.name?.split(' ')[0] || 'Student'}!</h1>
-          <p>Ready to continue your learning journey? Check your progress below.</p>
+    <div className="flex flex-col gap-8">
+      {/* Welcome Banner */}
+      <div className="relative overflow-hidden rounded-3xl bg-indigo-600 text-white p-8 md:p-12 shadow-2xl shadow-indigo-200">
+        <div className="relative z-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/20 text-sm font-medium mb-4">
+            <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+            Academic Dashboard
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">{greeting}, {user?.name?.split(' ')[0] || 'Student'}!</h1>
+          <p className="text-indigo-100 text-lg max-w-xl leading-relaxed">
+            You have <span className="font-bold text-white">{statsData[2].value} pending tasks</span> for this week. Keep up the momentum!
+          </p>
+
+          <div className="flex gap-4 mt-8">
+            <button onClick={() => navigate('/assignments')} className="px-6 py-3 bg-white text-indigo-600 rounded-xl font-bold shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all flex items-center gap-2">
+              View Tasks <ArrowRight size={18} />
+            </button>
+            <button onClick={() => navigate('/calendar')} className="px-6 py-3 bg-indigo-500/50 backdrop-blur-md text-white border border-white/20 rounded-xl font-bold hover:bg-indigo-500/70 transition-all">
+              Check Calendar
+            </button>
+          </div>
         </div>
-        <div className="banner-shapes">
-          <div className="shape shape-1"></div>
-          <div className="shape shape-2"></div>
-          <div className="shape shape-3"></div>
-        </div>
+
+        {/* Abstract shapes */}
+        <div className="absolute top-0 right-0 -mt-20 -mr-20 w-96 h-96 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-full blur-3xl opacity-50"></div>
+        <div className="absolute bottom-0 left-0 -mb-20 -ml-20 w-72 h-72 bg-indigo-400 rounded-full blur-3xl opacity-30"></div>
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150"></div>
       </div>
 
-      <div className="stats-grid">
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {statsData.map((stat, i) => (
-          <div key={stat.label} className="stat-card animate-fade-in" style={{ animationDelay: `${i * 80}ms` }}>
-            <div className="stat-icon-wrap" style={{ background: stat.gradient }}>
-              <stat.icon size={22} color="white" />
+          <div key={i} className={`bg-white p-6 rounded-2xl border ${stat.border} shadow-sm hover:shadow-md transition-shadow`}>
+            <div className="flex justify-between items-start mb-4">
+              <div className={`w-12 h-12 rounded-xl ${stat.bg} ${stat.color} flex items-center justify-center`}>
+                <stat.icon size={24} />
+              </div>
+              <span className={`flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-full ${stat.bg} ${stat.color}`}>
+                <TrendingUp size={12} /> +12%
+              </span>
             </div>
-            <div className="stat-info">
-              <span className="stat-value">{stat.value}</span>
-              <span className="stat-label">{stat.label}</span>
+            <div>
+              <h3 className="text-3xl font-bold text-gray-900 mb-1">{stat.value}</h3>
+              <p className="text-gray-500 font-medium text-sm">{stat.label}</p>
             </div>
-            <TrendingUp size={16} className="stat-trend" />
           </div>
         ))}
       </div>
 
-      <div className="section-grid">
-        <div className="card recent-activity animate-fade-in">
-          <div className="card-header">
-            <h2>Recent Activity</h2>
-            <button className="view-all" onClick={() => navigate('/notes')}>View All</button>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Recent Activity */}
+        <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-bold text-gray-900">Recent Activity</h2>
+            <button onClick={() => navigate('/notes')} className="text-indigo-600 font-semibold text-sm hover:bg-indigo-50 px-3 py-1.5 rounded-lg transition-colors">View All</button>
           </div>
-          <div className="activity-list">
+
+          <div className="space-y-4">
             {activities.length > 0 ? (
               activities.map((item) => (
-                <div
-                  key={item.id}
-                  className="activity-item"
-                  onClick={() => navigate(item.path)}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <div className="activity-icon-container">
-                    <item.icon size={18} />
+                <div key={item.id} onClick={() => navigate(item.path)} className="flex items-center gap-4 p-4 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer group border border-transparent hover:border-gray-100">
+                  <div className={`w-12 h-12 rounded-full ${item.color} flex items-center justify-center flex-shrink-0`}>
+                    <item.icon size={20} />
                   </div>
-                  <div className="activity-content">
-                    <p className="activity-title">{item.title}</p>
-                    <span className="activity-time">{item.time}</span>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-bold text-gray-900 truncate group-hover:text-indigo-600 transition-colors">{item.title}</h4>
+                    <p className="text-sm text-gray-500">{item.sub}</p>
                   </div>
-                  <ArrowRight size={16} className="activity-arrow" />
+                  <div className="text-right flex items-center gap-4">
+                    <span className="text-xs font-medium text-gray-400 bg-gray-100 px-2 py-1 rounded-md">{item.time}</span>
+                    <div className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-400 group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-600 transition-all">
+                      <ArrowRight size={14} />
+                    </div>
+                  </div>
                 </div>
               ))
             ) : (
-              <div className="empty-state">
-                <p className="text-muted">Upload notes or add assignments to see activity here.</p>
+              <div className="text-center py-12 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+                <div className="mx-auto w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-gray-400 mb-3">
+                  <Clock size={20} />
+                </div>
+                <p className="text-gray-500 font-medium">No recent activity found</p>
+                <p className="text-xs text-gray-400">Your recent actions will appear here</p>
               </div>
             )}
           </div>
         </div>
 
-        <div className="card quick-links animate-fade-in">
-          <div className="card-header">
-            <h2>Quick Actions</h2>
+        {/* Quick Actions */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 h-fit">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-bold text-gray-900">Quick Actions</h2>
+            <button className="text-gray-400 hover:text-gray-600"><MoreHorizontal size={20} /></button>
           </div>
-          <div className="quick-actions-list">
-            <button className="quick-action-btn" onClick={() => navigate('/notes')}>
-              <BookOpen size={20} />
-              <span>Upload Note</span>
+
+          <div className="grid grid-cols-1 gap-3">
+            <button onClick={() => navigate('/notes')} className="flex items-center gap-4 p-4 rounded-xl border border-gray-100 hover:border-indigo-200 hover:shadow-md hover:bg-indigo-50/50 transition-all group text-left">
+              <div className="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <BookOpen size={20} />
+              </div>
+              <div>
+                <span className="block font-bold text-gray-900">Upload Note</span>
+                <span className="text-xs text-gray-500">Share resources</span>
+              </div>
             </button>
-            <button className="quick-action-btn" onClick={() => navigate('/assignments')}>
-              <AlertCircle size={20} />
-              <span>Add Assignment</span>
+
+            <button onClick={() => navigate('/assignments')} className="flex items-center gap-4 p-4 rounded-xl border border-gray-100 hover:border-indigo-200 hover:shadow-md hover:bg-indigo-50/50 transition-all group text-left">
+              <div className="w-10 h-10 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <AlertCircle size={20} />
+              </div>
+              <div>
+                <span className="block font-bold text-gray-900">Add Assignment</span>
+                <span className="text-xs text-gray-500">Track deadlines</span>
+              </div>
             </button>
-            <button className="quick-action-btn" onClick={() => navigate('/announcements')}>
-              <MessageSquare size={20} />
-              <span>New Announcement</span>
+
+            <button onClick={() => navigate('/calendar')} className="flex items-center gap-4 p-4 rounded-xl border border-gray-100 hover:border-indigo-200 hover:shadow-md hover:bg-indigo-50/50 transition-all group text-left">
+              <div className="w-10 h-10 rounded-lg bg-green-100 text-green-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Calendar size={20} />
+              </div>
+              <div>
+                <span className="block font-bold text-gray-900">View Calendar</span>
+                <span className="text-xs text-gray-500">Check schedule</span>
+              </div>
             </button>
-            <button className="quick-action-btn" onClick={() => navigate('/calendar')}>
-              <Calendar size={20} />
-              <span>View Calendar</span>
-            </button>
+          </div>
+
+          <div className="mt-8 p-4 rounded-xl bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100">
+            <h3 className="font-bold text-indigo-900 mb-2">Pro Tip</h3>
+            <p className="text-sm text-indigo-700 leading-relaxed">
+              Connect your Google Calendar to sync assignments automatically.
+            </p>
+            <button className="mt-3 text-xs font-bold text-indigo-600 hover:text-indigo-800 uppercase tracking-wider">Connect Now</button>
           </div>
         </div>
       </div>
-
-      <style jsx="true">{`
-        .dashboard-home {
-          display: flex;
-          flex-direction: column;
-          gap: 1.75rem;
-        }
-
-        .welcome-banner {
-          background: var(--gradient-hero);
-          color: white;
-          padding: 2.5rem 2.5rem;
-          border-radius: var(--radius-xl);
-          position: relative;
-          overflow: hidden;
-          box-shadow: var(--shadow-lg);
-        }
-
-        .welcome-content { position: relative; z-index: 2; }
-
-        .welcome-tag {
-          display: inline-block;
-          background: rgba(255,255,255,0.15);
-          backdrop-filter: blur(8px);
-          padding: 0.35rem 1rem;
-          border-radius: var(--radius-full);
-          font-size: 0.85rem;
-          font-weight: 500;
-          margin-bottom: 1rem;
-          border: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .welcome-banner h1 {
-          font-size: 2.25rem;
-          font-weight: 800;
-          margin-bottom: 0.5rem;
-          letter-spacing: -0.5px;
-        }
-
-        .welcome-banner p {
-          opacity: 0.85;
-          font-size: 1.05rem;
-          max-width: 450px;
-        }
-
-        .banner-shapes {
-          position: absolute;
-          top: 0; right: 0; bottom: 0;
-          width: 50%;
-          z-index: 1;
-        }
-
-        .shape {
-          position: absolute;
-          border-radius: 50%;
-          opacity: 0.1;
-          background: white;
-        }
-
-        .shape-1 { width: 200px; height: 200px; top: -40px; right: -20px; }
-        .shape-2 { width: 120px; height: 120px; bottom: -30px; right: 80px; }
-        .shape-3 { width: 80px; height: 80px; top: 30px; right: 160px; opacity: 0.06; }
-
-        .stats-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-          gap: 1.25rem;
-        }
-
-        .stat-card {
-          background: white;
-          padding: 1.25rem 1.5rem;
-          border-radius: var(--radius-lg);
-          box-shadow: var(--shadow-sm);
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-          transition: all var(--transition-fast);
-          position: relative;
-          overflow: hidden;
-          opacity: 0;
-          animation-fill-mode: forwards;
-        }
-
-        .stat-card:hover {
-          transform: translateY(-4px);
-          box-shadow: var(--shadow-md);
-        }
-
-        .stat-icon-wrap {
-          width: 48px;
-          height: 48px;
-          border-radius: 14px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-shrink: 0;
-        }
-
-        .stat-info { display: flex; flex-direction: column; flex: 1; }
-
-        .stat-value {
-          font-size: 1.75rem;
-          font-weight: 800;
-          color: var(--color-text-main);
-          line-height: 1.2;
-        }
-
-        .stat-label {
-          color: var(--color-text-muted);
-          font-size: 0.85rem;
-          font-weight: 500;
-        }
-
-        .stat-trend {
-          color: var(--color-success);
-          opacity: 0.6;
-        }
-
-        .section-grid {
-          display: grid;
-          grid-template-columns: 1.5fr 1fr;
-          gap: 1.25rem;
-        }
-
-        @media (max-width: 1024px) {
-          .section-grid { grid-template-columns: 1fr; }
-        }
-
-        .card {
-          background: white;
-          border-radius: var(--radius-lg);
-          padding: 1.5rem;
-          box-shadow: var(--shadow-sm);
-        }
-
-        .card-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 1.25rem;
-        }
-
-        .card-header h2 {
-          font-size: 1.1rem;
-          font-weight: 700;
-          color: var(--color-text-main);
-        }
-
-        .view-all {
-          color: var(--color-primary);
-          font-size: 0.85rem;
-          font-weight: 600;
-          transition: all var(--transition-fast);
-        }
-
-        .view-all:hover { text-decoration: underline; }
-
-        .activity-item {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-          padding: 0.75rem 0;
-          border-bottom: 1px solid var(--color-border);
-          transition: all var(--transition-fast);
-        }
-
-        .activity-item:hover {
-          background: var(--color-primary-bg);
-          padding-left: 0.75rem;
-          padding-right: 0.75rem;
-          margin: 0 -0.75rem;
-          border-radius: var(--radius-md);
-          border-bottom-color: transparent;
-        }
-
-        .activity-item:last-child { border-bottom: none; }
-
-        .activity-icon-container {
-          width: 38px;
-          height: 38px;
-          background: var(--color-primary-bg);
-          border-radius: 10px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: var(--color-primary);
-          flex-shrink: 0;
-        }
-
-        .activity-item:hover .activity-icon-container {
-          background: var(--gradient-primary);
-          color: white;
-        }
-
-        .activity-content { flex: 1; }
-
-        .activity-title {
-          font-weight: 600;
-          color: var(--color-text-main);
-          font-size: 0.9rem;
-          margin-bottom: 0.15rem;
-        }
-
-        .activity-time {
-          font-size: 0.8rem;
-          color: var(--color-text-muted);
-        }
-
-        .activity-arrow {
-          color: var(--color-text-muted);
-          opacity: 0;
-          transform: translateX(-8px);
-          transition: all var(--transition-fast);
-        }
-
-        .activity-item:hover .activity-arrow {
-          opacity: 1;
-          transform: translateX(0);
-        }
-
-        .quick-actions-list {
-          display: flex;
-          flex-direction: column;
-          gap: 0.5rem;
-        }
-
-        .quick-action-btn {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-          padding: 0.8rem 1rem;
-          border-radius: var(--radius-md);
-          background: var(--color-background);
-          color: var(--color-text-main);
-          font-weight: 500;
-          font-size: 0.9rem;
-          transition: all var(--transition-fast);
-          border: 1px solid transparent;
-        }
-
-        .quick-action-btn:hover {
-          background: var(--color-primary-bg);
-          border-color: var(--color-primary);
-          color: var(--color-primary);
-          transform: translateX(4px);
-        }
-
-        .empty-state {
-          padding: 2rem 0;
-          text-align: center;
-          color: var(--color-text-muted);
-        }
-      `}</style>
     </div>
   );
 }
