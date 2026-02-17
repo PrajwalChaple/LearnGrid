@@ -1,22 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { FileText, Calendar, Eye, Trash2, Upload, User } from 'lucide-react';
+import { FileText, Calendar, Eye, Trash2, Upload, User, Loader2 } from 'lucide-react';
+import { subscribeToNotes, addNote, deleteNoteDoc } from '../../lib/firestore';
 
 export function Notes() {
-  const { user } = useAuth();
+  const { user, userProfile } = useAuth();
 
-  const [notes, setNotes] = useState(() => {
-    const savedNotes = localStorage.getItem('learngrid_notes');
-    return savedNotes ? JSON.parse(savedNotes) : [];
-  });
-
+  const [notes, setNotes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
   const fileInputRef = React.useRef(null);
 
+  // Real-time listener — notes auto-sync from Firestore
+  useEffect(() => {
+    if (!userProfile) return;
+    setLoading(true);
+    const unsubscribe = subscribeToNotes(userProfile, (data) => {
+      setNotes(data);
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, [userProfile]);
+
   const isOwner = (note) => {
-    return user && note.userId === user.id;
+    return user && note.userId === user.uid;
   };
 
-  const handleFileSelect = (e) => {
+  const handleFileSelect = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
@@ -25,49 +35,80 @@ export function Notes() {
       return;
     }
 
-    if (file.size > 2 * 1024 * 1024) {
-      alert('File size must be less than 2MB.');
+    if (file.size > 1 * 1024 * 1024) {
+      alert('File size must be less than 1MB (Firestore limit).');
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const newNote = {
-        id: Date.now(),
-        title: file.name.replace('.pdf', ''),
-        subject: 'PDF Upload',
-        date: new Date().toLocaleDateString(),
-        content: event.target.result,
-        type: 'pdf',
-        userId: user?.id,
-        userName: user?.name || 'Unknown',
-      };
+    setUploading(true);
 
-      const updatedNotes = [newNote, ...notes];
-      setNotes(updatedNotes);
-      localStorage.setItem('learngrid_notes', JSON.stringify(updatedNotes));
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      try {
+        const noteData = {
+          title: file.name.replace('.pdf', ''),
+          subject: 'PDF Upload',
+          date: new Date().toISOString(),
+          content: event.target.result, // base64 string
+          type: 'pdf',
+          userId: user.uid,
+          userName: user.displayName || userProfile?.name || 'Unknown',
+          // Class isolation fields
+          roleType: userProfile.roleType,
+          institutionName: userProfile.institutionName,
+          ...(userProfile.roleType === 'college'
+            ? { department: userProfile.department, year: userProfile.year }
+            : { standard: userProfile.standard, section: userProfile.section }),
+        };
+
+        await addNote(noteData);
+        // No manual setNotes — onSnapshot listener handles it
+      } catch (err) {
+        console.error('Error adding note:', err);
+        alert('Failed to upload note. Please try again.');
+      } finally {
+        setUploading(false);
+      }
+    };
+    reader.onerror = () => {
+      alert('Failed to read file.');
+      setUploading(false);
     };
     reader.readAsDataURL(file);
     e.target.value = null;
   };
 
-  const deleteNote = (id) => {
+  const deleteNote = async (id) => {
     const note = notes.find(n => n.id === id);
     if (note && !isOwner(note)) {
       alert('Only the uploader can delete this note.');
       return;
     }
-    const updatedNotes = notes.filter(note => note.id !== id);
-    setNotes(updatedNotes);
-    localStorage.setItem('learngrid_notes', JSON.stringify(updatedNotes));
+    try {
+      await deleteNoteDoc(id);
+      // No manual setNotes — listener handles it
+    } catch (err) {
+      console.error('Error deleting note:', err);
+      alert('Failed to delete note.');
+    }
   };
 
   const viewNote = (note) => {
-    if (note.type === 'pdf') {
+    if (note.content) {
       const win = window.open();
-      win.document.write(
-        `<iframe src="${note.content}" frameborder="0" style="border:0; top:0; left:0; bottom:0; right:0; width:100%; height:100%;" allowfullscreen></iframe>`
-      );
+      if (win) {
+        win.document.write(
+          `<iframe src="${note.content}" frameborder="0" style="border:0; top:0; left:0; bottom:0; right:0; width:100%; height:100%;" allowfullscreen></iframe>`
+        );
+      }
+    }
+  };
+
+  const formatDate = (dateStr) => {
+    try {
+      return new Date(dateStr).toLocaleDateString();
+    } catch {
+      return dateStr;
     }
   };
 
@@ -75,9 +116,9 @@ export function Notes() {
     <div className="notes-page">
       <div className="page-header">
         <h1>My Notes</h1>
-        <button className="btn-add" onClick={() => fileInputRef.current.click()}>
-          <Upload size={18} />
-          <span>Upload PDF</span>
+        <button className="btn-add" onClick={() => fileInputRef.current.click()} disabled={uploading}>
+          {uploading ? <Loader2 size={18} className="spin-icon" /> : <Upload size={18} />}
+          <span>{uploading ? 'Uploading...' : 'Upload PDF'}</span>
         </button>
         <input
           type="file"
@@ -89,7 +130,12 @@ export function Notes() {
       </div>
 
       <div className="notes-grid">
-        {notes.length > 0 ? (
+        {loading ? (
+          <div className="empty-state">
+            <div className="empty-icon"><FileText size={48} /></div>
+            <h3>Loading notes...</h3>
+          </div>
+        ) : notes.length > 0 ? (
           notes.map((note, i) => (
             <div key={note.id} className="note-card animate-fade-in" style={{ animationDelay: `${i * 60}ms` }}>
               <div className="note-accent"></div>
@@ -116,7 +162,7 @@ export function Notes() {
                 <div className="note-footer">
                   <div className="note-date">
                     <Calendar size={14} />
-                    <span>{note.date}</span>
+                    <span>{formatDate(note.date)}</span>
                   </div>
                   <button className="view-btn" onClick={() => viewNote(note)}>
                     <Eye size={16} />
@@ -162,6 +208,10 @@ export function Notes() {
         }
 
         .btn-add:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        .btn-add:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+
+        .spin-icon { animation: spin 1s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
         .notes-grid {
           display: grid;

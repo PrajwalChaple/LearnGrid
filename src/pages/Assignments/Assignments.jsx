@@ -1,60 +1,85 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { CheckCircle, Clock, FileQuestion, Plus, X, User } from 'lucide-react';
+import { subscribeToAssignments, addAssignment, deleteAssignmentDoc, updateAssignment } from '../../lib/firestore';
 
 export function Assignments() {
-  const { user } = useAuth();
+  const { user, userProfile } = useAuth();
 
-  const [assignments, setAssignments] = useState(() => {
-    return JSON.parse(localStorage.getItem('learngrid_assignments') || '[]');
-  });
+  const [assignments, setAssignments] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('All');
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({ subject: '', title: '', deadline: '' });
 
+  // Real-time listener
+  useEffect(() => {
+    if (!userProfile) return;
+    setLoading(true);
+    const unsubscribe = subscribeToAssignments(userProfile, (data) => {
+      setAssignments(data);
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, [userProfile]);
+
   const isOwner = (item) => {
-    return user && item.userId === user.id;
+    return user && item.userId === user.uid;
   };
 
-  const saveAssignments = (updated) => {
-    setAssignments(updated);
-    localStorage.setItem('learngrid_assignments', JSON.stringify(updated));
-  };
-
-  const handleAdd = (e) => {
+  const handleAdd = async (e) => {
     e.preventDefault();
-    const newAssignment = {
-      id: Date.now(),
+    const assignmentData = {
       ...formData,
       status: 'Pending',
       grade: '-',
-      userId: user?.id,
-      userName: user?.name || 'Unknown',
+      userId: user.uid,
+      userName: user.displayName || userProfile?.name || 'Unknown',
+      roleType: userProfile.roleType,
+      institutionName: userProfile.institutionName,
+      ...(userProfile.roleType === 'college'
+        ? { department: userProfile.department, year: userProfile.year }
+        : { standard: userProfile.standard, section: userProfile.section }),
     };
-    saveAssignments([newAssignment, ...assignments]);
-    setFormData({ subject: '', title: '', deadline: '' });
-    setShowForm(false);
+
+    try {
+      await addAssignment(assignmentData);
+      setFormData({ subject: '', title: '', deadline: '' });
+      setShowForm(false);
+    } catch (err) {
+      console.error('Error adding assignment:', err);
+      alert('Failed to add assignment.');
+    }
   };
 
-  const toggleStatus = (id) => {
+  const toggleStatus = async (id) => {
     const item = assignments.find(a => a.id === id);
     if (item && !isOwner(item)) {
       alert('Only the creator can change the status.');
       return;
     }
-    const updated = assignments.map(a =>
-      a.id === id ? { ...a, status: a.status === 'Pending' ? 'Completed' : 'Pending', grade: a.status === 'Pending' ? 'A' : '-' } : a
-    );
-    saveAssignments(updated);
+    const newStatus = item.status === 'Pending' ? 'Completed' : 'Pending';
+    const newGrade = newStatus === 'Completed' ? 'A' : '-';
+
+    try {
+      await updateAssignment(id, { status: newStatus, grade: newGrade });
+    } catch (err) {
+      console.error('Error updating assignment:', err);
+    }
   };
 
-  const deleteAssignment = (id) => {
+  const deleteAssignmentItem = async (id) => {
     const item = assignments.find(a => a.id === id);
     if (item && !isOwner(item)) {
       alert('Only the creator can delete this assignment.');
       return;
     }
-    saveAssignments(assignments.filter(a => a.id !== id));
+    try {
+      await deleteAssignmentDoc(id);
+    } catch (err) {
+      console.error('Error deleting assignment:', err);
+      alert('Failed to delete assignment.');
+    }
   };
 
   const filtered = filter === 'All' ? assignments : assignments.filter(a => a.status === filter);
@@ -116,7 +141,15 @@ export function Assignments() {
             </tr>
           </thead>
           <tbody>
-            {filtered.length > 0 ? (
+            {loading ? (
+              <tr>
+                <td colSpan="7">
+                  <div className="empty-state">
+                    <p>Loading assignments...</p>
+                  </div>
+                </td>
+              </tr>
+            ) : filtered.length > 0 ? (
               filtered.map((assignment) => (
                 <tr key={assignment.id} className="animate-fade-in">
                   <td>
@@ -144,7 +177,7 @@ export function Assignments() {
                   </td>
                   <td>
                     {isOwner(assignment) ? (
-                      <button className="delete-btn" onClick={() => deleteAssignment(assignment.id)}>Delete</button>
+                      <button className="delete-btn" onClick={() => deleteAssignmentItem(assignment.id)}>Delete</button>
                     ) : (
                       <span className="view-only-label">View Only</span>
                     )}

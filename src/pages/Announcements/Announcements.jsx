@@ -1,46 +1,67 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { Megaphone, Calendar, Plus, Trash2, User } from 'lucide-react';
+import { subscribeToAnnouncements, addAnnouncement, deleteAnnouncementDoc } from '../../lib/firestore';
 
 export function Announcements() {
-  const { user } = useAuth();
+  const { user, userProfile } = useAuth();
 
-  const [announcements, setAnnouncements] = useState(() => {
-    return JSON.parse(localStorage.getItem('learngrid_announcements') || '[]');
-  });
+  const [announcements, setAnnouncements] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({ title: '', description: '', type: 'General' });
 
+  // Real-time listener
+  useEffect(() => {
+    if (!userProfile) return;
+    setLoading(true);
+    const unsubscribe = subscribeToAnnouncements(userProfile, (data) => {
+      setAnnouncements(data);
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, [userProfile]);
+
   const isOwner = (item) => {
-    return user && item.userId === user.id;
+    return user && item.userId === user.uid;
   };
 
-  const saveAnnouncements = (updated) => {
-    setAnnouncements(updated);
-    localStorage.setItem('learngrid_announcements', JSON.stringify(updated));
-  };
-
-  const handleAdd = (e) => {
+  const handleAdd = async (e) => {
     e.preventDefault();
-    const newItem = {
-      id: Date.now(),
+    const announcementData = {
       ...formData,
       date: new Date().toLocaleDateString(),
-      userId: user?.id,
-      userName: user?.name || 'Unknown',
+      userId: user.uid,
+      userName: user.displayName || userProfile?.name || 'Unknown',
+      roleType: userProfile.roleType,
+      institutionName: userProfile.institutionName,
+      ...(userProfile.roleType === 'college'
+        ? { department: userProfile.department, year: userProfile.year }
+        : { standard: userProfile.standard, section: userProfile.section }),
     };
-    saveAnnouncements([newItem, ...announcements]);
-    setFormData({ title: '', description: '', type: 'General' });
-    setShowForm(false);
+
+    try {
+      await addAnnouncement(announcementData);
+      setFormData({ title: '', description: '', type: 'General' });
+      setShowForm(false);
+    } catch (err) {
+      console.error('Error adding announcement:', err);
+      alert('Failed to post announcement.');
+    }
   };
 
-  const deleteAnnouncement = (id) => {
+  const deleteAnnouncementItem = async (id) => {
     const item = announcements.find(a => a.id === id);
     if (item && !isOwner(item)) {
       alert('Only the creator can delete this announcement.');
       return;
     }
-    saveAnnouncements(announcements.filter(a => a.id !== id));
+    try {
+      await deleteAnnouncementDoc(id);
+    } catch (err) {
+      console.error('Error deleting announcement:', err);
+      alert('Failed to delete announcement.');
+    }
   };
 
   const typeColors = {
@@ -91,7 +112,12 @@ export function Announcements() {
       )}
 
       <div className="announcements-list">
-        {announcements.length > 0 ? (
+        {loading ? (
+          <div className="empty-state">
+            <div className="empty-icon"><Megaphone size={36} /></div>
+            <h3>Loading announcements...</h3>
+          </div>
+        ) : announcements.length > 0 ? (
           announcements.map((item) => {
             const colors = typeColors[item.type] || typeColors.General;
             return (
@@ -112,7 +138,7 @@ export function Announcements() {
                         {item.date}
                       </span>
                       {isOwner(item) && (
-                        <button className="delete-btn" onClick={() => deleteAnnouncement(item.id)}>
+                        <button className="delete-btn" onClick={() => deleteAnnouncementItem(item.id)}>
                           <Trash2 size={16} />
                         </button>
                       )}

@@ -14,7 +14,7 @@ import { Calendar } from './pages/Calendar/Calendar';
 import { Profile } from './pages/Profile/Profile';
 import { Settings } from './pages/Settings/Settings';
 import { Features } from './pages/Static/Features';
-import { Pricing } from './pages/Static/Pricing';
+
 import { Integrations } from './pages/Static/Integrations';
 import { Blog } from './pages/Static/Blog';
 import { Help } from './pages/Static/Help';
@@ -23,6 +23,7 @@ import { PrivacyPolicy } from './pages/Static/PrivacyPolicy';
 import { TermsOfService } from './pages/Static/TermsOfService';
 import { CookiePolicy } from './pages/Static/CookiePolicy';
 import { About } from './pages/Static/About';
+import { Onboarding } from './pages/Onboarding/Onboarding';
 
 function App() {
   return (
@@ -35,11 +36,12 @@ function App() {
           {/* Auth Pages */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/onboarding" element={<Onboarding />} />
 
           {/* Static pages with shared layout */}
           <Route element={<StaticLayout />}>
             <Route path="/features" element={<Features />} />
-            <Route path="/pricing" element={<Pricing />} />
+
             <Route path="/integrations" element={<Integrations />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/help" element={<Help />} />

@@ -5,12 +5,17 @@ import { Navbar } from './Navbar';
 import { useAuth } from '../context/AuthContext';
 
 export function DashboardLayout() {
-  const { user } = useAuth();
+  const { user, isOnboarded } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Redirect to login if not authenticated
   if (!user) {
     return <Navigate to="/login" replace />;
+  }
+
+  // Redirect to onboarding if profile is incomplete
+  if (!isOnboarded) {
+    return <Navigate to="/onboarding" replace />;
   }
 
   return (

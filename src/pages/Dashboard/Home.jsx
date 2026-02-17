@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { BookOpen, AlertCircle, Calendar, MessageSquare, ArrowRight, TrendingUp, MoreHorizontal, Clock, CheckCircle2 } from 'lucide-react';
+import { subscribeToNotes, subscribeToAssignments, subscribeToAnnouncements } from '../../lib/firestore';
 
 const defaultStats = [
   { label: 'Total Notes', value: '0', icon: BookOpen, color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-100' },
@@ -11,37 +12,74 @@ const defaultStats = [
 ];
 
 export function DashboardHome() {
-  const { user } = useAuth();
+  const { user, userProfile } = useAuth();
   const navigate = useNavigate();
   const [statsData, setStatsData] = useState(defaultStats);
   const [activities, setActivities] = useState([]);
   const [greeting, setGreeting] = useState('Good morning');
+
+  // Keep latest data in refs for cross-listener activity computation
+  const notesRef = React.useRef([]);
+  const assignmentsRef = React.useRef([]);
+  const announcementsRef = React.useRef([]);
 
   useEffect(() => {
     const hour = new Date().getHours();
     if (hour < 12) setGreeting('Good morning');
     else if (hour < 18) setGreeting('Good afternoon');
     else setGreeting('Good evening');
-
-    const savedNotes = JSON.parse(localStorage.getItem('learngrid_notes') || '[]');
-    const savedAssignments = JSON.parse(localStorage.getItem('learngrid_assignments') || '[]');
-    const savedAnnouncements = JSON.parse(localStorage.getItem('learngrid_announcements') || '[]');
-
-    setStatsData([
-      { ...defaultStats[0], value: savedNotes.length.toString() },
-      { ...defaultStats[1], value: savedAssignments.length.toString() },
-      { ...defaultStats[2], value: savedAssignments.filter(a => a.status === 'Pending').length.toString() },
-      { ...defaultStats[3], value: savedAnnouncements.length.toString() },
-    ]);
-
-    const allActivities = [
-      ...savedNotes.slice(0, 3).map(n => ({ id: 'n-' + n.id, type: 'note', title: n.title, sub: 'New note uploaded', time: n.date, icon: BookOpen, color: 'bg-indigo-100 text-indigo-600', path: '/notes' })),
-      ...savedAssignments.slice(0, 3).map(a => ({ id: 'a-' + a.id, type: 'assignment', title: a.title, sub: `Due: ${a.deadline}`, time: a.deadline, icon: AlertCircle, color: 'bg-orange-100 text-orange-600', path: '/assignments' })),
-      ...savedAnnouncements.slice(0, 2).map(a => ({ id: 'an-' + a.id, type: 'announcement', title: a.title, sub: 'Posted announcement', time: a.date, icon: MessageSquare, color: 'bg-purple-100 text-purple-600', path: '/announcements' })),
-    ].sort((a, b) => new Date(b.time) - new Date(a.time)).slice(0, 5);
-
-    setActivities(allActivities);
   }, []);
+
+  const rebuildActivities = () => {
+    const allActivities = [
+      ...notesRef.current.slice(0, 3).map(n => ({ id: 'n-' + n.id, type: 'note', title: n.title, sub: 'New note uploaded', time: n.date, icon: BookOpen, color: 'bg-indigo-100 text-indigo-600', path: '/notes' })),
+      ...assignmentsRef.current.slice(0, 3).map(a => ({ id: 'a-' + a.id, type: 'assignment', title: a.title, sub: `Due: ${a.deadline}`, time: a.deadline, icon: AlertCircle, color: 'bg-orange-100 text-orange-600', path: '/assignments' })),
+      ...announcementsRef.current.slice(0, 2).map(a => ({ id: 'an-' + a.id, type: 'announcement', title: a.title, sub: 'Posted announcement', time: a.date, icon: MessageSquare, color: 'bg-purple-100 text-purple-600', path: '/announcements' })),
+    ].sort((a, b) => new Date(b.time) - new Date(a.time)).slice(0, 5);
+    setActivities(allActivities);
+  };
+
+  // Real-time listeners for all three collections
+  useEffect(() => {
+    if (!userProfile) return;
+
+    const unsubNotes = subscribeToNotes(userProfile, (data) => {
+      notesRef.current = data;
+      setStatsData(prev => {
+        const next = [...prev];
+        next[0] = { ...defaultStats[0], value: data.length.toString() };
+        return next;
+      });
+      rebuildActivities();
+    });
+
+    const unsubAssignments = subscribeToAssignments(userProfile, (data) => {
+      assignmentsRef.current = data;
+      setStatsData(prev => {
+        const next = [...prev];
+        next[1] = { ...defaultStats[1], value: data.length.toString() };
+        next[2] = { ...defaultStats[2], value: data.filter(a => a.status === 'Pending').length.toString() };
+        return next;
+      });
+      rebuildActivities();
+    });
+
+    const unsubAnnouncements = subscribeToAnnouncements(userProfile, (data) => {
+      announcementsRef.current = data;
+      setStatsData(prev => {
+        const next = [...prev];
+        next[3] = { ...defaultStats[3], value: data.length.toString() };
+        return next;
+      });
+      rebuildActivities();
+    });
+
+    return () => {
+      unsubNotes();
+      unsubAssignments();
+      unsubAnnouncements();
+    };
+  }, [userProfile]);
 
   return (
     <div className="flex flex-col gap-8">
@@ -52,7 +90,7 @@ export function DashboardHome() {
             <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
             Academic Dashboard
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">{greeting}, {user?.name?.split(' ')[0] || 'Student'}!</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">{greeting}, {user?.displayName?.split(' ')[0] || userProfile?.name?.split(' ')[0] || 'Student'}!</h1>
           <p className="text-indigo-100 text-lg max-w-xl leading-relaxed">
             You have <span className="font-bold text-white">{statsData[2].value} pending tasks</span> for this week. Keep up the momentum!
           </p>

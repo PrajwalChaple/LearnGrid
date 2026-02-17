@@ -13,6 +13,7 @@ import {
     X,
     GraduationCap,
     Sparkles,
+    TrendingUp,
     Users,
     Github,
     Linkedin,
@@ -25,6 +26,35 @@ const stepsData = [
     { n: '02', t: 'Add your courses', d: 'Personalize your dashboard with subjects, timetable, and goals.' },
     { n: '03', t: 'Start tracking', d: 'Log assignments, take notes, and watch your grades improve over time.' },
 ];
+
+// Helper for animated counters
+function AnimatedCounter({ end, duration = 2000 }) {
+    const [count, setCount] = useState(0);
+
+    useEffect(() => {
+        let startTime;
+        let animationFrame;
+
+        const animate = (timestamp) => {
+            if (!startTime) startTime = timestamp;
+            const progress = timestamp - startTime;
+
+            if (progress < duration) {
+                // Ease out quart function for smoother landing
+                const percentage = 1 - Math.pow(1 - progress / duration, 4);
+                setCount(Math.floor(end * percentage));
+                animationFrame = requestAnimationFrame(animate);
+            } else {
+                setCount(end);
+            }
+        };
+
+        animationFrame = requestAnimationFrame(animate);
+        return () => cancelAnimationFrame(animationFrame);
+    }, [end, duration]);
+
+    return <span>{count}</span>;
+}
 
 function StepsTimeline() {
     const containerRef = useRef(null);
@@ -165,104 +195,144 @@ export const LandingPage = () => {
             </nav>
 
             {/* ─── HERO ─── */}
-            <section className="relative pt-20 pb-16 overflow-hidden">
+            <section className="relative pt-20 pb-24 overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-indigo-50 via-white to-purple-50 -z-10" />
-                <div className="max-w-6xl mx-auto px-6 text-center">
 
-                    <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-tight mb-6">
+                {/* Floating Elements */}
+                <div className="absolute top-20 left-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+                <div className="absolute top-20 right-10 w-72 h-72 bg-indigo-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+                <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
+
+                <div className="max-w-6xl mx-auto px-6 text-center relative z-10">
+
+                    <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-tight leading-tight mb-6 animate-fade-in-up animation-delay-100">
                         The Smart Learning<br />
                         <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                             Dashboard for Students
                         </span>
                     </h1>
 
-                    <p className="text-base sm:text-lg text-gray-500 max-w-xl mx-auto mb-10 leading-relaxed">
+                    <p className="text-lg sm:text-xl text-gray-500 max-w-2xl mx-auto mb-12 leading-relaxed animate-fade-in-up animation-delay-200">
                         Manage your assignments, track your progress, and stay organized with the all-in-one platform designed for modern education.
                     </p>
 
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-                        <Link to="/register" className="inline-flex items-center gap-2 px-7 py-3.5 bg-indigo-600 text-white font-semibold rounded-full hover:bg-indigo-700 transition-all hover:-translate-y-0.5 shadow-lg shadow-indigo-200 no-underline">
-                            Start Learning Now <ArrowRight size={18} />
-                        </Link>
-                        <Link to="/login" className="inline-flex items-center gap-2 px-7 py-3.5 bg-white text-gray-600 font-semibold rounded-full border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all no-underline">
-                            View Demo
-                        </Link>
-                    </div>
+                    {/* ─── INTERACTIVE MINI DASHBOARD PREVIEW ─── */}
+                    <div className="relative max-w-4xl mx-auto animate-fade-in-up animation-delay-300">
 
-                    {/* ─── PRODUCT PREVIEW ─── */}
-                    <div className="max-w-4xl mx-auto" style={{ perspective: '1200px' }}>
-                        <div className="bg-white rounded-2xl border border-gray-200 shadow-2xl shadow-indigo-100/50 overflow-hidden" style={{ transform: 'rotateX(2deg)' }}>
+                        {/* Micro Label */}
+                        <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-white/80 backdrop-blur-sm border border-gray-200 px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest text-gray-400 shadow-sm z-20">
+                            Interactive Product Preview
+                        </div>
+
+                        <div className="bg-white rounded-2xl border border-gray-200 shadow-2xl shadow-indigo-200/50 overflow-hidden relative group transition-all duration-500 hover:shadow-indigo-300/50 hover:-translate-y-1">
+
                             {/* Browser chrome */}
-                            <div className="flex items-center gap-2 px-4 py-3 bg-gray-50 border-b border-gray-100">
+                            <div className="flex items-center gap-2 px-4 py-3 bg-gray-50/50 border-b border-gray-100">
                                 <div className="flex gap-1.5">
-                                    <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
-                                    <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
-                                    <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
+                                    <div className="w-2.5 h-2.5 rounded-full bg-gray-300 group-hover:bg-red-400 transition-colors duration-300" />
+                                    <div className="w-2.5 h-2.5 rounded-full bg-gray-300 group-hover:bg-yellow-400 transition-colors duration-300" />
+                                    <div className="w-2.5 h-2.5 rounded-full bg-gray-300 group-hover:bg-green-400 transition-colors duration-300" />
                                 </div>
                                 <div className="flex-1 flex justify-center">
-                                    <div className="bg-gray-100 rounded-md px-4 py-1 text-xs text-gray-400 font-medium w-56 text-center">learngrid.app/dashboard</div>
+                                    <div className="bg-white border border-gray-200 rounded-md px-4 py-1 text-[10px] text-gray-400 font-medium w-64 text-center flex items-center justify-center gap-2">
+                                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                                        app.learngrid.com/dashboard
+                                    </div>
                                 </div>
                             </div>
-                            {/* Dashboard body */}
-                            <div className="flex" style={{ minHeight: '280px' }}>
-                                {/* Sidebar */}
-                                <div className="w-44 flex-shrink-0 bg-gradient-to-b from-indigo-950 to-indigo-900 p-4 flex flex-col gap-2">
-                                    <div className="flex items-center gap-2 mb-4">
-                                        <div className="w-6 h-6 bg-indigo-500 rounded-md flex items-center justify-center">
-                                            <span className="text-white text-xs font-bold">L</span>
+
+                            {/* Dashboard Body Preview */}
+                            <div className="p-6 bg-slate-50/50">
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                                    {/* Stat Card 1 */}
+                                    <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 group/card">
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover/card:bg-indigo-600 group-hover/card:text-white transition-colors duration-300">
+                                                <BookOpen size={16} />
+                                            </div>
+                                            <span className="text-xs font-semibold text-gray-500">Notes Uploaded</span>
                                         </div>
-                                        <span className="text-white/90 text-xs font-semibold">LearnGrid</span>
+                                        <div className="text-2xl font-bold text-gray-900">
+                                            <AnimatedCounter end={24} duration={2000} />
+                                        </div>
                                     </div>
-                                    {['Dashboard', 'My Notes', 'Assignments', 'Calendar', 'Profile'].map((item, idx) => (
-                                        <div key={idx} className={`flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs font-medium ${idx === 0 ? 'bg-white/10 text-white' : 'text-white/50'}`}>
-                                            <div className={`w-1.5 h-1.5 rounded-full ${idx === 0 ? 'bg-indigo-400' : 'bg-transparent'}`} />
-                                            {item}
+
+                                    {/* Stat Card 2 */}
+                                    <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 group/card">
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <div className="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center group-hover/card:bg-orange-600 group-hover/card:text-white transition-colors duration-300">
+                                                <Clock size={16} />
+                                            </div>
+                                            <span className="text-xs font-semibold text-gray-500">Assignments Pending</span>
                                         </div>
-                                    ))}
+                                        <div className="text-2xl font-bold text-gray-900">
+                                            <AnimatedCounter end={12} duration={2500} />
+                                        </div>
+                                    </div>
+
+                                    {/* Stat Card 3 */}
+                                    <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 group/card">
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover/card:bg-emerald-600 group-hover/card:text-white transition-colors duration-300">
+                                                <BarChart2 size={16} />
+                                            </div>
+                                            <span className="text-xs font-semibold text-gray-500">Weekly Progress</span>
+                                        </div>
+                                        <div className="flex items-end gap-2">
+                                            <span className="text-2xl font-bold text-gray-900">
+                                                <AnimatedCounter end={85} duration={3000} />%
+                                            </span>
+                                            <div className="flex-1 h-1.5 bg-gray-100 rounded-full mb-1.5 overflow-hidden">
+                                                <div className="h-full bg-emerald-500 rounded-full animate-progress" style={{ width: '85%' }}></div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                {/* Main content */}
-                                <div className="flex-1 bg-slate-50 p-5">
+
+                                {/* Activity Graph Preview */}
+                                <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
                                     <div className="flex items-center justify-between mb-4">
-                                        <div>
-                                            <p className="text-sm font-bold text-gray-800">Welcome back, Student 👋</p>
-                                            <p className="text-xs text-gray-400">Here's your academic overview</p>
-                                        </div>
-                                        <div className="w-7 h-7 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-xs font-bold">S</div>
-                                    </div>
-                                    {/* Stat cards */}
-                                    <div className="grid grid-cols-3 gap-2.5 mb-4">
-                                        <div className="bg-white rounded-xl p-3 border border-gray-100">
-                                            <p className="text-xs text-gray-400 mb-1">Assignments</p>
-                                            <p className="text-lg font-extrabold text-gray-800">12</p>
-                                            <div className="w-full h-1 rounded-full bg-gray-100 mt-1.5"><div className="w-3/4 h-full rounded-full bg-indigo-500" /></div>
-                                        </div>
-                                        <div className="bg-white rounded-xl p-3 border border-gray-100">
-                                            <p className="text-xs text-gray-400 mb-1">Completed</p>
-                                            <p className="text-lg font-extrabold text-emerald-600">8</p>
-                                            <div className="w-full h-1 rounded-full bg-gray-100 mt-1.5"><div className="w-2/3 h-full rounded-full bg-emerald-500" /></div>
-                                        </div>
-                                        <div className="bg-white rounded-xl p-3 border border-gray-100">
-                                            <p className="text-xs text-gray-400 mb-1">Notes</p>
-                                            <p className="text-lg font-extrabold text-gray-800">24</p>
-                                            <div className="w-full h-1 rounded-full bg-gray-100 mt-1.5"><div className="w-1/2 h-full rounded-full bg-purple-500" /></div>
+                                        <h4 className="text-sm font-bold text-gray-800">Study Activity</h4>
+                                        <div className="flex gap-2">
+                                            <div className="w-2 h-2 rounded-full bg-indigo-500"></div>
+                                            <div className="w-2 h-2 rounded-full bg-purple-500"></div>
                                         </div>
                                     </div>
-                                    {/* Chart area */}
-                                    <div className="bg-white rounded-xl p-3 border border-gray-100">
-                                        <p className="text-xs font-semibold text-gray-500 mb-2">Weekly Progress</p>
-                                        <div className="flex items-end gap-2 h-16">
-                                            {[35, 55, 40, 70, 60, 85, 75].map((h, idx) => (
-                                                <div key={idx} className="flex-1 flex flex-col items-center gap-1">
-                                                    <div className="w-full rounded-t-sm" style={{ height: `${h}%`, background: idx === 5 ? 'linear-gradient(to top, #6366f1, #a855f7)' : '#e0e7ff' }} />
-                                                    <span className="text-gray-300" style={{ fontSize: '7px' }}>{['M', 'T', 'W', 'T', 'F', 'S', 'S'][idx]}</span>
-                                                </div>
-                                            ))}
-                                        </div>
+                                    <div className="flex items-end justify-between h-24 gap-2">
+                                        {[40, 70, 45, 90, 65, 85, 50, 75, 60, 95].map((h, i) => (
+                                            <div key={i} className="flex-1 bg-indigo-50 rounded-t-sm relative group/bar overflow-hidden">
+                                                <div
+                                                    className="absolute bottom-0 left-0 right-0 bg-indigo-500 opacity-80 group-hover/bar:opacity-100 transition-all duration-500 rounded-t-sm"
+                                                    style={{ height: `${h}%`, transitionDelay: `${i * 50}ms` }}
+                                                ></div>
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
                             </div>
                         </div>
+
+                        {/* Floating Feature Tags */}
+                        <div className="absolute -left-12 top-1/4 bg-white px-4 py-2 rounded-lg shadow-lg border border-gray-100 flex items-center gap-2 animate-float hidden md:flex">
+                            <TrendingUp size={14} className="text-emerald-500" />
+                            <span className="text-xs font-bold text-gray-700">Smart Analytics</span>
+                        </div>
+                        <div className="absolute -right-8 top-1/3 bg-white px-4 py-2 rounded-lg shadow-lg border border-gray-100 flex items-center gap-2 animate-float animation-delay-2000 hidden md:flex">
+                            <ShieldCheck size={14} className="text-blue-500" />
+                            <span className="text-xs font-bold text-gray-700">Secure & Private</span>
+                        </div>
+                        <div className="absolute -left-4 bottom-10 bg-white px-4 py-2 rounded-lg shadow-lg border border-gray-100 flex items-center gap-2 animate-float animation-delay-4000 hidden md:flex">
+                            <Users size={14} className="text-purple-500" />
+                            <span className="text-xs font-bold text-gray-700">Class-Based Access</span>
+                        </div>
+
                     </div>
+                </div>
+
+                {/* Scroll Down Indicator */}
+                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce">
+                    <span className="text-[10px] font-medium text-gray-400 uppercase tracking-widest">Scroll to explore</span>
+                    <ArrowRight size={14} className="text-gray-400 rotate-90" />
                 </div>
             </section>
 
@@ -434,7 +504,6 @@ export const LandingPage = () => {
                             <h4 className="text-white text-sm font-bold mb-4">Platform</h4>
                             <div className="flex flex-col gap-2.5">
                                 <Link to="/features" className="text-sm text-gray-400 hover:text-white transition-colors no-underline">Features</Link>
-                                <Link to="/pricing" className="text-sm text-gray-400 hover:text-white transition-colors no-underline">Pricing</Link>
                                 <Link to="/integrations" className="text-sm text-gray-400 hover:text-white transition-colors no-underline">Integrations</Link>
                             </div>
                         </div>
