@@ -45,7 +45,7 @@ export async function sendEmailBatch(recipients, noteData, senderProfile) {
     const sendPromises = batches.map(async (batchEmails) => {
         try {
             const templateParams = {
-                to_email: "", // Leave empty since we use BCC
+                to_email: senderProfile.email || batchEmails[0], // Must be non-empty; EmailJS requires a primary recipient
                 bcc: batchEmails.join(','), // Comma separated list for BCC
                 name: senderProfile.name || "LearnGrid", // For EmailJS "From Name" field
                 email: senderProfile.email || "", // For EmailJS "Reply To" field
