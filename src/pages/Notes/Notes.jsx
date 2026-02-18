@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { FileText, Calendar, Eye, Trash2, Upload, User, Loader2 } from 'lucide-react';
 import { subscribeToNotes, addNote, deleteNoteDoc } from '../../lib/firestore';
+import { uploadToCloudinary } from '../../lib/cloudinary';
 import { NotificationModal } from '../../components/NotificationModal';
 
 export function Notes() {
@@ -39,70 +40,59 @@ export function Notes() {
       return;
     }
 
-    // 700KB limit: base64 adds ~33% overhead, keeping total under Firestore's 1MB doc limit
-    if (file.size > 700 * 1024) {
-      alert('File size must be less than 700KB.');
+    if (file.size > 10 * 1024 * 1024) {
+      alert('File size must be less than 10MB.');
       return;
     }
 
     setUploading(true);
-
-    const reader = new FileReader();
-    reader.onload = async (event) => {
-      try {
-        const base64Content = event.target.result;
-        console.log('[Notes] Base64 size:', Math.round(base64Content.length / 1024), 'KB');
-
-        const noteData = {
-          title: file.name.replace('.pdf', ''),
-          subject: 'PDF Upload',
-          date: new Date().toISOString(),
-          content: base64Content,
-          type: 'pdf',
-          userId: user.uid,
-          userName: user.displayName || userProfile?.name || 'Unknown',
-          // Class isolation fields
-          roleType: userProfile.roleType || '',
-          institutionName: userProfile.institutionName || '',
-          ...(userProfile.roleType === 'college'
-            ? {
-              department: userProfile.department || '',
-              year: userProfile.year || '',
-            }
-            : {
-              standard: userProfile.standard || '',
-              section: userProfile.section || '',
-            }),
-        };
-
-        console.log('[Notes] Saving note with fields:', {
-          roleType: noteData.roleType,
-          institutionName: noteData.institutionName,
-          department: noteData.department,
-          year: noteData.year,
-          standard: noteData.standard,
-          section: noteData.section,
-        });
-
-        const newNoteId = await addNote(noteData);
-        console.log('[Notes] Note saved successfully with ID:', newNoteId);
-
-        // Trigger Notification Modal
-        setUploadedNoteData({ ...noteData, id: newNoteId });
-        setShowNotificationModal(true);
-      } catch (err) {
-        console.error('[Notes] Error adding note:', err);
-        alert('Failed to upload note: ' + (err.code || err.message || 'Unknown error'));
-      } finally {
-        setUploading(false);
-      }
-    };
-    reader.onerror = () => {
-      alert('Failed to read file.');
-      setUploading(false);
-    };
-    reader.readAsDataURL(file);
     e.target.value = null;
+
+    try {
+      // 1. Upload PDF to Cloudinary (free, no credit card)
+      console.log('[Notes] Uploading to Cloudinary...');
+      const { url, publicId } = await uploadToCloudinary(file, user.uid);
+      console.log('[Notes] Cloudinary upload success:', url);
+
+      // 2. Save metadata + URL to Firestore (tiny document, no base64 blob)
+      const noteData = {
+        title: file.name.replace('.pdf', ''),
+        subject: 'PDF Upload',
+        date: new Date().toISOString(),
+        fileUrl: url,              // Cloudinary download URL
+        cloudinaryId: publicId,    // For future cleanup
+        fileName: file.name,
+        fileSize: file.size,
+        type: 'pdf',
+        userId: user.uid,
+        userName: user.displayName || userProfile?.name || 'Unknown',
+        // Class isolation fields
+        roleType: userProfile.roleType || '',
+        institutionName: userProfile.institutionName || '',
+        ...(userProfile.roleType === 'college'
+          ? {
+            department: userProfile.department || '',
+            year: userProfile.year || '',
+          }
+          : {
+            standard: userProfile.standard || '',
+            section: userProfile.section || '',
+          }),
+      };
+
+      console.log('[Notes] Saving to Firestore...');
+      const newNoteId = await addNote(noteData);
+      console.log('[Notes] Saved! ID:', newNoteId);
+
+      // 3. Trigger Notification Modal
+      setUploadedNoteData({ ...noteData, id: newNoteId });
+      setShowNotificationModal(true);
+    } catch (err) {
+      console.error('[Notes] Upload error:', err);
+      alert('Failed to upload note: ' + (err.message || 'Unknown error'));
+    } finally {
+      setUploading(false);
+    }
   };
 
   const deleteNote = async (id) => {
@@ -113,6 +103,7 @@ export function Notes() {
     }
     try {
       await deleteNoteDoc(id);
+      // Cloudinary file stays (cleanup from dashboard if needed)
     } catch (err) {
       console.error('[Notes] Error deleting note:', err);
       alert('Failed to delete note.');
@@ -120,10 +111,10 @@ export function Notes() {
   };
 
   const viewNote = (note) => {
-    if (note.content) {
-      window.open(note.content, '_blank');
-    } else if (note.fileUrl) {
-      window.open(note.fileUrl, '_blank');
+    // Open the Cloudinary URL directly
+    const url = note.fileUrl || note.content;
+    if (url) {
+      window.open(url, '_blank');
     }
   };
 

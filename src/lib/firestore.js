@@ -20,16 +20,16 @@ export async function saveUserProfile(uid, data) {
 
 function buildClassFilters(profile) {
     const filters = [
-        where('institutionName', '==', profile.institutionName),
-        where('roleType', '==', profile.roleType),
+        where('institutionName', '==', profile.institutionName || ''),
+        where('roleType', '==', profile.roleType || ''),
     ];
 
     if (profile.roleType === 'college') {
-        filters.push(where('department', '==', profile.department));
-        filters.push(where('year', '==', profile.year));
+        filters.push(where('department', '==', profile.department || ''));
+        filters.push(where('year', '==', profile.year || ''));
     } else {
-        filters.push(where('standard', '==', profile.standard));
-        filters.push(where('section', '==', profile.section));
+        filters.push(where('standard', '==', profile.standard || ''));
+        filters.push(where('section', '==', profile.section || ''));
     }
 
     return filters;
@@ -37,7 +37,9 @@ function buildClassFilters(profile) {
 
 function buildClassQuery(collectionName, profile) {
     const filters = buildClassFilters(profile);
-    return query(collection(db, collectionName), ...filters, orderBy('createdAt', 'desc'));
+    // NOTE: Do NOT use orderBy here — it requires a composite index in Firestore
+    // that must be manually created. We sort client-side instead.
+    return query(collection(db, collectionName), ...filters);
 }
 
 // ─── Generic CRUD with class isolation ──────────────────────────
@@ -53,7 +55,14 @@ async function addItem(collectionName, data) {
 async function getItems(collectionName, profile) {
     const q = buildClassQuery(collectionName, profile);
     const snap = await getDocs(q);
-    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    // Sort client-side by createdAt descending
+    items.sort((a, b) => {
+        const ta = a.createdAt?.toMillis?.() || 0;
+        const tb = b.createdAt?.toMillis?.() || 0;
+        return tb - ta;
+    });
+    return items;
 }
 
 async function deleteItem(collectionName, id) {
@@ -64,11 +73,27 @@ async function deleteItem(collectionName, id) {
 
 function subscribeToCollection(collectionName, profile, callback) {
     const q = buildClassQuery(collectionName, profile);
+    console.log(`[Firestore] Subscribing to ${collectionName} for`, {
+        institutionName: profile.institutionName,
+        roleType: profile.roleType,
+        department: profile.department,
+        year: profile.year,
+        standard: profile.standard,
+        section: profile.section,
+    });
     return onSnapshot(q, (snapshot) => {
         const items = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        // Sort client-side by createdAt descending
+        items.sort((a, b) => {
+            const ta = a.createdAt?.toMillis?.() || 0;
+            const tb = b.createdAt?.toMillis?.() || 0;
+            return tb - ta;
+        });
+        console.log(`[Firestore] ${collectionName}: received ${items.length} items (fromCache: ${snapshot.metadata.fromCache})`);
         callback(items);
     }, (err) => {
-        console.error(`Error listening to ${collectionName}:`, err);
+        console.error(`[Firestore] Error listening to ${collectionName}:`, err);
+        console.error(`[Firestore] Error code: ${err.code}, message: ${err.message}`);
     });
 }
 
