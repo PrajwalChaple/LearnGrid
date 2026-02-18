@@ -53,7 +53,7 @@ export async function sendEmailBatch(recipients, noteData, senderProfile) {
                 department: senderProfile.department || "General",
                 year: senderProfile.year || "",
                 note_title: noteData.title,
-                website_link: window.location.origin + "/notes", // Link to notes page
+                website_link: "https://learn-grid-tool.vercel.app/#/notes", // Production URL with hash routing
             };
 
             await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams);
