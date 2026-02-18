@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { FileText, Calendar, Eye, Trash2, Upload, User, Loader2 } from 'lucide-react';
 import { subscribeToNotes, addNote, deleteNoteDoc } from '../../lib/firestore';
+import { uploadPDF, deletePDF } from '../../lib/storage';
 import { NotificationModal } from '../../components/NotificationModal';
 
 export function Notes() {
@@ -38,51 +39,49 @@ export function Notes() {
       return;
     }
 
-    if (file.size > 1 * 1024 * 1024) {
-      alert('File size must be less than 1MB (Firestore limit).');
+    if (file.size > 5 * 1024 * 1024) {
+      alert('File size must be less than 5MB.');
       return;
     }
 
     setUploading(true);
-
-    const reader = new FileReader();
-    reader.onload = async (event) => {
-      try {
-        const noteData = {
-          title: file.name.replace('.pdf', ''),
-          subject: 'PDF Upload',
-          date: new Date().toISOString(),
-          content: event.target.result, // base64 string
-          type: 'pdf',
-          userId: user.uid,
-          userName: user.displayName || userProfile?.name || 'Unknown',
-          // Class isolation fields
-          roleType: userProfile.roleType,
-          institutionName: userProfile.institutionName,
-          ...(userProfile.roleType === 'college'
-            ? { department: userProfile.department, year: userProfile.year }
-            : { standard: userProfile.standard, section: userProfile.section }),
-        };
-
-        const newNoteId = await addNote(noteData);
-        // No manual setNotes — onSnapshot listener handles it
-
-        // Trigger Notification Modal
-        setUploadedNoteData({ ...noteData, id: newNoteId });
-        setShowNotificationModal(true);
-      } catch (err) {
-        console.error('Error adding note:', err);
-        alert('Failed to upload note. Please try again.');
-      } finally {
-        setUploading(false);
-      }
-    };
-    reader.onerror = () => {
-      alert('Failed to read file.');
-      setUploading(false);
-    };
-    reader.readAsDataURL(file);
     e.target.value = null;
+
+    try {
+      // 1. Upload PDF to Firebase Storage
+      const fileUrl = await uploadPDF(file, user.uid);
+
+      // 2. Save metadata + URL to Firestore (no base64 blob)
+      const noteData = {
+        title: file.name.replace('.pdf', ''),
+        subject: 'PDF Upload',
+        date: new Date().toISOString(),
+        fileUrl,           // Storage download URL
+        fileName: file.name,
+        fileSize: file.size,
+        type: 'pdf',
+        userId: user.uid,
+        userName: user.displayName || userProfile?.name || 'Unknown',
+        // Class isolation fields
+        roleType: userProfile.roleType,
+        institutionName: userProfile.institutionName,
+        ...(userProfile.roleType === 'college'
+          ? { department: userProfile.department, year: userProfile.year }
+          : { standard: userProfile.standard, section: userProfile.section }),
+      };
+
+      const newNoteId = await addNote(noteData);
+      // onSnapshot listener handles UI update
+
+      // 3. Trigger Notification Modal
+      setUploadedNoteData({ ...noteData, id: newNoteId });
+      setShowNotificationModal(true);
+    } catch (err) {
+      console.error('Error uploading note:', err);
+      alert('Failed to upload note: ' + (err.message || 'Unknown error'));
+    } finally {
+      setUploading(false);
+    }
   };
 
   const deleteNote = async (id) => {
@@ -92,8 +91,12 @@ export function Notes() {
       return;
     }
     try {
+      // Delete from Storage first, then Firestore
+      if (note?.fileUrl) {
+        await deletePDF(note.fileUrl);
+      }
       await deleteNoteDoc(id);
-      // No manual setNotes — listener handles it
+      // onSnapshot listener handles UI update
     } catch (err) {
       console.error('Error deleting note:', err);
       alert('Failed to delete note.');
@@ -101,13 +104,10 @@ export function Notes() {
   };
 
   const viewNote = (note) => {
-    if (note.content) {
-      const win = window.open();
-      if (win) {
-        win.document.write(
-          `<iframe src="${note.content}" frameborder="0" style="border:0; top:0; left:0; bottom:0; right:0; width:100%; height:100%;" allowfullscreen></iframe>`
-        );
-      }
+    // Open the Storage URL directly — browser renders PDF natively
+    const url = note.fileUrl || note.content;
+    if (url) {
+      window.open(url, '_blank');
     }
   };
 
