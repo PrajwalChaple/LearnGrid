@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { FileText, Calendar, Eye, Trash2, Upload, User, Loader2 } from 'lucide-react';
 import { subscribeToNotes, addNote, deleteNoteDoc } from '../../lib/firestore';
-import { uploadPDF, deletePDF } from '../../lib/storage';
 import { NotificationModal } from '../../components/NotificationModal';
 
 export function Notes() {
@@ -20,6 +19,7 @@ export function Notes() {
     if (!userProfile) return;
     setLoading(true);
     const unsubscribe = subscribeToNotes(userProfile, (data) => {
+      console.log('[Notes] Received', data.length, 'notes from Firestore');
       setNotes(data);
       setLoading(false);
     });
@@ -39,49 +39,70 @@ export function Notes() {
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
-      alert('File size must be less than 5MB.');
+    // 700KB limit: base64 adds ~33% overhead, keeping total under Firestore's 1MB doc limit
+    if (file.size > 700 * 1024) {
+      alert('File size must be less than 700KB.');
       return;
     }
 
     setUploading(true);
-    e.target.value = null;
 
-    try {
-      // 1. Upload PDF to Firebase Storage
-      const fileUrl = await uploadPDF(file, user.uid);
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      try {
+        const base64Content = event.target.result;
+        console.log('[Notes] Base64 size:', Math.round(base64Content.length / 1024), 'KB');
 
-      // 2. Save metadata + URL to Firestore (no base64 blob)
-      const noteData = {
-        title: file.name.replace('.pdf', ''),
-        subject: 'PDF Upload',
-        date: new Date().toISOString(),
-        fileUrl,           // Storage download URL
-        fileName: file.name,
-        fileSize: file.size,
-        type: 'pdf',
-        userId: user.uid,
-        userName: user.displayName || userProfile?.name || 'Unknown',
-        // Class isolation fields
-        roleType: userProfile.roleType,
-        institutionName: userProfile.institutionName,
-        ...(userProfile.roleType === 'college'
-          ? { department: userProfile.department, year: userProfile.year }
-          : { standard: userProfile.standard, section: userProfile.section }),
-      };
+        const noteData = {
+          title: file.name.replace('.pdf', ''),
+          subject: 'PDF Upload',
+          date: new Date().toISOString(),
+          content: base64Content,
+          type: 'pdf',
+          userId: user.uid,
+          userName: user.displayName || userProfile?.name || 'Unknown',
+          // Class isolation fields
+          roleType: userProfile.roleType || '',
+          institutionName: userProfile.institutionName || '',
+          ...(userProfile.roleType === 'college'
+            ? {
+              department: userProfile.department || '',
+              year: userProfile.year || '',
+            }
+            : {
+              standard: userProfile.standard || '',
+              section: userProfile.section || '',
+            }),
+        };
 
-      const newNoteId = await addNote(noteData);
-      // onSnapshot listener handles UI update
+        console.log('[Notes] Saving note with fields:', {
+          roleType: noteData.roleType,
+          institutionName: noteData.institutionName,
+          department: noteData.department,
+          year: noteData.year,
+          standard: noteData.standard,
+          section: noteData.section,
+        });
 
-      // 3. Trigger Notification Modal
-      setUploadedNoteData({ ...noteData, id: newNoteId });
-      setShowNotificationModal(true);
-    } catch (err) {
-      console.error('Error uploading note:', err);
-      alert('Failed to upload note: ' + (err.message || 'Unknown error'));
-    } finally {
+        const newNoteId = await addNote(noteData);
+        console.log('[Notes] Note saved successfully with ID:', newNoteId);
+
+        // Trigger Notification Modal
+        setUploadedNoteData({ ...noteData, id: newNoteId });
+        setShowNotificationModal(true);
+      } catch (err) {
+        console.error('[Notes] Error adding note:', err);
+        alert('Failed to upload note: ' + (err.code || err.message || 'Unknown error'));
+      } finally {
+        setUploading(false);
+      }
+    };
+    reader.onerror = () => {
+      alert('Failed to read file.');
       setUploading(false);
-    }
+    };
+    reader.readAsDataURL(file);
+    e.target.value = null;
   };
 
   const deleteNote = async (id) => {
@@ -91,23 +112,18 @@ export function Notes() {
       return;
     }
     try {
-      // Delete from Storage first, then Firestore
-      if (note?.fileUrl) {
-        await deletePDF(note.fileUrl);
-      }
       await deleteNoteDoc(id);
-      // onSnapshot listener handles UI update
     } catch (err) {
-      console.error('Error deleting note:', err);
+      console.error('[Notes] Error deleting note:', err);
       alert('Failed to delete note.');
     }
   };
 
   const viewNote = (note) => {
-    // Open the Storage URL directly — browser renders PDF natively
-    const url = note.fileUrl || note.content;
-    if (url) {
-      window.open(url, '_blank');
+    if (note.content) {
+      window.open(note.content, '_blank');
+    } else if (note.fileUrl) {
+      window.open(note.fileUrl, '_blank');
     }
   };
 
@@ -130,7 +146,6 @@ export function Notes() {
         noteData={uploadedNoteData}
         userProfile={userProfile}
         onConfirmSuccess={() => {
-          // Optional: Add a toast notification here
           setShowNotificationModal(false);
           setUploadedNoteData(null);
         }}
