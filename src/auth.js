@@ -7,7 +7,8 @@ import {
     GoogleAuthProvider,
     signInWithPopup,
     updateProfile,
-    sendPasswordResetEmail
+    sendPasswordResetEmail,
+    sendEmailVerification
 } from 'firebase/auth';
 
 // --- Authentication Logic ---
@@ -16,9 +17,23 @@ export const registerWithEmail = async ({ email, password, name }) => {
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         await updateProfile(userCredential.user, { displayName: name });
+        // Send verification email
+        await sendEmailVerification(userCredential.user);
         return { user: userCredential.user, error: null };
     } catch (error) {
         return { user: null, error };
+    }
+};
+
+export const resendVerificationEmail = async () => {
+    try {
+        if (auth.currentUser && !auth.currentUser.emailVerified) {
+            await sendEmailVerification(auth.currentUser);
+            return { success: true, error: null };
+        }
+        return { success: false, error: { message: 'No user or already verified' } };
+    } catch (error) {
+        return { success: false, error };
     }
 };
 

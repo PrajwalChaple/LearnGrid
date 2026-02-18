@@ -5,7 +5,8 @@ import {
     loginWithGoogle,
     logoutUser,
     subscribeToAuthChanges,
-    resetPassword
+    resetPassword,
+    resendVerificationEmail
 } from '../auth';
 import { formatErrorMessage } from '../ui';
 import { getUserProfile } from '../lib/firestore';
@@ -66,6 +67,12 @@ export function AuthProvider({ children }) {
             setAuthError(msg);
             return { success: false, message: msg };
         }
+        // Block unverified email/password users
+        if (!u.emailVerified) {
+            const msg = 'Please verify your email before logging in. Check your inbox for the verification link.';
+            setAuthError(msg);
+            return { success: false, message: msg, needsVerification: true };
+        }
         await fetchProfile(u);
         return { success: true };
     };
@@ -78,9 +85,17 @@ export function AuthProvider({ children }) {
             setAuthError(msg);
             return { success: false, message: msg };
         }
-        // New user — profile won't exist yet
+        // New user — profile won't exist yet, verification email sent
         setUserProfile(null);
-        return { success: true, user: u };
+        return { success: true, user: u, needsVerification: true };
+    };
+
+    const resendVerification = async () => {
+        const result = await resendVerificationEmail();
+        if (result.success) {
+            return { success: true };
+        }
+        return { success: false, message: result.error?.message || 'Failed to resend verification email' };
     };
 
     const loginGoogle = async () => {
@@ -123,7 +138,8 @@ export function AuthProvider({ children }) {
         loginGoogle,
         logout,
         forgotPassword,
-        refreshProfile
+        refreshProfile,
+        resendVerification
     };
 
     return (
