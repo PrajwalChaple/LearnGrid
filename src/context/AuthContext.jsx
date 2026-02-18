@@ -103,7 +103,7 @@ export function AuthProvider({ children }) {
 
     const forgotPassword = async (email) => {
         setAuthError(null);
-        const { success, error } = await resetPassword(email);
+        const { error } = await resetPassword(email);
         if (error) {
             const msg = formatErrorMessage(error.code);
             setAuthError(msg);

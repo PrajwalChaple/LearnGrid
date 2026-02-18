@@ -19,19 +19,17 @@ export function DashboardHome() {
   const navigate = useNavigate();
   const [statsData, setStatsData] = useState(defaultStats);
   const [activities, setActivities] = useState([]);
-  const [greeting, setGreeting] = useState('Good morning');
+  const [greeting] = useState(() => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good morning';
+    if (hour < 18) return 'Good afternoon';
+    return 'Good evening';
+  });
 
   // Keep latest data in refs for cross-listener activity computation
   const notesRef = React.useRef([]);
   const assignmentsRef = React.useRef([]);
   const announcementsRef = React.useRef([]);
-
-  useEffect(() => {
-    const hour = new Date().getHours();
-    if (hour < 12) setGreeting('Good morning');
-    else if (hour < 18) setGreeting('Good afternoon');
-    else setGreeting('Good evening');
-  }, []);
 
   const rebuildActivities = () => {
     const allActivities = [

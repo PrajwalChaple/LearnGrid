@@ -18,7 +18,7 @@ export function NotificationModal({ isOpen, onClose, noteData, userProfile, onCo
         if (isOpen && userProfile) {
             calculateRecipients();
         }
-    }, [isOpen, scope, userProfile]);
+    }, [isOpen, scope, userProfile, user?.uid]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const calculateRecipients = async () => {
         setCalculating(true);
@@ -196,7 +196,7 @@ export function NotificationModal({ isOpen, onClose, noteData, userProfile, onCo
 
             </div>
 
-            <style jsx>{`
+            <style>{`
         @keyframes scale-in {
           from { opacity: 0; transform: scale(0.95); }
           to { opacity: 1; transform: scale(1); }

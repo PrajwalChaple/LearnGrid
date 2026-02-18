@@ -15,7 +15,6 @@ export function Assignments() {
   // Real-time listener
   useEffect(() => {
     if (!userProfile) return;
-    setLoading(true);
     const unsubscribe = subscribeToAssignments(userProfile, (data) => {
       setAssignments(data);
       setLoading(false);
@@ -198,7 +197,7 @@ export function Assignments() {
         </table>
       </div>
 
-      <style jsx="true">{`
+      <style>{`
         .page-header {
           display: flex;
           justify-content: space-between;

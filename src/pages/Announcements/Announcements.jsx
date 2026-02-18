@@ -14,7 +14,6 @@ export function Announcements() {
   // Real-time listener
   useEffect(() => {
     if (!userProfile) return;
-    setLoading(true);
     const unsubscribe = subscribeToAnnouncements(userProfile, (data) => {
       setAnnouncements(data);
       setLoading(false);
@@ -161,7 +160,7 @@ export function Announcements() {
         )}
       </div>
 
-      <style jsx="true">{`
+      <style>{`
         .page-header {
           display: flex;
           justify-content: space-between;
