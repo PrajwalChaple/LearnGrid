@@ -13,12 +13,18 @@ import {
 
 // --- Authentication Logic ---
 
+const actionCodeSettings = {
+    // Redirect to onboarding page after verification
+    url: `${window.location.origin}/#/onboarding`,
+    handleCodeInApp: true,
+};
+
 export const registerWithEmail = async ({ email, password, name }) => {
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         await updateProfile(userCredential.user, { displayName: name });
-        // Send verification email
-        await sendEmailVerification(userCredential.user);
+        // Send verification email with redirect URL
+        await sendEmailVerification(userCredential.user, actionCodeSettings);
         return { user: userCredential.user, error: null };
     } catch (error) {
         return { user: null, error };
@@ -28,7 +34,7 @@ export const registerWithEmail = async ({ email, password, name }) => {
 export const resendVerificationEmail = async () => {
     try {
         if (auth.currentUser && !auth.currentUser.emailVerified) {
-            await sendEmailVerification(auth.currentUser);
+            await sendEmailVerification(auth.currentUser, actionCodeSettings);
             return { success: true, error: null };
         }
         return { success: false, error: { message: 'No user or already verified' } };

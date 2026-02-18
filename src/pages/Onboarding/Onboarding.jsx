@@ -37,7 +37,8 @@ export function Onboarding() {
     }
 
     // Block unverified email/password users
-    if (!user.emailVerified && user.providerData?.[0]?.providerId === 'password') {
+    const isGoogleUser = user.providerData?.some(p => p.providerId === 'google.com');
+    if (!user.emailVerified && !isGoogleUser) {
         return <Navigate to="/verify-email" replace />;
     }
 

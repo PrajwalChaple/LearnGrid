@@ -15,6 +15,11 @@ export function Register() {
   useEffect(() => {
     if (user && user.emailVerified) {
       navigate('/dashboard');
+    } else if (user && !user.emailVerified) {
+      const isGoogleUser = user.providerData?.some(p => p.providerId === 'google.com');
+      if (!isGoogleUser) {
+        navigate('/verify-email');
+      }
     }
   }, [user, navigate]);
 

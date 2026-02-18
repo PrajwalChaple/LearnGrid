@@ -13,8 +13,9 @@ export function DashboardLayout() {
     return <Navigate to="/login" replace />;
   }
 
-  // Redirect to verify-email if email not verified (email/password users only)
-  if (!user.emailVerified && user.providerData?.[0]?.providerId === 'password') {
+  // Redirect to verify-email if email not verified
+  const isGoogleUser = user.providerData?.some(p => p.providerId === 'google.com');
+  if (!user.emailVerified && !isGoogleUser) {
     return <Navigate to="/verify-email" replace />;
   }
 
