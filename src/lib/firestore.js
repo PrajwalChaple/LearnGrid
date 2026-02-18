@@ -107,3 +107,90 @@ export function deleteAnnouncementDoc(id) { return deleteItem('announcements', i
 export async function updateAssignment(id, fields) {
     await updateDoc(doc(db, 'assignments', id), fields);
 }
+
+// ─── Notifications ──────────────────────────────────────────────
+
+export async function createNotification(data) {
+    return addItem('notifications', data);
+}
+
+
+export async function getRecipientCount(profile, scope, currentUid = '') {
+    if (scope === 'none') return 0;
+
+    const constraints = buildRecipientConstraints(profile, scope);
+    console.log('[getRecipientCount] scope:', scope, 'constraints:', constraints.length);
+    console.log('[getRecipientCount] profile fields:', {
+        institutionName: profile?.institutionName,
+        department: profile?.department,
+        year: profile?.year,
+        roleType: profile?.roleType,
+    });
+
+    const q = query(collection(db, 'users'), ...constraints);
+    const snap = await getDocs(q);
+
+    // Exclude current user from count
+    const count = currentUid
+        ? snap.docs.filter(d => d.id !== currentUid).length
+        : snap.size;
+
+    console.log('[getRecipientCount] total found:', snap.size, 'after excluding self:', count);
+    return count;
+}
+
+export async function getRecipients(profile, scope, currentUid = '') {
+    if (scope === 'none') return [];
+
+    const constraints = buildRecipientConstraints(profile, scope);
+    const q = query(collection(db, 'users'), ...constraints);
+
+    const snap = await getDocs(q);
+
+    // Exclude current user and return data with uid
+    return snap.docs
+        .filter(d => !currentUid || d.id !== currentUid)
+        .map(d => ({ uid: d.id, ...d.data() }));
+}
+
+function buildRecipientConstraints(profile, scope) {
+    let constraints = [
+        where('institutionName', '==', profile.institutionName),
+        // where('roleType', '==', 'student') // Removed to allow notifying everyone including faculty if needed, or re-add if strict
+    ];
+
+    if (scope === 'class') {
+        if (profile.roleType === 'college') {
+            constraints.push(where('department', '==', profile.department));
+            constraints.push(where('year', '==', profile.year));
+        } else {
+            constraints.push(where('standard', '==', profile.standard));
+            constraints.push(where('section', '==', profile.section));
+        }
+    } else if (scope === 'branch') {
+        if (profile.roleType === 'college') {
+            constraints.push(where('department', '==', profile.department));
+        } else {
+            constraints.push(where('department', '==', profile.department || 'General'));
+        }
+    }
+
+    return constraints;
+}
+
+export function subscribeToNotifications(userId, callback) {
+    // Listen for notifications sent BY this user
+    const q = query(
+        collection(db, 'notifications'),
+        where('senderId', '==', userId),
+        orderBy('createdAt', 'desc')
+    );
+
+    return onSnapshot(q, (snapshot) => {
+        const items = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        callback(items);
+    }, (err) => {
+        console.error("Error listening to notifications:", err);
+    });
+}
+

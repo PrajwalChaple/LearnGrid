@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { FileText, Calendar, Eye, Trash2, Upload, User, Loader2 } from 'lucide-react';
 import { subscribeToNotes, addNote, deleteNoteDoc } from '../../lib/firestore';
+import { NotificationModal } from '../../components/NotificationModal';
 
 export function Notes() {
   const { user, userProfile } = useAuth();
@@ -9,6 +10,8 @@ export function Notes() {
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [showNotificationModal, setShowNotificationModal] = useState(false);
+  const [uploadedNoteData, setUploadedNoteData] = useState(null);
   const fileInputRef = React.useRef(null);
 
   // Real-time listener — notes auto-sync from Firestore
@@ -61,8 +64,12 @@ export function Notes() {
             : { standard: userProfile.standard, section: userProfile.section }),
         };
 
-        await addNote(noteData);
+        const newNoteId = await addNote(noteData);
         // No manual setNotes — onSnapshot listener handles it
+
+        // Trigger Notification Modal
+        setUploadedNoteData({ ...noteData, id: newNoteId });
+        setShowNotificationModal(true);
       } catch (err) {
         console.error('Error adding note:', err);
         alert('Failed to upload note. Please try again.');
@@ -114,6 +121,20 @@ export function Notes() {
 
   return (
     <div className="notes-page">
+      <NotificationModal
+        isOpen={showNotificationModal}
+        onClose={() => {
+          setShowNotificationModal(false);
+          setUploadedNoteData(null);
+        }}
+        noteData={uploadedNoteData}
+        userProfile={userProfile}
+        onConfirmSuccess={() => {
+          // Optional: Add a toast notification here
+          setShowNotificationModal(false);
+          setUploadedNoteData(null);
+        }}
+      />
       <div className="page-header">
         <h1>My Notes</h1>
         <button className="btn-add" onClick={() => fileInputRef.current.click()} disabled={uploading}>

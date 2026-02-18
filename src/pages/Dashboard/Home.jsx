@@ -2,7 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { BookOpen, AlertCircle, Calendar, MessageSquare, ArrowRight, TrendingUp, MoreHorizontal, Clock, CheckCircle2 } from 'lucide-react';
+
 import { subscribeToNotes, subscribeToAssignments, subscribeToAnnouncements } from '../../lib/firestore';
+import { NotificationHistory } from '../../components/NotificationHistory';
+
 
 const defaultStats = [
   { label: 'Total Notes', value: '0', icon: BookOpen, color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-100' },
@@ -171,52 +174,59 @@ export function DashboardHome() {
         </div>
 
         {/* Quick Actions */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 h-fit">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-gray-900">Quick Actions</h2>
-            <button className="text-gray-400 hover:text-gray-600"><MoreHorizontal size={20} /></button>
+
+        <div className="space-y-8 h-fit">
+          {/* Quick Actions */}
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 h-fit">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-bold text-gray-900">Quick Actions</h2>
+              <button className="text-gray-400 hover:text-gray-600"><MoreHorizontal size={20} /></button>
+            </div>
+
+            <div className="grid grid-cols-1 gap-3">
+              <button onClick={() => navigate('/notes')} className="flex items-center gap-4 p-4 rounded-xl border border-gray-100 hover:border-indigo-200 hover:shadow-md hover:bg-indigo-50/50 transition-all group text-left">
+                <div className="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <BookOpen size={20} />
+                </div>
+                <div>
+                  <span className="block font-bold text-gray-900">Upload Note</span>
+                  <span className="text-xs text-gray-500">Share resources</span>
+                </div>
+              </button>
+
+              <button onClick={() => navigate('/assignments')} className="flex items-center gap-4 p-4 rounded-xl border border-gray-100 hover:border-indigo-200 hover:shadow-md hover:bg-indigo-50/50 transition-all group text-left">
+                <div className="w-10 h-10 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <AlertCircle size={20} />
+                </div>
+                <div>
+                  <span className="block font-bold text-gray-900">Add Assignment</span>
+                  <span className="text-xs text-gray-500">Track deadlines</span>
+                </div>
+              </button>
+
+              <button onClick={() => navigate('/calendar')} className="flex items-center gap-4 p-4 rounded-xl border border-gray-100 hover:border-indigo-200 hover:shadow-md hover:bg-indigo-50/50 transition-all group text-left">
+                <div className="w-10 h-10 rounded-lg bg-green-100 text-green-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Calendar size={20} />
+                </div>
+                <div>
+                  <span className="block font-bold text-gray-900">View Calendar</span>
+                  <span className="text-xs text-gray-500">Check schedule</span>
+                </div>
+              </button>
+            </div>
+
+            <div className="mt-8 p-4 rounded-xl bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100">
+              <h3 className="font-bold text-indigo-900 mb-2">Pro Tip</h3>
+              <p className="text-sm text-indigo-700 leading-relaxed">
+                Connect your Google Calendar to sync assignments automatically.
+              </p>
+              <button className="mt-3 text-xs font-bold text-indigo-600 hover:text-indigo-800 uppercase tracking-wider">Connect Now</button>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-3">
-            <button onClick={() => navigate('/notes')} className="flex items-center gap-4 p-4 rounded-xl border border-gray-100 hover:border-indigo-200 hover:shadow-md hover:bg-indigo-50/50 transition-all group text-left">
-              <div className="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <BookOpen size={20} />
-              </div>
-              <div>
-                <span className="block font-bold text-gray-900">Upload Note</span>
-                <span className="text-xs text-gray-500">Share resources</span>
-              </div>
-            </button>
-
-            <button onClick={() => navigate('/assignments')} className="flex items-center gap-4 p-4 rounded-xl border border-gray-100 hover:border-indigo-200 hover:shadow-md hover:bg-indigo-50/50 transition-all group text-left">
-              <div className="w-10 h-10 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <AlertCircle size={20} />
-              </div>
-              <div>
-                <span className="block font-bold text-gray-900">Add Assignment</span>
-                <span className="text-xs text-gray-500">Track deadlines</span>
-              </div>
-            </button>
-
-            <button onClick={() => navigate('/calendar')} className="flex items-center gap-4 p-4 rounded-xl border border-gray-100 hover:border-indigo-200 hover:shadow-md hover:bg-indigo-50/50 transition-all group text-left">
-              <div className="w-10 h-10 rounded-lg bg-green-100 text-green-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Calendar size={20} />
-              </div>
-              <div>
-                <span className="block font-bold text-gray-900">View Calendar</span>
-                <span className="text-xs text-gray-500">Check schedule</span>
-              </div>
-            </button>
-          </div>
-
-          <div className="mt-8 p-4 rounded-xl bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100">
-            <h3 className="font-bold text-indigo-900 mb-2">Pro Tip</h3>
-            <p className="text-sm text-indigo-700 leading-relaxed">
-              Connect your Google Calendar to sync assignments automatically.
-            </p>
-            <button className="mt-3 text-xs font-bold text-indigo-600 hover:text-indigo-800 uppercase tracking-wider">Connect Now</button>
-          </div>
+          <NotificationHistory />
         </div>
+
       </div>
     </div>
   );

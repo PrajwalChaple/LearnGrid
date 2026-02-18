@@ -1,14 +1,36 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { User, Mail, Shield, Award, Edit, BookOpen, ClipboardList } from 'lucide-react';
+import { User, Mail, Shield, Award, Edit, BookOpen, ClipboardList, Building2, GraduationCap } from 'lucide-react';
+import { subscribeToNotes, subscribeToAssignments } from '../../lib/firestore';
 
 export function Profile() {
-  const { user } = useAuth();
-  const initials = user?.name ? user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : 'U';
+  const { user, userProfile } = useAuth();
 
-  const notesCount = JSON.parse(localStorage.getItem('learngrid_notes') || '[]').length;
-  const assignments = JSON.parse(localStorage.getItem('learngrid_assignments') || '[]');
-  const completedCount = assignments.filter(a => a.status === 'Completed').length;
+  const displayName = userProfile?.name || user?.displayName || 'Student';
+  const initials = displayName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+
+  const [notesCount, setNotesCount] = useState(0);
+  const [assignmentsCount, setAssignmentsCount] = useState(0);
+  const [completedCount, setCompletedCount] = useState(0);
+
+  // Real-time stats from Firestore
+  useEffect(() => {
+    if (!userProfile) return;
+
+    const unsubNotes = subscribeToNotes(userProfile, (data) => {
+      setNotesCount(data.length);
+    });
+
+    const unsubAssignments = subscribeToAssignments(userProfile, (data) => {
+      setAssignmentsCount(data.length);
+      setCompletedCount(data.filter(a => a.status === 'Completed').length);
+    });
+
+    return () => {
+      unsubNotes();
+      unsubAssignments();
+    };
+  }, [userProfile]);
 
   return (
     <div className="profile-page">
@@ -24,8 +46,11 @@ export function Profile() {
             <div className="avatar-large">{initials}</div>
           </div>
           <div className="profile-details">
-            <h1>{user?.name || 'Student'}</h1>
-            <p className="role">{user?.role || 'Student'} • LearnGrid Member</p>
+            <h1>{displayName}</h1>
+            <p className="role">{userProfile?.roleType === 'college' ? 'College Student' : userProfile?.roleType === 'school' ? 'School Student' : 'Student'} • LearnGrid Member</p>
+            {userProfile?.institutionName && (
+              <p className="institution">{userProfile.institutionName}</p>
+            )}
           </div>
           <button className="edit-btn">
             <Edit size={16} />
@@ -42,7 +67,7 @@ export function Profile() {
               <div className="icon-box"><User size={20} /></div>
               <div>
                 <label>Full Name</label>
-                <p>{user?.name || 'Student'}</p>
+                <p>{displayName}</p>
               </div>
             </div>
             <div className="info-item">
@@ -55,10 +80,30 @@ export function Profile() {
             <div className="info-item">
               <div className="icon-box"><Shield size={20} /></div>
               <div>
-                <label>Student ID</label>
-                <p>#ST-{user?.id ? String(user.id).slice(-4) : '0000'}</p>
+                <label>Roll Number</label>
+                <p>{userProfile?.rollNumber || 'N/A'}</p>
               </div>
             </div>
+            {userProfile?.roleType === 'college' && (
+              <>
+                <div className="info-item">
+                  <div className="icon-box"><Building2 size={20} /></div>
+                  <div>
+                    <label>Department</label>
+                    <p>{userProfile.department} — {userProfile.year} Year</p>
+                  </div>
+                </div>
+              </>
+            )}
+            {userProfile?.roleType === 'school' && (
+              <div className="info-item">
+                <div className="icon-box"><GraduationCap size={20} /></div>
+                <div>
+                  <label>Class</label>
+                  <p>{userProfile.standard} — Section {userProfile.section}</p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -72,7 +117,7 @@ export function Profile() {
             </div>
             <div className="stat-box">
               <div className="stat-icon-sm" style={{ background: 'var(--gradient-warm)' }}><ClipboardList size={18} color="white" /></div>
-              <span className="stat-num">{assignments.length}</span>
+              <span className="stat-num">{assignmentsCount}</span>
               <span className="stat-lbl">Assignments</span>
             </div>
             <div className="stat-box">
@@ -82,7 +127,7 @@ export function Profile() {
             </div>
             <div className="stat-box">
               <div className="stat-icon-sm" style={{ background: 'var(--gradient-cool)' }}><Shield size={18} color="white" /></div>
-              <span className="stat-num">{assignments.length > 0 ? Math.round((completedCount / assignments.length) * 100) : 0}%</span>
+              <span className="stat-num">{assignmentsCount > 0 ? Math.round((completedCount / assignmentsCount) * 100) : 0}%</span>
               <span className="stat-lbl">Progress</span>
             </div>
           </div>
@@ -148,6 +193,8 @@ export function Profile() {
         h1 { font-size: 1.75rem; color: var(--color-text-main); margin-bottom: 0.25rem; font-weight: 800; }
 
         .role { color: var(--color-text-muted); font-size: 1rem; }
+
+        .institution { color: var(--color-primary); font-size: 0.9rem; font-weight: 600; margin-top: 0.25rem; }
 
         .edit-btn {
           margin-bottom: 1rem;
