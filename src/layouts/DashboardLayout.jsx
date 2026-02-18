@@ -13,6 +13,11 @@ export function DashboardLayout() {
     return <Navigate to="/login" replace />;
   }
 
+  // Redirect to verify-email if email not verified (email/password users only)
+  if (!user.emailVerified && user.providerData?.[0]?.providerId === 'password') {
+    return <Navigate to="/verify-email" replace />;
+  }
+
   // Redirect to onboarding if profile is incomplete
   if (!isOnboarded) {
     return <Navigate to="/onboarding" replace />;

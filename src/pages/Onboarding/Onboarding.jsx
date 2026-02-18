@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { saveUserProfile } from '../../lib/firestore';
 import { GraduationCap, School, Building2, ArrowRight, Loader2 } from 'lucide-react';
@@ -34,6 +34,11 @@ export function Onboarding() {
     if (!user) {
         navigate('/login', { replace: true });
         return null;
+    }
+
+    // Block unverified email/password users
+    if (!user.emailVerified && user.providerData?.[0]?.providerId === 'password') {
+        return <Navigate to="/verify-email" replace />;
     }
 
     const handleRoleSelect = (type) => {

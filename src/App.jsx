@@ -6,6 +6,7 @@ import { StaticLayout } from './layouts/StaticLayout';
 import { LandingPage } from './pages/Landing/LandingPage';
 import { Login } from './pages/Auth/Login';
 import { Register } from './pages/Auth/Register';
+import { VerifyEmail } from './pages/Auth/VerifyEmail';
 import { DashboardHome } from './pages/Dashboard/Home';
 import { Notes } from './pages/Notes/Notes';
 import { Assignments } from './pages/Assignments/Assignments';
@@ -36,6 +37,7 @@ function App() {
           {/* Auth Pages */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
           <Route path="/onboarding" element={<Onboarding />} />
 
           {/* Static pages with shared layout */}
