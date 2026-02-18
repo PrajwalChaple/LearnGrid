@@ -39,7 +39,7 @@ export function DashboardLayout() {
         />
       )}
 
-      <style jsx="true">{`
+      <style>{`
         .layout {
           display: flex;
           min-height: 100vh;
