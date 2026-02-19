@@ -55,8 +55,15 @@ export const loginWithEmail = async (email, password) => {
 export const loginWithGoogle = async () => {
     try {
         const provider = new GoogleAuthProvider();
-        const userCredential = await signInWithPopup(auth, provider);
-        return { user: userCredential.user, error: null };
+        provider.addScope('https://www.googleapis.com/auth/calendar.events');
+        const result = await signInWithPopup(auth, provider);
+        // Save access token for Google Calendar API
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const accessToken = credential?.accessToken;
+        if (accessToken) {
+            sessionStorage.setItem('gcal_token', accessToken);
+        }
+        return { user: result.user, accessToken, error: null };
     } catch (error) {
         return { user: null, error };
     }

@@ -3,6 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { CheckCircle, Clock, FileQuestion, Plus, X, User } from 'lucide-react';
 import { subscribeToAssignments, addAssignment, deleteAssignmentDoc, updateAssignment } from '../../lib/firestore';
 import { NotificationModal } from '../../components/NotificationModal';
+import { addEventToCalendar, getCalendarToken } from '../../lib/googleCalendar';
 
 export function Assignments() {
   const { user, userProfile } = useAuth();
@@ -46,6 +47,14 @@ export function Assignments() {
 
     try {
       const newId = await addAssignment(assignmentData);
+      // Sync to Google Calendar if connected
+      const token = getCalendarToken();
+      if (token) {
+        const calResult = await addEventToCalendar(token, assignmentData);
+        if (calResult.success) {
+          console.log('[Assignments] Synced to Google Calendar:', calResult.eventId);
+        }
+      }
       setFormData({ subject: '', title: '', deadline: '' });
       setShowForm(false);
       // Trigger notification modal

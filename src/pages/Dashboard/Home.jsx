@@ -5,6 +5,8 @@ import { BookOpen, AlertCircle, Calendar, MessageSquare, ArrowRight, TrendingUp,
 
 import { subscribeToNotes, subscribeToAssignments, subscribeToAnnouncements } from '../../lib/firestore';
 import { NotificationHistory } from '../../components/NotificationHistory';
+import { isCalendarConnected } from '../../lib/googleCalendar';
+import { loginWithGoogle } from '../../auth';
 
 
 const defaultStats = [
@@ -217,11 +219,25 @@ export function DashboardHome() {
             </div>
 
             <div className="mt-8 p-4 rounded-xl bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100">
-              <h3 className="font-bold text-indigo-900 mb-2">Pro Tip</h3>
+              <h3 className="font-bold text-indigo-900 mb-2">
+                {isCalendarConnected() ? 'Calendar Connected ✅' : 'Google Calendar'}
+              </h3>
               <p className="text-sm text-indigo-700 leading-relaxed">
-                Connect your Google Calendar to sync assignments automatically.
+                {isCalendarConnected()
+                  ? 'New assignments will automatically sync to your Google Calendar with reminders.'
+                  : 'Connect your Google Calendar to sync assignments automatically.'}
               </p>
-              <button className="mt-3 text-xs font-bold text-indigo-600 hover:text-indigo-800 uppercase tracking-wider">Connect Now</button>
+              {!isCalendarConnected() && (
+                <button
+                  onClick={async () => {
+                    await loginWithGoogle();
+                    window.location.reload();
+                  }}
+                  className="mt-3 text-xs font-bold text-indigo-600 hover:text-indigo-800 uppercase tracking-wider"
+                >
+                  Connect Now
+                </button>
+              )}
             </div>
           </div>
 
