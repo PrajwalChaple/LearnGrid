@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Search, Bell, Menu } from 'lucide-react';
+import { NotificationDropdown, useUnreadCount } from '../components/NotificationDropdown';
 
 export function Navbar({ onMenuClick }) {
   const { user } = useAuth();
   const displayName = user?.displayName || user?.name || 'User';
   const initials = displayName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
   const firstName = displayName.split(' ')[0];
+  const [notifOpen, setNotifOpen] = useState(false);
+  const unreadCount = useUnreadCount();
 
   return (
     <header className="navbar">
@@ -21,10 +24,17 @@ export function Navbar({ onMenuClick }) {
       </div>
 
       <div className="navbar-right">
-        <button className="icon-btn">
-          <Bell size={20} />
-          <span className="notification-dot"></span>
-        </button>
+        <div className="notif-bell-wrapper">
+          <button className="icon-btn" onClick={() => setNotifOpen(!notifOpen)}>
+            <Bell size={20} />
+            {unreadCount > 0 && (
+              <span className="notification-badge">
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </span>
+            )}
+          </button>
+          <NotificationDropdown isOpen={notifOpen} onClose={() => setNotifOpen(false)} />
+        </div>
 
         <div className="user-profile">
           <div className="user-info">
@@ -37,7 +47,7 @@ export function Navbar({ onMenuClick }) {
         </div>
       </div>
 
-      <style jsx="true">{`
+      <style>{`
         .navbar {
           height: 70px;
           background: rgba(255, 255, 255, 0.8);
@@ -114,6 +124,10 @@ export function Navbar({ onMenuClick }) {
           gap: 1.25rem;
         }
 
+        .notif-bell-wrapper {
+          position: relative;
+        }
+
         .icon-btn {
           position: relative;
           color: var(--color-text-muted);
@@ -128,16 +142,29 @@ export function Navbar({ onMenuClick }) {
           color: var(--color-primary);
         }
 
-        .notification-dot {
+        .notification-badge {
           position: absolute;
-          top: 8px;
-          right: 8px;
-          width: 8px;
-          height: 8px;
-          background-color: var(--color-danger);
-          border-radius: 50%;
+          top: 4px;
+          right: 4px;
+          min-width: 18px;
+          height: 18px;
+          background: linear-gradient(135deg, #ef4444, #dc2626);
+          color: white;
+          border-radius: 20px;
+          font-size: 0.6rem;
+          font-weight: 700;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0 4px;
           border: 2px solid white;
-          animation: pulse-glow 2s infinite;
+          animation: badge-pop 0.3s ease-out;
+        }
+
+        @keyframes badge-pop {
+          from { transform: scale(0); }
+          50% { transform: scale(1.2); }
+          to { transform: scale(1); }
         }
 
         .user-profile {
@@ -213,3 +240,4 @@ export function Navbar({ onMenuClick }) {
     </header>
   );
 }
+

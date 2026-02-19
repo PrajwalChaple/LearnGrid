@@ -56,10 +56,16 @@ export function DashboardHome() {
 
     const unsubAssignments = subscribeToAssignments(userProfile, (data) => {
       assignmentsRef.current = data;
+      const uid = user?.uid;
+      const pendingCount = data.filter(a => {
+        if (a.userStatuses && a.userStatuses[uid]) return a.userStatuses[uid] === 'Pending';
+        if (a.userId === uid) return (a.status || 'Pending') === 'Pending';
+        return true; // default Pending for others
+      }).length;
       setStatsData(prev => {
         const next = [...prev];
         next[1] = { ...defaultStats[1], value: data.length.toString() };
-        next[2] = { ...defaultStats[2], value: data.filter(a => a.status === 'Pending').length.toString() };
+        next[2] = { ...defaultStats[2], value: pendingCount.toString() };
         return next;
       });
       rebuildActivities();
@@ -120,9 +126,6 @@ export function DashboardHome() {
               <div className={`w-12 h-12 rounded-xl ${stat.bg} ${stat.color} flex items-center justify-center`}>
                 <stat.icon size={24} />
               </div>
-              <span className={`flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-full ${stat.bg} ${stat.color}`}>
-                <TrendingUp size={12} /> +12%
-              </span>
             </div>
             <div>
               <h3 className="text-3xl font-bold text-gray-900 mb-1">{stat.value}</h3>

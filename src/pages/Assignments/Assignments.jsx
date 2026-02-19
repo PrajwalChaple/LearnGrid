@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { CheckCircle, Clock, FileQuestion, Plus, X, User } from 'lucide-react';
 import { subscribeToAssignments, addAssignment, deleteAssignmentDoc, updateAssignment } from '../../lib/firestore';
+import { NotificationModal } from '../../components/NotificationModal';
 
 export function Assignments() {
   const { user, userProfile } = useAuth();
@@ -11,6 +12,8 @@ export function Assignments() {
   const [filter, setFilter] = useState('All');
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({ subject: '', title: '', deadline: '' });
+  const [showNotificationModal, setShowNotificationModal] = useState(false);
+  const [createdItemData, setCreatedItemData] = useState(null);
 
   // Real-time listener
   useEffect(() => {
@@ -42,26 +45,48 @@ export function Assignments() {
     };
 
     try {
-      await addAssignment(assignmentData);
+      const newId = await addAssignment(assignmentData);
       setFormData({ subject: '', title: '', deadline: '' });
       setShowForm(false);
+      // Trigger notification modal
+      setCreatedItemData({ ...assignmentData, id: newId, title: assignmentData.title });
+      setShowNotificationModal(true);
     } catch (err) {
       console.error('Error adding assignment:', err);
       alert('Failed to add assignment.');
     }
   };
 
+  // Get current user's status for an assignment
+  const getMyStatus = (assignment) => {
+    if (assignment.userStatuses && assignment.userStatuses[user.uid]) {
+      return assignment.userStatuses[user.uid];
+    }
+    // Fallback: if creator, use top-level status; otherwise default Pending
+    if (isOwner(assignment)) return assignment.status || 'Pending';
+    return 'Pending';
+  };
+
+  const getMyGrade = (assignment) => {
+    if (assignment.userGrades && assignment.userGrades[user.uid]) {
+      return assignment.userGrades[user.uid];
+    }
+    if (isOwner(assignment)) return assignment.grade || '-';
+    return '-';
+  };
+
   const toggleStatus = async (id) => {
     const item = assignments.find(a => a.id === id);
-    if (item && !isOwner(item)) {
-      alert('Only the creator can change the status.');
-      return;
-    }
-    const newStatus = item.status === 'Pending' ? 'Completed' : 'Pending';
+    if (!item) return;
+    const currentStatus = getMyStatus(item);
+    const newStatus = currentStatus === 'Pending' ? 'Completed' : 'Pending';
     const newGrade = newStatus === 'Completed' ? 'A' : '-';
 
     try {
-      await updateAssignment(id, { status: newStatus, grade: newGrade });
+      await updateAssignment(id, {
+        [`userStatuses.${user.uid}`]: newStatus,
+        [`userGrades.${user.uid}`]: newGrade,
+      });
     } catch (err) {
       console.error('Error updating assignment:', err);
     }
@@ -81,10 +106,18 @@ export function Assignments() {
     }
   };
 
-  const filtered = filter === 'All' ? assignments : assignments.filter(a => a.status === filter);
+  const filtered = filter === 'All' ? assignments : assignments.filter(a => getMyStatus(a) === filter);
 
   return (
     <div className="assignments-page">
+      <NotificationModal
+        isOpen={showNotificationModal}
+        onClose={() => { setShowNotificationModal(false); setCreatedItemData(null); }}
+        noteData={createdItemData}
+        userProfile={userProfile}
+        itemType="assignment"
+        onConfirmSuccess={() => { setShowNotificationModal(false); setCreatedItemData(null); }}
+      />
       <div className="page-header">
         <h1>Assignments</h1>
         <div className="header-actions">
@@ -134,15 +167,13 @@ export function Assignments() {
               <th>Assignment Title</th>
               <th>Deadline</th>
               <th>Status</th>
-              <th>Grade</th>
               <th>Created By</th>
-              <th>Action</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="7">
+                <td colSpan="5">
                   <div className="empty-state">
                     <p>Loading assignments...</p>
                   </div>
@@ -158,34 +189,29 @@ export function Assignments() {
                   <td className="date-cell">{assignment.deadline}</td>
                   <td>
                     <span
-                      className={`status-badge ${assignment.status.toLowerCase()}`}
+                      className={`status-badge ${getMyStatus(assignment).toLowerCase()}`}
                       onClick={() => toggleStatus(assignment.id)}
-                      style={{ cursor: isOwner(assignment) ? 'pointer' : 'default' }}
-                      title={isOwner(assignment) ? 'Click to toggle status' : 'Only creator can change status'}
+                      style={{ cursor: 'pointer' }}
+                      title="Click to toggle your status"
                     >
-                      {assignment.status === 'Completed' ? <CheckCircle size={14} /> : <Clock size={14} />}
-                      {assignment.status}
+                      {getMyStatus(assignment) === 'Completed' ? <CheckCircle size={14} /> : <Clock size={14} />}
+                      {getMyStatus(assignment)}
                     </span>
                   </td>
-                  <td className="grade-cell">{assignment.grade}</td>
                   <td>
                     <span className={`creator-badge ${isOwner(assignment) ? 'is-you' : ''}`}>
                       <User size={12} />
                       {isOwner(assignment) ? 'You' : (assignment.userName?.split(' ')[0] || 'Other')}
                     </span>
-                  </td>
-                  <td>
-                    {isOwner(assignment) ? (
-                      <button className="delete-btn" onClick={() => deleteAssignmentItem(assignment.id)}>Delete</button>
-                    ) : (
-                      <span className="view-only-label">View Only</span>
+                    {isOwner(assignment) && (
+                      <button className="delete-btn" onClick={() => deleteAssignmentItem(assignment.id)} style={{ marginLeft: '8px' }}>Delete</button>
                     )}
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="7">
+                <td colSpan="5">
                   <div className="empty-state">
                     <FileQuestion size={32} className="empty-icon-sm" />
                     <p>No assignments found.</p>
@@ -436,6 +462,6 @@ export function Assignments() {
 
         .empty-icon-sm { opacity: 0.4; }
       `}</style>
-    </div>
+    </div >
   );
 }

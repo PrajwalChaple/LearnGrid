@@ -6,60 +6,66 @@ const TEMPLATE_ID = "template_66vccuh";
 const PUBLIC_KEY = "uVo11pLn69oC3RUI7";
 
 /**
- * Sends emails to a list of recipients in batches.
- * Uses BCC to save quota and improve performance (1 email per batch of 50).
+ * Sends individual emails to each recipient.
+ * Each recipient sees only their own email in "To".
  * 
  * @param {Array} recipients - Array of user objects { email, ... }
  * @param {Object} noteData - { title, ... }
- * @param {Object} senderProfile - { name, ... }
+ * @param {Object} senderProfile - { name, email, ... }
+ * @param {string} itemType - 'note' | 'assignment' | 'announcement'
  * @returns {Promise<Object>} - { success: true, count: number }
  */
-export async function sendEmailBatch(recipients, noteData, senderProfile) {
+export async function sendEmailBatch(recipients, noteData, senderProfile, itemType = 'note') {
     if (!recipients || recipients.length === 0) return { success: true, count: 0 };
 
     // Initialize EmailJS
     emailjs.init(PUBLIC_KEY);
 
-    // Extract emails
+    // Extract valid emails
     const validEmails = recipients
         .map(u => u.email)
         .filter(email => email && email.includes('@'));
 
     if (validEmails.length === 0) return { success: true, count: 0 };
 
-    // Batching (Max 50 per batch for safety/BCC limits)
-    const BATCH_SIZE = 50;
-    const batches = [];
-
-    for (let i = 0; i < validEmails.length; i += BATCH_SIZE) {
-        batches.push(validEmails.slice(i, i + BATCH_SIZE));
-    }
+    const actionTexts = {
+        note: 'has uploaded new notes',
+        assignment: 'has added a new assignment',
+        announcement: 'has posted a new announcement',
+    };
+    const itemLabels = {
+        note: 'Notes',
+        assignment: 'Assignments',
+        announcement: 'Announcements',
+    };
 
     let sentCount = 0;
     let errors = [];
 
-    // Process batches
-    // We run them sequentially or in small parallel groups to avoid browser blocking
-    // Promise.all is fine for small numbers of batches (e.g. 10 batches = 500 users)
-
-    const sendPromises = batches.map(async (batchEmails) => {
+    // Send individual email to each recipient
+    const sendPromises = validEmails.map(async (recipientEmail) => {
         try {
             const templateParams = {
-                to_email: senderProfile.email || batchEmails[0], // Must be non-empty; EmailJS requires a primary recipient
-                bcc: batchEmails.join(','), // Comma separated list for BCC
-                name: senderProfile.name || "LearnGrid", // For EmailJS "From Name" field
-                email: senderProfile.email || "", // For EmailJS "Reply To" field
+                to_email: recipientEmail,
+                bcc: '',
+                name: `${senderProfile.name || 'LearnGrid'} via LearnGrid`,
+                email: senderProfile.email || "",
                 sender_name: senderProfile.name || "LearnGrid Admin",
-                department: senderProfile.department || "General",
+                sender_email: senderProfile.email || "",
+                institution_name: senderProfile.institutionName || "",
+                department: senderProfile.department || senderProfile.standard || "",
                 year: senderProfile.year || "",
+                section: senderProfile.section || senderProfile.sector || "",
                 note_title: noteData.title,
-                website_link: "https://learn-grid-tool.vercel.app/#/notes", // Production URL with hash routing
+                action_text: actionTexts[itemType] || actionTexts.note,
+                item_label: itemLabels[itemType] || itemLabels.note,
+                website_link: `https://learn-grid-tool.vercel.app/#/${itemType === 'note' ? 'notes' : itemType === 'assignment' ? 'assignments' : 'announcements'}`,
             };
 
             await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams);
-            sentCount += batchEmails.length;
+            sentCount++;
         } catch (error) {
-            console.error("Email batch failed", error);
+            console.error(`Email to ${recipientEmail} failed`, error);
             errors.push(error);
         }
     });

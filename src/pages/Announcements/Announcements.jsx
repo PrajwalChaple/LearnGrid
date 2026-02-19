@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { Megaphone, Calendar, Plus, Trash2, User } from 'lucide-react';
 import { subscribeToAnnouncements, addAnnouncement, deleteAnnouncementDoc } from '../../lib/firestore';
+import { NotificationModal } from '../../components/NotificationModal';
 
 export function Announcements() {
   const { user, userProfile } = useAuth();
@@ -10,6 +11,8 @@ export function Announcements() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({ title: '', description: '', type: 'General' });
+  const [showNotificationModal, setShowNotificationModal] = useState(false);
+  const [createdItemData, setCreatedItemData] = useState(null);
 
   // Real-time listener
   useEffect(() => {
@@ -40,9 +43,12 @@ export function Announcements() {
     };
 
     try {
-      await addAnnouncement(announcementData);
+      const newId = await addAnnouncement(announcementData);
       setFormData({ title: '', description: '', type: 'General' });
       setShowForm(false);
+      // Trigger notification modal
+      setCreatedItemData({ ...announcementData, id: newId, title: announcementData.title });
+      setShowNotificationModal(true);
     } catch (err) {
       console.error('Error adding announcement:', err);
       alert('Failed to post announcement.');
@@ -72,6 +78,14 @@ export function Announcements() {
 
   return (
     <div className="announcements-page">
+      <NotificationModal
+        isOpen={showNotificationModal}
+        onClose={() => { setShowNotificationModal(false); setCreatedItemData(null); }}
+        noteData={createdItemData}
+        userProfile={userProfile}
+        itemType="announcement"
+        onConfirmSuccess={() => { setShowNotificationModal(false); setCreatedItemData(null); }}
+      />
       <div className="page-header">
         <h1>Announcements</h1>
         <button className="btn-add" onClick={() => setShowForm(!showForm)}>

@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { X, Users, Check, BookOpen, School } from 'lucide-react';
-import { getRecipientCount, getRecipients, createNotification } from '../lib/firestore';
+import { X, Users, Check, BookOpen, School, Mail, Bell } from 'lucide-react';
+import { getRecipientCount, getRecipients, createNotification, createUserNotifications } from '../lib/firestore';
 import { sendEmailBatch } from '../lib/email';
 import { useAuth } from '../context/AuthContext';
 
-export function NotificationModal({ isOpen, onClose, noteData, userProfile, onConfirmSuccess }) {
+export function NotificationModal({ isOpen, onClose, noteData, userProfile, onConfirmSuccess, itemType = 'note' }) {
     const { user } = useAuth();
     const [scope, setScope] = useState('class'); // Default to class
+    const [notifyMethod, setNotifyMethod] = useState('bell'); // 'email' = Email + In-App, 'bell' = In-App only
     const [loading, setLoading] = useState(false);
     const [recipientCount, setRecipientCount] = useState(0);
     const [calculating, setCalculating] = useState(false);
@@ -44,19 +45,21 @@ export function NotificationModal({ isOpen, onClose, noteData, userProfile, onCo
                 const count = recipients.length;
                 console.log(`Sending to ${count} recipients...`);
 
-                // 2. Send Emails (Client-side Batch)
-                let emailStatus = 'sent';
+                // 2. Send Emails (only if method is 'email')
+                let emailStatus = notifyMethod === 'email' ? 'sent' : 'skipped';
                 let emailError = '';
 
-                try {
-                    const emailResult = await sendEmailBatch(recipients, noteData, userProfile);
-                    if (!emailResult.success) {
+                if (notifyMethod === 'email') {
+                    try {
+                        const emailResult = await sendEmailBatch(recipients, noteData, userProfile, itemType);
+                        if (!emailResult.success) {
+                            emailStatus = 'failed';
+                        }
+                    } catch (err) {
+                        console.error("Email sending error:", err);
                         emailStatus = 'failed';
+                        emailError = err.message || 'Unknown error';
                     }
-                } catch (err) {
-                    console.error("Email sending error:", err);
-                    emailStatus = 'failed';
-                    emailError = err.message || 'Unknown error';
                 }
 
                 // 3. Save Notification Record (no undefined values!)
@@ -77,6 +80,17 @@ export function NotificationModal({ isOpen, onClose, noteData, userProfile, onCo
 
                 console.log('Creating notification:', notificationData);
                 await createNotification(notificationData);
+
+                // Create in-app notifications for each recipient
+                const typeLabels = { note: 'note', assignment: 'assignment', announcement: 'announcement' };
+                const label = typeLabels[itemType] || 'note';
+                await createUserNotifications(recipients, {
+                    senderName: userProfile?.name || userProfile?.displayName || 'Someone',
+                    type: itemType || 'note',
+                    title: noteData?.title || '',
+                    message: `shared a new ${label}: "${noteData?.title || 'Untitled'}"`,
+                    scope: scope,
+                });
             }
             onConfirmSuccess();
             onClose();
@@ -154,6 +168,35 @@ export function NotificationModal({ isOpen, onClose, noteData, userProfile, onCo
                             onClick={() => setScope('none')}
                         />
                     </div>
+
+                    {/* Notification Method Toggle */}
+                    {scope !== 'none' && (
+                        <div className="mt-2 animate-fade-in">
+                            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Notification Method</p>
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={() => setNotifyMethod('email')}
+                                    className={`flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg border-2 text-sm font-medium transition-all ${notifyMethod === 'email'
+                                        ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
+                                        : 'border-gray-200 bg-white text-gray-500 hover:border-gray-300'
+                                        }`}
+                                >
+                                    <Mail size={16} />
+                                    Email + In-App
+                                </button>
+                                <button
+                                    onClick={() => setNotifyMethod('bell')}
+                                    className={`flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg border-2 text-sm font-medium transition-all ${notifyMethod === 'bell'
+                                        ? 'border-purple-500 bg-purple-50 text-purple-700'
+                                        : 'border-gray-200 bg-white text-gray-500 hover:border-gray-300'
+                                        }`}
+                                >
+                                    <Bell size={16} />
+                                    In-App Only
+                                </button>
+                            </div>
+                        </div>
+                    )}
 
                     {/* Dynamic Helper Text */}
                     {scope !== 'none' && (

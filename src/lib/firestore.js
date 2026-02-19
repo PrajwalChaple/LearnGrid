@@ -219,3 +219,77 @@ export function subscribeToNotifications(userId, callback) {
     });
 }
 
+// ─── User Notifications (per-recipient inbox) ───────────────
+
+/**
+ * Creates one notification document per recipient in user_notifications.
+ * @param {Array} recipients - Array of { uid, ... } objects
+ * @param {Object} notifData - { senderName, type, title, message, scope }
+ */
+export async function createUserNotifications(recipients, notifData) {
+    if (!recipients || recipients.length === 0) return;
+
+    const promises = recipients.map(recipient =>
+        addDoc(collection(db, 'user_notifications'), {
+            recipientId: recipient.uid,
+            senderName: notifData.senderName || 'Someone',
+            type: notifData.type || 'note',
+            title: notifData.title || '',
+            message: notifData.message || 'shared something with you',
+            scope: notifData.scope || 'class',
+            read: false,
+            createdAt: serverTimestamp(),
+        })
+    );
+
+    await Promise.all(promises);
+}
+
+/**
+ * Real-time listener for the current user's incoming notifications.
+ */
+export function subscribeToMyNotifications(userId, callback) {
+    const q = query(
+        collection(db, 'user_notifications'),
+        where('recipientId', '==', userId)
+    );
+
+    return onSnapshot(q, (snapshot) => {
+        const items = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        // Sort client-side by createdAt descending (avoids composite index requirement)
+        items.sort((a, b) => {
+            const ta = a.createdAt?.toMillis?.() || a.createdAt?.seconds * 1000 || 0;
+            const tb = b.createdAt?.toMillis?.() || b.createdAt?.seconds * 1000 || 0;
+            return tb - ta;
+        });
+        callback(items);
+    }, (err) => {
+        console.error("[Firestore] Error listening to user_notifications:", err);
+        // On error, return empty array so loading state stops
+        callback([]);
+    });
+}
+
+/**
+ * Mark a single notification as read.
+ */
+export async function markNotificationRead(notifId) {
+    await updateDoc(doc(db, 'user_notifications', notifId), { read: true });
+}
+
+/**
+ * Mark all unread notifications as read for a user.
+ */
+export async function markAllNotificationsRead(userId) {
+    const q = query(
+        collection(db, 'user_notifications'),
+        where('recipientId', '==', userId),
+        where('read', '==', false)
+    );
+    const snap = await getDocs(q);
+    const promises = snap.docs.map(d =>
+        updateDoc(doc(db, 'user_notifications', d.id), { read: true })
+    );
+    await Promise.all(promises);
+}
+

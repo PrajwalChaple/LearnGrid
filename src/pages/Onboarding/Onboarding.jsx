@@ -22,7 +22,7 @@ export function Onboarding() {
     const [section, setSection] = useState('');
     const [department, setDepartment] = useState('');
     const [year, setYear] = useState('');
-    const [sector, setSector] = useState('');
+    const [collegeSection, setCollegeSection] = useState('');
     const [rollNumber, setRollNumber] = useState('');
 
     // If already onboarded, go to dashboard
@@ -67,7 +67,7 @@ export function Onboarding() {
             } else {
                 profileData.department = department;
                 profileData.year = year;
-                profileData.sector = sector || '';
+                profileData.section = collegeSection || '';
             }
 
             await saveUserProfile(user.uid, profileData);
@@ -228,7 +228,7 @@ export function Onboarding() {
                                     <input
                                         type="text" required
                                         className="block w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                                        placeholder="e.g. ABC Engineering College"
+                                        placeholder="e.g. Govt. College of Engineering, Nagpur"
                                         value={institutionName}
                                         onChange={(e) => setInstitutionName(e.target.value)}
                                     />
@@ -258,13 +258,13 @@ export function Onboarding() {
                                     </div>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Sector <span className="text-gray-400 font-normal">(optional)</span></label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Section *</label>
                                     <input
-                                        type="text"
+                                        type="text" required
                                         className="block w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                                        placeholder="e.g. Engineering"
-                                        value={sector}
-                                        onChange={(e) => setSector(e.target.value)}
+                                        placeholder="e.g. A"
+                                        value={collegeSection}
+                                        onChange={(e) => setCollegeSection(e.target.value)}
                                     />
                                 </div>
                                 <div>
