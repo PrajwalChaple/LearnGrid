@@ -33,8 +33,3 @@ export const formatErrorMessage = (code) => {
             return `An error occurred (${code || 'unknown'}). Please try again later.`;
     }
 };
-
-export const showSuccessMessage = (name) => {
-    // This could be integrated with toast notifications later
-    console.log(`Welcome back, ${name}!`);
-};

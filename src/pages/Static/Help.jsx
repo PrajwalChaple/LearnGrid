@@ -1,6 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Search, BookOpen, MessageCircle, FileText, ArrowRight } from 'lucide-react';
+import { Search, BookOpen, MessageCircle, FileText } from 'lucide-react';
 
 const categories = [
     { icon: BookOpen, title: 'Getting Started', desc: 'Learn the basics of setting up your LearnGrid account and dashboard.', articles: 8 },

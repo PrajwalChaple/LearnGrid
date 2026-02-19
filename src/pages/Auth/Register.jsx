@@ -275,7 +275,7 @@ export function Register() {
             </form>
 
             <p className="mt-8 text-center text-xs text-gray-400">
-              By creating an account, you agree to our <a href="#" className="underline">Terms of Service</a> and <a href="#" className="underline">Privacy Policy</a>.
+              By creating an account, you agree to our <Link to="/terms-of-service" className="underline hover:text-indigo-500 transition-colors">Terms of Service</Link> and <Link to="/privacy-policy" className="underline hover:text-indigo-500 transition-colors">Privacy Policy</Link>.
             </p>
           </div>
         )}

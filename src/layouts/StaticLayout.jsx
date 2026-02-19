@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
+import { PageTransition } from '../components/PageTransition';
 import { GraduationCap, Menu, X, Github, Linkedin, Instagram, Mail } from 'lucide-react';
 
 const socialLinks = [
@@ -58,7 +59,7 @@ export function StaticLayout() {
 
             {/* ─── PAGE CONTENT ─── */}
             <main className="flex-1">
-                <Outlet />
+                <PageTransition><Outlet /></PageTransition>
             </main>
 
             {/* ─── FOOTER ─── */}
@@ -70,7 +71,7 @@ export function StaticLayout() {
                                 <GraduationCap size={20} />
                                 <span>LearnGrid</span>
                             </div>
-                            <p className="text-sm leading-relaxed mb-5">Empowering students with tools for success. Built with ❤️ for the modern learner.</p>
+                            <p className="text-sm leading-relaxed mb-5">Empowering students with tools for success. Built for the modern learner.</p>
                             <div className="flex items-center gap-2.5">
                                 {socialLinks.map((s, i) => (
                                     <a key={i} href={s.href} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-lg bg-gray-800 flex items-center justify-center text-gray-500 hover:text-white hover:bg-indigo-600 transition-all duration-200 no-underline">
@@ -108,7 +109,7 @@ export function StaticLayout() {
                     <div className="border-t border-gray-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
                         <p className="text-xs text-gray-500">© {new Date().getFullYear()} LearnGrid. All rights reserved.</p>
                         <p className="text-xs text-gray-600">Designed & Developed by{' '}
-                            <a href="https://www.linkedin.com/in/prajwalchaple" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-indigo-400 transition-colors no-underline">Prajwal Chaple</a>
+                            <span className="text-gray-400">Prajwal Chaple</span>
                         </p>
                     </div>
                 </div>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
+import { PageTransition } from '../components/PageTransition';
 import { Sidebar } from './Sidebar';
 import { Navbar } from './Navbar';
 import { useAuth } from '../context/AuthContext';
@@ -33,7 +34,7 @@ export function DashboardLayout() {
 
         <main className="content-area">
           <div className="content-container animate-fade-in">
-            <Outlet />
+            <PageTransition><Outlet /></PageTransition>
           </div>
         </main>
       </div>
