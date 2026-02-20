@@ -12,7 +12,7 @@ export function Announcements() {
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({ title: '', description: '', type: 'General' });
   const [showNotificationModal, setShowNotificationModal] = useState(false);
-  const [createdItemData, setCreatedItemData] = useState(null);
+  const [pendingItemData, setPendingItemData] = useState(null); // Prepared but NOT saved yet
 
   // Real-time listener
   useEffect(() => {
@@ -30,6 +30,7 @@ export function Announcements() {
 
   const handleAdd = async (e) => {
     e.preventDefault();
+    // Only prepare the data — do NOT save to Firestore yet
     const announcementData = {
       ...formData,
       date: new Date().toLocaleDateString(),
@@ -42,16 +43,23 @@ export function Announcements() {
         : { standard: userProfile.standard, section: userProfile.section }),
     };
 
+    // Show notification modal — save happens ONLY on Confirm
+    setPendingItemData(announcementData);
+    setFormData({ title: '', description: '', type: 'General' });
+    setShowForm(false);
+    setShowNotificationModal(true);
+  };
+
+  // Called by NotificationModal on Confirm — does the actual Firestore save
+  const handleUploadAnnouncement = async () => {
+    if (!pendingItemData) return null;
     try {
-      const newId = await addAnnouncement(announcementData);
-      setFormData({ title: '', description: '', type: 'General' });
-      setShowForm(false);
-      // Trigger notification modal
-      setCreatedItemData({ ...announcementData, id: newId, title: announcementData.title });
-      setShowNotificationModal(true);
+      const newId = await addAnnouncement(pendingItemData);
+      return { ...pendingItemData, id: newId, title: pendingItemData.title };
     } catch (err) {
       console.error('Error adding announcement:', err);
       alert('Failed to post announcement.');
+      return null;
     }
   };
 
@@ -80,11 +88,12 @@ export function Announcements() {
     <div className="announcements-page">
       <NotificationModal
         isOpen={showNotificationModal}
-        onClose={() => { setShowNotificationModal(false); setCreatedItemData(null); }}
-        noteData={createdItemData}
+        onClose={() => { setShowNotificationModal(false); setPendingItemData(null); }}
+        noteData={pendingItemData}
         userProfile={userProfile}
         itemType="announcement"
-        onConfirmSuccess={() => { setShowNotificationModal(false); setCreatedItemData(null); }}
+        onUpload={handleUploadAnnouncement}
+        onConfirmSuccess={() => { setShowNotificationModal(false); setPendingItemData(null); }}
       />
       <div className="page-header">
         <h1>Announcements</h1>

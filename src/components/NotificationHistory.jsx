@@ -110,7 +110,7 @@ export function NotificationHistory() {
 }
 
 function StatusBadge({ status }) {
-    if (status === 'sent') {
+    if (status === 'sent' || status === 'skipped') {
         return (
             <span className="flex items-center gap-1 text-[10px] font-bold text-green-600 bg-green-100 px-1.5 py-0.5 rounded-full uppercase tracking-wider">
                 <CheckCircle2 size={10} /> Sent

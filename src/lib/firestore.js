@@ -137,7 +137,8 @@ export async function updateAssignment(id, fields) {
 // ─── Notifications ──────────────────────────────────────────────
 
 export async function createNotification(data) {
-    return addItem('notifications', data);
+    const expireAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days from now
+    return addItem('notifications', { ...data, expireAt });
 }
 
 
@@ -230,6 +231,8 @@ export function subscribeToNotifications(userId, callback) {
 export async function createUserNotifications(recipients, notifData) {
     if (!recipients || recipients.length === 0) return;
 
+    const expireAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days from now
+
     const promises = recipients.map(recipient =>
         addDoc(collection(db, 'user_notifications'), {
             recipientId: recipient.uid,
@@ -240,6 +243,7 @@ export async function createUserNotifications(recipients, notifData) {
             scope: notifData.scope || 'class',
             read: false,
             createdAt: serverTimestamp(),
+            expireAt,
         })
     );
 
@@ -291,6 +295,26 @@ export async function markAllNotificationsRead(userId) {
     const promises = snap.docs.map(d =>
         updateDoc(doc(db, 'user_notifications', d.id), { read: true })
     );
+    await Promise.all(promises);
+}
+
+/**
+ * Delete a single notification.
+ */
+export async function deleteNotification(notifId) {
+    await deleteDoc(doc(db, 'user_notifications', notifId));
+}
+
+/**
+ * Delete all notifications for a user.
+ */
+export async function deleteAllNotifications(userId) {
+    const q = query(
+        collection(db, 'user_notifications'),
+        where('recipientId', '==', userId)
+    );
+    const snap = await getDocs(q);
+    const promises = snap.docs.map(d => deleteDoc(doc(db, 'user_notifications', d.id)));
     await Promise.all(promises);
 }
 

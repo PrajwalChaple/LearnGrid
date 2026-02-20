@@ -4,21 +4,20 @@ import { getRecipientCount, getRecipients, createNotification, createUserNotific
 import { sendEmailBatch } from '../lib/email';
 import { useAuth } from '../context/AuthContext';
 
-export function NotificationModal({ isOpen, onClose, noteData, userProfile, onConfirmSuccess, itemType = 'note' }) {
+export function NotificationModal({ isOpen, onClose, noteData, userProfile, onConfirmSuccess, onUpload, itemType = 'note' }) {
     const { user } = useAuth();
-    const [scope, setScope] = useState('class'); // Default to class
-    const [sendEmail, setSendEmail] = useState(false); // Default: In-App Only (Email OFF)
+    const [scope, setScope] = useState('class');
+    const [sendInApp, setSendInApp] = useState(false);
+    const [sendEmail, setSendEmail] = useState(false);
     const [loading, setLoading] = useState(false);
     const [recipientCount, setRecipientCount] = useState(0);
     const [calculating, setCalculating] = useState(false);
 
-    // Hierarchy Logic
-    // College > Branch > Class
-
     useEffect(() => {
         if (isOpen && userProfile) {
             calculateRecipients();
-            setSendEmail(false); // Always reset email toggle to OFF when modal opens
+            setSendInApp(false);
+            setSendEmail(false);
         }
     }, [isOpen, scope, userProfile, user?.uid]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -39,65 +38,77 @@ export function NotificationModal({ isOpen, onClose, noteData, userProfile, onCo
     const handleConfirm = async () => {
         setLoading(true);
         try {
-            if (scope !== 'none') {
-                // 1. Fetch Recipients (excluding current user)
-                const currentUid = user?.uid || '';
-                const recipients = await getRecipients(userProfile, scope, currentUid);
-                const count = recipients.length;
-                console.log(`Sending to ${count} recipients...`);
-
-                // 2. Send Emails (only if toggle is ON)
-                let emailStatus = sendEmail ? 'sent' : 'skipped';
-                let emailError = '';
-
-                if (sendEmail) {
-                    try {
-                        const emailResult = await sendEmailBatch(recipients, noteData, userProfile, itemType);
-                        if (!emailResult.success) {
-                            emailStatus = 'failed';
-                        }
-                    } catch (err) {
-                        console.error("Email sending error:", err);
-                        emailStatus = 'failed';
-                        emailError = err.message || 'Unknown error';
-                    }
+            // 1. First, do the actual upload/save if onUpload is provided
+            let savedData = noteData;
+            if (onUpload) {
+                savedData = await onUpload();
+                if (!savedData) {
+                    // Upload failed or was cancelled
+                    setLoading(false);
+                    return;
                 }
+            }
 
-                // 3. Save Notification Record (no undefined values!)
-                const notificationData = {
-                    senderId: user?.uid || '',
-                    senderName: userProfile?.name || userProfile?.displayName || 'Unknown',
-                    institutionName: userProfile?.institutionName || '',
-                    department: userProfile?.department || '',
-                    year: userProfile?.year || '',
-                    section: userProfile?.section || userProfile?.sector || '',
-                    scope: scope,
-                    noteId: noteData?.id || '',
-                    noteTitle: noteData?.title || '',
-                    recipientCount: count,
-                    status: emailStatus,
-                    error: emailError
-                };
+            // 2. Fetch Recipients (excluding current user)
+            const currentUid = user?.uid || '';
+            const recipients = await getRecipients(userProfile, scope, currentUid);
+            const count = recipients.length;
+            console.log(`Sending to ${count} recipients...`);
 
-                console.log('Creating notification:', notificationData);
-                await createNotification(notificationData);
+            // 3. Send Emails (only if toggle is ON)
+            let emailStatus = sendEmail ? 'sent' : 'skipped';
+            let emailError = '';
 
-                // Create in-app notifications for each recipient (ALWAYS)
+            if (sendEmail) {
+                try {
+                    const emailResult = await sendEmailBatch(recipients, savedData, userProfile, itemType);
+                    if (!emailResult.success) {
+                        emailStatus = 'failed';
+                    }
+                } catch (err) {
+                    console.error("Email sending error:", err);
+                    emailStatus = 'failed';
+                    emailError = err.message || 'Unknown error';
+                }
+            }
+
+            // 4. Save Notification Record
+            const notificationData = {
+                senderId: user?.uid || '',
+                senderName: userProfile?.name || userProfile?.displayName || 'Unknown',
+                institutionName: userProfile?.institutionName || '',
+                department: userProfile?.department || '',
+                year: userProfile?.year || '',
+                section: userProfile?.section || userProfile?.sector || '',
+                scope: scope,
+                noteId: savedData?.id || '',
+                noteTitle: savedData?.title || '',
+                recipientCount: count,
+                status: emailStatus,
+                error: emailError
+            };
+
+            console.log('Creating notification:', notificationData);
+            await createNotification(notificationData);
+
+            // 5. Create in-app notifications only if toggle is ON
+            if (sendInApp) {
                 const typeLabels = { note: 'note', assignment: 'assignment', announcement: 'announcement' };
                 const label = typeLabels[itemType] || 'note';
                 await createUserNotifications(recipients, {
                     senderName: userProfile?.name || userProfile?.displayName || 'Someone',
                     type: itemType || 'note',
-                    title: noteData?.title || '',
-                    message: `shared a new ${label}: "${noteData?.title || 'Untitled'}"`,
+                    title: savedData?.title || '',
+                    message: `shared a new ${label}: "${savedData?.title || 'Untitled'}"`,
                     scope: scope,
                 });
             }
+
             onConfirmSuccess();
             onClose();
         } catch (error) {
             console.error("Notification creation failed:", error);
-            alert("Failed to create notification: " + error.message);
+            alert("Failed: " + error.message);
         } finally {
             setLoading(false);
         }
@@ -106,181 +117,303 @@ export function NotificationModal({ isOpen, onClose, noteData, userProfile, onCo
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50" style={{ overflow: 'auto' }}>
             {/* Backdrop */}
             <div
-                className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-fade-in"
+                className="fixed inset-0 bg-black/40 backdrop-blur-sm animate-nmodal-fade"
                 onClick={onClose}
             ></div>
 
-            {/* Modal */}
-            <div className="relative w-full max-w-md bg-white/80 backdrop-blur-md rounded-2xl shadow-2xl border border-white/50 overflow-hidden animate-scale-in">
+            {/* Centering wrapper */}
+            <div className="nmodal-center-wrap">
+                {/* Modal — wide & short */}
+                <div className="nmodal-card animate-nmodal-scale">
 
-                {/* Header */}
-                <div className="p-6 border-b border-gray-100 bg-white/50">
-                    <div className="flex justify-between items-center">
+                    {/* Header */}
+                    <div className="nmodal-header">
                         <div>
-                            <h2 className="text-xl font-bold text-gray-800">Notify Students</h2>
-                            <p className="text-sm text-gray-500 mt-1">Who should receive this update?</p>
+                            <h2 className="nmodal-title">Notify Students</h2>
+                            <p className="nmodal-subtitle">Choose audience & delivery channels</p>
                         </div>
-                        <button
-                            onClick={onClose}
-                            className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-500"
-                        >
-                            <X size={20} />
+                        <button onClick={onClose} className="nmodal-close-btn">
+                            <X size={18} />
+                        </button>
+                    </div>
+
+                    {/* Body — two-column layout */}
+                    <div className="nmodal-body">
+
+                        {/* LEFT: Scope selection */}
+                        <div className="nmodal-col-left">
+                            <p className="nmodal-section-label">Audience</p>
+                            <div className="nmodal-scope-grid">
+                                <ScopeCard
+                                    icon={<Users size={18} className="text-indigo-500" />}
+                                    title="My Class"
+                                    subtitle={`${userProfile?.year || userProfile?.standard || ''}${userProfile?.section ? ' – ' + userProfile.section : userProfile?.sector ? ' – ' + userProfile.sector : ''}`}
+                                    selected={scope === 'class'}
+                                    onClick={() => setScope('class')}
+                                />
+                                <ScopeCard
+                                    icon={<BookOpen size={18} className="text-purple-500" />}
+                                    title="My Branch"
+                                    subtitle={userProfile?.department || ''}
+                                    selected={scope === 'branch'}
+                                    onClick={() => setScope('branch')}
+                                />
+                                <ScopeCard
+                                    icon={<School size={18} className="text-pink-500" />}
+                                    title="Entire College"
+                                    subtitle={userProfile?.institutionName || ''}
+                                    selected={scope === 'college'}
+                                    onClick={() => setScope('college')}
+                                />
+                            </div>
+                        </div>
+
+                        {/* RIGHT: Delivery toggles + reach */}
+                        <div className="nmodal-col-right">
+                            <p className="nmodal-section-label">Delivery</p>
+
+                            {/* In-App Toggle */}
+                            <div className={`nmodal-toggle ${sendInApp ? 'nmodal-toggle--on' : ''}`} onClick={() => setSendInApp(!sendInApp)}>
+                                <div className="nmodal-toggle-left">
+                                    <div className={`nmodal-toggle-icon ${sendInApp ? 'nmodal-toggle-icon--on' : ''}`}>
+                                        <Bell size={15} />
+                                    </div>
+                                    <div>
+                                        <span className="nmodal-toggle-title">In-App Alerts</span>
+                                        <span className="nmodal-toggle-desc">Notifications inside LearnGrid</span>
+                                    </div>
+                                </div>
+                                <div className={`nmodal-switch ${sendInApp ? 'nmodal-switch--on' : ''}`}>
+                                    <span className="nmodal-switch-knob" />
+                                </div>
+                            </div>
+
+                            {/* Email Toggle */}
+                            <div className={`nmodal-toggle ${sendEmail ? 'nmodal-toggle--on' : ''}`} onClick={() => setSendEmail(!sendEmail)}>
+                                <div className="nmodal-toggle-left">
+                                    <div className={`nmodal-toggle-icon ${sendEmail ? 'nmodal-toggle-icon--on' : ''}`}>
+                                        <Mail size={15} />
+                                    </div>
+                                    <div>
+                                        <span className="nmodal-toggle-title">Send Email</span>
+                                        <span className="nmodal-toggle-desc">Deliver via email too</span>
+                                    </div>
+                                </div>
+                                <div className={`nmodal-switch ${sendEmail ? 'nmodal-switch--on' : ''}`}>
+                                    <span className="nmodal-switch-knob" />
+                                </div>
+                            </div>
+
+                            {/* Estimated Reach */}
+                            <div className="nmodal-reach">
+                                <Users size={13} className="text-indigo-600" />
+                                <span>
+                                    {calculating
+                                        ? 'Calculating...'
+                                        : `~${recipientCount} students will be notified`}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Footer */}
+                    <div className="nmodal-footer">
+                        <button onClick={onClose} className="nmodal-btn-skip">Skip</button>
+                        <button onClick={handleConfirm} disabled={loading} className="nmodal-btn-confirm">
+                            {loading && <div className="nmodal-spinner"></div>}
+                            Confirm
                         </button>
                     </div>
                 </div>
-
-                {/* Content */}
-                <div className="p-6 space-y-4">
-
-                    {/* Options */}
-                    <div className="space-y-3">
-                        <Option
-                            icon={<Users className="text-indigo-500" />}
-                            title="My Class"
-                            subtitle={`Notify students in ${userProfile?.year || userProfile?.standard}${userProfile?.section ? ' - ' + userProfile.section : userProfile?.sector ? ' - ' + userProfile.sector : ''}`}
-                            selected={scope === 'class'}
-                            onClick={() => setScope('class')}
-                        />
-
-                        <Option
-                            icon={<BookOpen className="text-purple-500" />}
-                            title="My Branch"
-                            subtitle={`Notify all students in ${userProfile?.department}`}
-                            selected={scope === 'branch'}
-                            onClick={() => setScope('branch')}
-                        />
-
-                        <Option
-                            icon={<School className="text-pink-500" />}
-                            title="Entire College"
-                            subtitle={`Notify everyone in ${userProfile?.institutionName}`}
-                            selected={scope === 'college'}
-                            onClick={() => setScope('college')}
-                        />
-
-                        <Option
-                            icon={<div className="w-5 h-5 rounded-full border-2 border-gray-300" />}
-                            title="Do Not Notify"
-                            subtitle="Only upload the file without sending notifications"
-                            selected={scope === 'none'}
-                            onClick={() => setScope('none')}
-                        />
-                    </div>
-
-                    {/* Email Toggle Switch */}
-                    {scope !== 'none' && (
-                        <div className="mt-4 animate-fade-in">
-                            <div
-                                className={`flex items-center justify-between p-3 rounded-xl border transition-all cursor-pointer ${sendEmail ? 'bg-indigo-50 border-indigo-200' : 'bg-white border-gray-200 hover:bg-gray-50'
-                                    }`}
-                                onClick={() => setSendEmail(!sendEmail)}
-                            >
-                                <div className="flex items-center gap-3">
-                                    <div className={`p-1.5 rounded-lg transition-colors ${sendEmail ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-400'}`}>
-                                        <Mail size={18} />
-                                    </div>
-                                    <span className={`font-semibold text-sm ${sendEmail ? 'text-indigo-900' : 'text-gray-700'}`}>
-                                        Send Email
-                                    </span>
-                                </div>
-                                <div className={`relative w-10 h-6 rounded-full transition-colors duration-200 ease-in-out ${sendEmail ? 'bg-indigo-600' : 'bg-gray-300'}`}>
-                                    <span
-                                        className={`inline-block w-4 h-4 transform bg-white rounded-full shadow transition-transform duration-200 ease-in-out mt-1 ml-1 ${sendEmail ? 'translate-x-4' : 'translate-x-0'
-                                            }`}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Dynamic Helper Text */}
-                    {scope !== 'none' && (
-                        <div className="bg-indigo-50 border border-indigo-100 rounded-lg p-3 flex items-start gap-3 animate-fade-in">
-                            <div className="p-1 bg-indigo-100 rounded-full mt-0.5">
-                                <Users size={14} className="text-indigo-600" />
-                            </div>
-                            <div>
-                                <p className="text-sm text-indigo-900 font-medium">
-                                    Estimated Reach
-                                </p>
-                                <p className="text-xs text-indigo-700 mt-0.5">
-                                    {calculating
-                                        ? "Calculating..."
-                                        : `~${recipientCount} students will be notified instantly.`}
-                                </p>
-                            </div>
-                        </div>
-                    )}
-
-                </div>
-
-                {/* Footer */}
-                <div className="p-5 bg-gray-50/80 border-t border-gray-100 flex justify-end gap-3">
-                    <button
-                        onClick={onClose}
-                        className="px-4 py-2 text-gray-600 font-medium hover:bg-gray-200 rounded-lg transition-colors text-sm"
-                    >
-                        Skip
-                    </button>
-                    <button
-                        onClick={handleConfirm}
-                        disabled={loading}
-                        className="px-6 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all text-sm flex items-center gap-2 disabled:opacity-70 disabled:transform-none"
-                    >
-                        {loading && <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>}
-                        Confirm Selection
-                    </button>
-                </div>
-
             </div>
 
             <style>{`
-        @keyframes scale-in {
-          from { opacity: 0; transform: scale(0.95); }
-          to { opacity: 1; transform: scale(1); }
-        }
-        .animate-scale-in {
-          animation: scale-in 0.2s ease-out forwards;
-        }
-        .animate-fade-in {
-          animation: fade-in 0.2s ease-out forwards;
-        }
-        @keyframes fade-in {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-      `}</style>
+                /* ── centering ── */
+                .nmodal-center-wrap {
+                    display: flex; align-items: center; justify-content: center;
+                    min-height: 100%; padding: 1.25rem;
+                    position: relative; z-index: 1;
+                }
+
+                /* ── card ── */
+                .nmodal-card {
+                    width: 100%; max-width: 38rem;
+                    background: rgba(255,255,255,.88);
+                    backdrop-filter: blur(16px);
+                    border-radius: 1.125rem;
+                    box-shadow: 0 20px 60px rgba(0,0,0,.12), 0 0 0 1px rgba(255,255,255,.5);
+                    overflow: hidden;
+                    display: flex; flex-direction: column;
+                }
+
+                /* ── header ── */
+                .nmodal-header {
+                    display: flex; justify-content: space-between; align-items: center;
+                    padding: .875rem 1.25rem;
+                    border-bottom: 1px solid #f0f0f0;
+                    background: rgba(255,255,255,.5);
+                }
+                .nmodal-title { font-size: 1rem; font-weight: 700; color: #1f2937; margin: 0; }
+                .nmodal-subtitle { font-size: .7rem; color: #9ca3af; margin-top: 1px; }
+                .nmodal-close-btn {
+                    padding: 6px; border-radius: 50%; border: none; background: none;
+                    color: #9ca3af; cursor: pointer; transition: background .15s;
+                }
+                .nmodal-close-btn:hover { background: #f3f4f6; }
+
+                /* ── body two columns ── */
+                .nmodal-body {
+                    display: grid; grid-template-columns: 1fr 1fr;
+                    gap: 1rem; padding: 1rem 1.25rem;
+                }
+                @media (max-width: 540px) {
+                    .nmodal-body { grid-template-columns: 1fr; }
+                }
+                .nmodal-section-label {
+                    font-size: .65rem; font-weight: 600; text-transform: uppercase;
+                    letter-spacing: .06em; color: #9ca3af; margin: 0 0 .5rem 2px;
+                }
+
+                /* ── scope grid (left col) ── */
+                .nmodal-col-left {}
+                .nmodal-scope-grid { display: flex; flex-direction: column; gap: .4rem; }
+                .nmodal-scope {
+                    display: flex; align-items: center; gap: .6rem;
+                    padding: .55rem .7rem; border-radius: .75rem;
+                    border: 1.5px solid #e5e7eb; background: #fff;
+                    cursor: pointer; transition: all .2s; width: 100%;
+                    text-align: left;
+                }
+                .nmodal-scope:hover { border-color: #c7d2fe; background: #fafafe; }
+                .nmodal-scope--selected {
+                    border-color: #6366f1; background: rgba(99,102,241,.06);
+                    box-shadow: 0 0 0 2px rgba(99,102,241,.1);
+                }
+                .nmodal-scope-icon {
+                    width: 32px; height: 32px; border-radius: .5rem;
+                    display: flex; align-items: center; justify-content: center;
+                    background: #f5f5f5; flex-shrink: 0; transition: background .2s;
+                }
+                .nmodal-scope--selected .nmodal-scope-icon { background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+                .nmodal-scope-title { font-size: .8rem; font-weight: 600; color: #374151; display: block; }
+                .nmodal-scope-sub { font-size: .65rem; color: #9ca3af; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; }
+                .nmodal-scope--selected .nmodal-scope-title { color: #312e81; }
+                .nmodal-scope-check {
+                    width: 16px; height: 16px; border-radius: 50%; margin-left: auto;
+                    border: 2px solid #d1d5db; display: flex; align-items: center;
+                    justify-content: center; flex-shrink: 0; transition: all .2s;
+                }
+                .nmodal-scope--selected .nmodal-scope-check {
+                    border-color: #6366f1; background: #6366f1;
+                }
+
+                /* ── right col ── */
+                .nmodal-col-right { display: flex; flex-direction: column; gap: .4rem; }
+                .nmodal-col-right .nmodal-section-label { margin-bottom: .35rem; }
+
+                /* ── toggle rows ── */
+                .nmodal-toggle {
+                    display: flex; align-items: center; justify-content: space-between;
+                    padding: .5rem .65rem; border-radius: .7rem;
+                    border: 1.5px solid #e5e7eb; background: #fff;
+                    cursor: pointer; transition: all .2s;
+                }
+                .nmodal-toggle:hover { border-color: #c7d2fe; }
+                .nmodal-toggle--on { background: rgba(99,102,241,.05); border-color: #c7d2fe; }
+                .nmodal-toggle-left { display: flex; align-items: center; gap: .5rem; }
+                .nmodal-toggle-icon {
+                    width: 30px; height: 30px; border-radius: .5rem;
+                    display: flex; align-items: center; justify-content: center;
+                    background: #f3f4f6; color: #9ca3af; transition: all .2s; flex-shrink: 0;
+                }
+                .nmodal-toggle-icon--on { background: #e0e7ff; color: #4f46e5; }
+                .nmodal-toggle-title { font-size: .78rem; font-weight: 600; color: #374151; display: block; }
+                .nmodal-toggle-desc { font-size: .6rem; color: #b0b4bc; display: block; }
+
+                /* ── switch ── */
+                .nmodal-switch {
+                    width: 34px; height: 19px; border-radius: 10px;
+                    background: #d1d5db; position: relative; transition: background .2s;
+                    flex-shrink: 0;
+                }
+                .nmodal-switch--on { background: #6366f1; }
+                .nmodal-switch-knob {
+                    position: absolute; top: 2.5px; left: 2.5px;
+                    width: 14px; height: 14px; border-radius: 50%;
+                    background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.15);
+                    transition: transform .2s;
+                }
+                .nmodal-switch--on .nmodal-switch-knob { transform: translateX(15px); }
+
+                /* ── reach badge ── */
+                .nmodal-reach {
+                    display: flex; align-items: center; gap: .4rem;
+                    background: #eef2ff; border: 1px solid #e0e7ff;
+                    border-radius: .5rem; padding: .4rem .6rem; margin-top: .25rem;
+                    font-size: .68rem; color: #4338ca; font-weight: 500;
+                }
+
+                /* ── footer ── */
+                .nmodal-footer {
+                    display: flex; justify-content: flex-end; gap: .5rem;
+                    padding: .65rem 1.25rem;
+                    border-top: 1px solid #f0f0f0; background: rgba(249,250,251,.8);
+                }
+                .nmodal-btn-skip {
+                    padding: .35rem .9rem; border-radius: .5rem; border: none;
+                    background: none; color: #6b7280; font-weight: 500;
+                    font-size: .8rem; cursor: pointer; transition: background .15s;
+                }
+                .nmodal-btn-skip:hover { background: #e5e7eb; }
+                .nmodal-btn-confirm {
+                    padding: .35rem 1.2rem; border-radius: .5rem; border: none;
+                    background: linear-gradient(135deg, #6366f1, #7c3aed);
+                    color: #fff; font-weight: 600; font-size: .8rem;
+                    cursor: pointer; display: flex; align-items: center; gap: .4rem;
+                    box-shadow: 0 2px 8px rgba(99,102,241,.3);
+                    transition: all .2s;
+                }
+                .nmodal-btn-confirm:hover { box-shadow: 0 4px 14px rgba(99,102,241,.4); transform: translateY(-1px); }
+                .nmodal-btn-confirm:disabled { opacity: .65; transform: none; cursor: not-allowed; }
+                .nmodal-spinner {
+                    width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.3);
+                    border-top-color: #fff; border-radius: 50%; animation: nmodal-spin .6s linear infinite;
+                }
+
+                /* ── animations ── */
+                @keyframes nmodal-scale {
+                    from { opacity: 0; transform: scale(.96); }
+                    to { opacity: 1; transform: scale(1); }
+                }
+                @keyframes nmodal-fade {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+                @keyframes nmodal-spin { to { transform: rotate(360deg); } }
+                .animate-nmodal-scale { animation: nmodal-scale .2s ease-out forwards; }
+                .animate-nmodal-fade { animation: nmodal-fade .2s ease-out forwards; }
+            `}</style>
         </div>
     );
 }
 
-function Option({ icon, title, subtitle, selected, onClick }) {
+/* ── Scope Card sub-component ── */
+function ScopeCard({ icon, title, subtitle, selected, onClick }) {
     return (
         <button
             onClick={onClick}
-            className={`w-full flex items-center gap-4 p-4 rounded-xl border transition-all duration-300 text-left group
-        ${selected
-                    ? 'bg-indigo-50/50 border-indigo-500 shadow-sm'
-                    : 'bg-white border-gray-100 hover:border-indigo-200 hover:bg-gray-50'
-                }
-      `}
+            className={`nmodal-scope ${selected ? 'nmodal-scope--selected' : ''}`}
         >
-            <div className={`p-2 rounded-lg transition-colors ${selected ? 'bg-white shadow-sm' : 'bg-gray-50 group-hover:bg-white'}`}>
-                {icon}
+            <div className="nmodal-scope-icon">{icon}</div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+                <span className="nmodal-scope-title">{title}</span>
+                <span className="nmodal-scope-sub">{subtitle}</span>
             </div>
-            <div className="flex-1">
-                <h3 className={`font-semibold text-sm ${selected ? 'text-indigo-900' : 'text-gray-700'}`}>
-                    {title}
-                </h3>
-                <p className="text-xs text-gray-500 mt-0.5 line-clamp-1">{subtitle}</p>
-            </div>
-            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors
-        ${selected ? 'border-indigo-500 bg-indigo-500' : 'border-gray-300'}
-      `}>
-                {selected && <Check size={12} className="text-white" />}
+            <div className="nmodal-scope-check">
+                {selected && <Check size={10} className="text-white" />}
             </div>
         </button>
     );

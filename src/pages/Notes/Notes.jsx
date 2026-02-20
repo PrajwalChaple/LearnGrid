@@ -12,7 +12,7 @@ export function Notes() {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [showNotificationModal, setShowNotificationModal] = useState(false);
-  const [uploadedNoteData, setUploadedNoteData] = useState(null);
+  const [pendingNoteData, setPendingNoteData] = useState(null); // Data prepared but NOT saved yet
   const fileInputRef = React.useRef(null);
 
   // Real-time listener — notes auto-sync from Firestore
@@ -49,25 +49,24 @@ export function Notes() {
     e.target.value = null;
 
     try {
-      // 1. Upload PDF to Cloudinary (free, no credit card)
-      console.log('[Notes] Uploading...');
+      // 1. Upload PDF to Cloudinary (get URL — needed before save)
+      console.log('[Notes] Uploading to Cloudinary...');
       const { url, publicId, downloadUrl } = await uploadToCloudinary(file, user.uid);
       console.log('[Notes] Upload success:', url);
 
-      // 2. Save metadata + URL to Firestore
+      // 2. Prepare note data (NOT saved to Firestore yet)
       const noteData = {
         title: file.name.replace('.pdf', ''),
         subject: 'PDF Upload',
         date: new Date().toISOString(),
-        fileUrl: url,              // Public URL (IPFS Gateway or Storage)
-        downloadUrl: downloadUrl || url, // Download URL
-        cloudinaryId: publicId,    // File ID / Hash
+        fileUrl: url,
+        downloadUrl: downloadUrl || url,
+        cloudinaryId: publicId,
         fileName: file.name,
         fileSize: file.size,
         type: 'pdf',
         userId: user.uid,
         userName: user.displayName || userProfile?.name || 'Unknown',
-        // Class isolation fields
         roleType: userProfile.roleType || '',
         institutionName: userProfile.institutionName || '',
         ...(userProfile.roleType === 'college'
@@ -81,18 +80,29 @@ export function Notes() {
           }),
       };
 
-      console.log('[Notes] Saving to Firestore...');
-      const newNoteId = await addNote(noteData);
-      console.log('[Notes] Saved! ID:', newNoteId);
-
-      // 3. Trigger Notification Modal
-      setUploadedNoteData({ ...noteData, id: newNoteId });
+      // 3. Show Notification Modal — Firestore save happens ONLY on Confirm
+      setPendingNoteData(noteData);
       setShowNotificationModal(true);
     } catch (err) {
       console.error('[Notes] Upload error:', err);
       alert('Failed to upload note: ' + (err.message || 'Unknown error'));
     } finally {
       setUploading(false);
+    }
+  };
+
+  // Called by NotificationModal on Confirm — does the actual Firestore save
+  const handleUploadNote = async () => {
+    if (!pendingNoteData) return null;
+    try {
+      console.log('[Notes] Saving to Firestore...');
+      const newNoteId = await addNote(pendingNoteData);
+      console.log('[Notes] Saved! ID:', newNoteId);
+      return { ...pendingNoteData, id: newNoteId };
+    } catch (err) {
+      console.error('[Notes] Firestore save error:', err);
+      alert('Failed to save note: ' + (err.message || 'Unknown error'));
+      return null;
     }
   };
 
@@ -104,7 +114,6 @@ export function Notes() {
     }
     try {
       await deleteNoteDoc(id);
-      // Cloudinary file stays (cleanup from dashboard if needed)
     } catch (err) {
       console.error('[Notes] Error deleting note:', err);
       alert('Failed to delete note.');
@@ -114,12 +123,9 @@ export function Notes() {
   const viewNote = (note) => {
     const url = note.fileUrl || note.content;
     if (url) {
-      // For IPFS/Pinata, simple window.open works best
       window.open(url, '_blank');
     }
   };
-
-
 
   const formatDate = (dateStr) => {
     try {
@@ -135,13 +141,14 @@ export function Notes() {
         isOpen={showNotificationModal}
         onClose={() => {
           setShowNotificationModal(false);
-          setUploadedNoteData(null);
+          setPendingNoteData(null);
         }}
-        noteData={uploadedNoteData}
+        noteData={pendingNoteData}
         userProfile={userProfile}
+        onUpload={handleUploadNote}
         onConfirmSuccess={() => {
           setShowNotificationModal(false);
-          setUploadedNoteData(null);
+          setPendingNoteData(null);
         }}
       />
       <div className="page-header">

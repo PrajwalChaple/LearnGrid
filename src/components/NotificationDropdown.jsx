@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { subscribeToMyNotifications, markNotificationRead, markAllNotificationsRead } from '../lib/firestore';
-import { BookOpen, AlertCircle, MessageSquare, CheckCheck, Bell, X } from 'lucide-react';
+import { subscribeToMyNotifications, markNotificationRead, markAllNotificationsRead, deleteNotification, deleteAllNotifications } from '../lib/firestore';
+import { BookOpen, AlertCircle, MessageSquare, CheckCheck, Bell, X, Trash2 } from 'lucide-react';
 
 const TYPE_CONFIG = {
     note: { icon: BookOpen, color: '#6366f1', bg: '#eef2ff', label: 'Note' },
@@ -61,6 +61,18 @@ export function NotificationDropdown({ isOpen, onClose }) {
         }
     };
 
+    const handleDeleteAll = async () => {
+        if (!user || notifications.length === 0) return;
+        if (window.confirm('Delete all notifications? This cannot be undone.')) {
+            await deleteAllNotifications(user.uid);
+        }
+    };
+
+    const handleDeleteOne = async (e, notifId) => {
+        e.stopPropagation();
+        await deleteNotification(notifId);
+    };
+
     const handleNotifClick = async (notif) => {
         if (!notif.read) {
             await markNotificationRead(notif.id);
@@ -83,6 +95,11 @@ export function NotificationDropdown({ isOpen, onClose }) {
                     {unreadCount > 0 && (
                         <button className="notif-mark-all" onClick={handleMarkAllRead} title="Mark all as read">
                             <CheckCheck size={16} />
+                        </button>
+                    )}
+                    {notifications.length > 0 && (
+                        <button className="notif-delete-all" onClick={handleDeleteAll} title="Delete all notifications">
+                            <Trash2 size={16} />
                         </button>
                     )}
                     <button className="notif-close" onClick={onClose}>
@@ -128,6 +145,13 @@ export function NotificationDropdown({ isOpen, onClose }) {
                                     </div>
                                 </div>
                                 {!notif.read && <div className="notif-dot"></div>}
+                                <button
+                                    className="notif-delete-btn"
+                                    onClick={(e) => handleDeleteOne(e, notif.id)}
+                                    title="Delete notification"
+                                >
+                                    <X size={14} />
+                                </button>
                             </div>
                         );
                     })
@@ -207,6 +231,21 @@ export function NotificationDropdown({ isOpen, onClose }) {
                     background: #eef2ff;
                     color: #6366f1;
                 }
+                .notif-delete-all {
+                    background: none;
+                    border: none;
+                    padding: 6px;
+                    border-radius: 8px;
+                    color: #6b7280;
+                    cursor: pointer;
+                    transition: all 0.15s;
+                    display: flex;
+                    align-items: center;
+                }
+                .notif-delete-all:hover {
+                    background: #fef2f2;
+                    color: #ef4444;
+                }
                 .notif-close:hover {
                     background: #f3f4f6;
                     color: #374151;
@@ -237,6 +276,32 @@ export function NotificationDropdown({ isOpen, onClose }) {
                 }
                 .notif-item:hover {
                     background: #f9fafb;
+                }
+                .notif-item:hover .notif-delete-btn {
+                    opacity: 1;
+                }
+                .notif-item:hover .notif-dot {
+                    opacity: 0;
+                }
+                .notif-delete-btn {
+                    position: absolute;
+                    top: 50%;
+                    right: 10px;
+                    transform: translateY(-50%);
+                    background: rgba(255,255,255,0.9);
+                    border: none;
+                    padding: 4px;
+                    border-radius: 6px;
+                    color: #9ca3af;
+                    cursor: pointer;
+                    opacity: 0;
+                    transition: all 0.15s;
+                    display: flex;
+                    align-items: center;
+                }
+                .notif-delete-btn:hover {
+                    background: #fef2f2;
+                    color: #ef4444;
                 }
                 .notif-unread {
                     background: #fafaff;
@@ -294,7 +359,10 @@ export function NotificationDropdown({ isOpen, onClose }) {
                     border-radius: 50%;
                     background: #6366f1;
                     flex-shrink: 0;
-                    margin-top: 8px;
+                    position: absolute;
+                    top: 50%;
+                    right: 12px;
+                    transform: translateY(-50%);
                 }
 
                 .notif-empty {

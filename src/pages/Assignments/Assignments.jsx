@@ -14,7 +14,7 @@ export function Assignments() {
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({ subject: '', title: '', deadline: '' });
   const [showNotificationModal, setShowNotificationModal] = useState(false);
-  const [createdItemData, setCreatedItemData] = useState(null);
+  const [pendingItemData, setPendingItemData] = useState(null); // Prepared but NOT saved yet
 
   // Real-time listener
   useEffect(() => {
@@ -32,6 +32,7 @@ export function Assignments() {
 
   const handleAdd = async (e) => {
     e.preventDefault();
+    // Only prepare the data — do NOT save to Firestore yet
     const assignmentData = {
       ...formData,
       status: 'Pending',
@@ -45,26 +46,32 @@ export function Assignments() {
         : { standard: userProfile.standard, section: userProfile.section }),
     };
 
+    // Show notification modal — save happens ONLY on Confirm
+    setPendingItemData(assignmentData);
+    setFormData({ subject: '', title: '', deadline: '' });
+    setShowForm(false);
+    setShowNotificationModal(true);
+  };
+
+  // Called by NotificationModal on Confirm — does the actual Firestore save + Calendar sync
+  const handleUploadAssignment = async () => {
+    if (!pendingItemData) return null;
     try {
-      const newId = await addAssignment(assignmentData);
+      const newId = await addAssignment(pendingItemData);
       // Sync to Google Calendar if connected
       const token = getCalendarToken();
       if (token) {
-        const calResult = await addEventToCalendar(token, { ...assignmentData, id: newId });
+        const calResult = await addEventToCalendar(token, { ...pendingItemData, id: newId });
         if (calResult.success && calResult.eventId) {
-          // Save the eventId mapping so we can delete it later
           saveEventToSyncMap(user.uid, newId, calResult.eventId);
           console.log('[Assignments] Synced to Google Calendar:', calResult.eventId);
         }
       }
-      setFormData({ subject: '', title: '', deadline: '' });
-      setShowForm(false);
-      // Trigger notification modal
-      setCreatedItemData({ ...assignmentData, id: newId, title: assignmentData.title });
-      setShowNotificationModal(true);
+      return { ...pendingItemData, id: newId, title: pendingItemData.title };
     } catch (err) {
       console.error('Error adding assignment:', err);
       alert('Failed to add assignment.');
+      return null;
     }
   };
 
@@ -141,11 +148,12 @@ export function Assignments() {
     <div className="assignments-page">
       <NotificationModal
         isOpen={showNotificationModal}
-        onClose={() => { setShowNotificationModal(false); setCreatedItemData(null); }}
-        noteData={createdItemData}
+        onClose={() => { setShowNotificationModal(false); setPendingItemData(null); }}
+        noteData={pendingItemData}
         userProfile={userProfile}
         itemType="assignment"
-        onConfirmSuccess={() => { setShowNotificationModal(false); setCreatedItemData(null); }}
+        onUpload={handleUploadAssignment}
+        onConfirmSuccess={() => { setShowNotificationModal(false); setPendingItemData(null); }}
       />
       <div className="page-header">
         <h1>Assignments</h1>
