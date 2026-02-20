@@ -45,64 +45,68 @@ export function Notes() {
       return;
     }
 
-    setUploading(true);
     e.target.value = null;
 
+    // Only prepare metadata — do NOT upload to Cloudinary yet
+    const noteData = {
+      title: file.name.replace('.pdf', ''),
+      subject: 'PDF Upload',
+      date: new Date().toISOString(),
+      fileName: file.name,
+      fileSize: file.size,
+      type: 'pdf',
+      userId: user.uid,
+      userName: user.displayName || userProfile?.name || 'Unknown',
+      roleType: userProfile.roleType || '',
+      institutionName: userProfile.institutionName || '',
+      ...(userProfile.roleType === 'college'
+        ? {
+          department: userProfile.department || '',
+          year: userProfile.year || '',
+        }
+        : {
+          standard: userProfile.standard || '',
+          section: userProfile.section || '',
+        }),
+      _file: file, // Store raw file for later upload
+    };
+
+    // Show Notification Modal — upload happens ONLY on Confirm
+    setPendingNoteData(noteData);
+    setShowNotificationModal(true);
+  };
+
+  // Called by NotificationModal on Confirm — does Cloudinary upload + Firestore save
+  const handleUploadNote = async () => {
+    if (!pendingNoteData) return null;
+    setUploading(true);
     try {
-      // 1. Upload PDF to Cloudinary (get URL — needed before save)
+      const file = pendingNoteData._file;
+
+      // 1. Upload to Cloudinary/Pinata NOW
       console.log('[Notes] Uploading to Cloudinary...');
       const { url, publicId, downloadUrl } = await uploadToCloudinary(file, user.uid);
       console.log('[Notes] Upload success:', url);
 
-      // 2. Prepare note data (NOT saved to Firestore yet)
-      const noteData = {
-        title: file.name.replace('.pdf', ''),
-        subject: 'PDF Upload',
-        date: new Date().toISOString(),
+      // 2. Save to Firestore with the URL
+      const { _file, ...noteMetadata } = pendingNoteData; // Remove raw file from data
+      const finalData = {
+        ...noteMetadata,
         fileUrl: url,
         downloadUrl: downloadUrl || url,
         cloudinaryId: publicId,
-        fileName: file.name,
-        fileSize: file.size,
-        type: 'pdf',
-        userId: user.uid,
-        userName: user.displayName || userProfile?.name || 'Unknown',
-        roleType: userProfile.roleType || '',
-        institutionName: userProfile.institutionName || '',
-        ...(userProfile.roleType === 'college'
-          ? {
-            department: userProfile.department || '',
-            year: userProfile.year || '',
-          }
-          : {
-            standard: userProfile.standard || '',
-            section: userProfile.section || '',
-          }),
       };
 
-      // 3. Show Notification Modal — Firestore save happens ONLY on Confirm
-      setPendingNoteData(noteData);
-      setShowNotificationModal(true);
+      console.log('[Notes] Saving to Firestore...');
+      const newNoteId = await addNote(finalData);
+      console.log('[Notes] Saved! ID:', newNoteId);
+      return { ...finalData, id: newNoteId };
     } catch (err) {
-      console.error('[Notes] Upload error:', err);
+      console.error('[Notes] Upload/save error:', err);
       alert('Failed to upload note: ' + (err.message || 'Unknown error'));
+      return null;
     } finally {
       setUploading(false);
-    }
-  };
-
-  // Called by NotificationModal on Confirm — does the actual Firestore save
-  const handleUploadNote = async () => {
-    if (!pendingNoteData) return null;
-    try {
-      console.log('[Notes] Saving to Firestore...');
-      const newNoteId = await addNote(pendingNoteData);
-      console.log('[Notes] Saved! ID:', newNoteId);
-      return { ...pendingNoteData, id: newNoteId };
-    } catch (err) {
-      console.error('[Notes] Firestore save error:', err);
-      alert('Failed to save note: ' + (err.message || 'Unknown error'));
-      return null;
     }
   };
 
