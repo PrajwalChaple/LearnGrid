@@ -56,13 +56,33 @@ export const loginWithGoogle = async () => {
     try {
         const provider = new GoogleAuthProvider();
         provider.addScope('https://www.googleapis.com/auth/calendar.events');
+        provider.addScope('https://www.googleapis.com/auth/drive.file');
+        provider.setCustomParameters({ prompt: 'consent' }); // Force permission prompt
+
         const result = await signInWithPopup(auth, provider);
-        // Save access token for Google Calendar API
+
+        // Save access token ONLY if calendar scope is actually granted
         const credential = GoogleAuthProvider.credentialFromResult(result);
         const accessToken = credential?.accessToken;
+
         if (accessToken) {
-            sessionStorage.setItem('gcal_token', accessToken);
+            // Verify scopes via Google API
+            try {
+                const response = await fetch(`https://oauth2.googleapis.com/tokeninfo?access_token=${accessToken}`);
+                const data = await response.json();
+
+                if (data.scope && data.scope.includes('calendar')) {
+                    sessionStorage.setItem('gcal_token', accessToken);
+                } else {
+                    console.warn('[Auth] Calendar scope denied by user.');
+                    sessionStorage.removeItem('gcal_token');
+                }
+            } catch (err) {
+                console.error('[Auth] Token verification failed:', err);
+                // Fail safe: don't save token if verify fails
+            }
         }
+
         return { user: result.user, accessToken, error: null };
     } catch (error) {
         return { user: null, error };

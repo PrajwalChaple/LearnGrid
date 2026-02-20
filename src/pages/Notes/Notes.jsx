@@ -50,17 +50,18 @@ export function Notes() {
 
     try {
       // 1. Upload PDF to Cloudinary (free, no credit card)
-      console.log('[Notes] Uploading to Cloudinary...');
-      const { url, publicId } = await uploadToCloudinary(file, user.uid);
-      console.log('[Notes] Cloudinary upload success:', url);
+      console.log('[Notes] Uploading...');
+      const { url, publicId, downloadUrl } = await uploadToCloudinary(file, user.uid);
+      console.log('[Notes] Upload success:', url);
 
-      // 2. Save metadata + URL to Firestore (tiny document, no base64 blob)
+      // 2. Save metadata + URL to Firestore
       const noteData = {
         title: file.name.replace('.pdf', ''),
         subject: 'PDF Upload',
         date: new Date().toISOString(),
-        fileUrl: url,              // Cloudinary download URL
-        cloudinaryId: publicId,    // For future cleanup
+        fileUrl: url,              // Public URL (IPFS Gateway or Storage)
+        downloadUrl: downloadUrl || url, // Download URL
+        cloudinaryId: publicId,    // File ID / Hash
         fileName: file.name,
         fileSize: file.size,
         type: 'pdf',
@@ -111,12 +112,14 @@ export function Notes() {
   };
 
   const viewNote = (note) => {
-    // Open the Cloudinary URL directly
     const url = note.fileUrl || note.content;
     if (url) {
+      // For IPFS/Pinata, simple window.open works best
       window.open(url, '_blank');
     }
   };
+
+
 
   const formatDate = (dateStr) => {
     try {
@@ -364,6 +367,8 @@ export function Notes() {
           background: var(--color-primary);
           color: white;
         }
+
+
 
         .empty-state {
           display: flex;

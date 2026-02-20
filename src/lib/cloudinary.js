@@ -1,56 +1,98 @@
 /**
- * Cloudinary PDF Upload Helper
- * Uses unsigned upload (no server needed) — free tier: 25 credits/month
+ * Pinata IPFS Upload Helper
+ * Replaces Cloudinary/Firebase with decentralized IPFS storage via Pinata.
  *
- * Setup:
- * 1. Sign up at https://cloudinary.com (free, no credit card)
- * 2. Go to Settings → Upload → Add upload preset
- * 3. Set "Signing Mode" to "Unsigned"
- * 4. Copy the preset name and your cloud name below
+ * Benefits:
+ * - Free 1GB storage
+ * - No user login required (uses API Key)
+ * - Public Gateway access
+ *
+ * Keys provided by user on 2026-02-20
  */
 
-const CLOUD_NAME = 'dkppiv7lx';
-const UPLOAD_PRESET = 'learngrid_notes';
+const PINATA_API_KEY = '758d05ae5329dc613cfa';
+const PINATA_SECRET_KEY = '1289f97c1df5bfb4892658887e5197f58ca45edb0391fd6e4c2f6f93e6fef41b';
 
 /**
- * Uploads a PDF to Cloudinary via unsigned upload.
+ * Uploads a file to Pinata (IPFS).
+ * Kept function name 'uploadToCloudinary' for compatibility with existing code.
  *
- * @param {File} file - The PDF file
- * @param {string} userId - Uploader's UID (used as folder path)
+ * @param {File} file - The file to upload
+ * @param {string} userId - (Unused in IPFS, but kept for signature)
  * @returns {Promise<{ url: string, publicId: string }>}
  */
 export async function uploadToCloudinary(file, userId) {
+    const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
+
+    // Create FormData for Pinata
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('upload_preset', UPLOAD_PRESET);
-    formData.append('folder', `learngrid/notes/${userId}`);
-    formData.append('resource_type', 'raw'); // Required for PDFs
 
-    const response = await fetch(
-        `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/raw/upload`,
-        { method: 'POST', body: formData }
-    );
+    // Optional metadata
+    const metadata = JSON.stringify({
+        name: file.name,
+        keyvalues: {
+            userId: userId,
+            type: 'note'
+        }
+    });
+    formData.append('pinataMetadata', metadata);
 
-    if (!response.ok) {
-        const error = await response.json().catch(() => ({}));
-        throw new Error(error.error?.message || `Upload failed (${response.status})`);
+    // Optional options
+    const options = JSON.stringify({
+        cidVersion: 0,
+    });
+    formData.append('pinataOptions', options);
+
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'pinata_api_key': PINATA_API_KEY,
+                'pinata_secret_api_key': PINATA_SECRET_KEY,
+            },
+            body: formData,
+        });
+
+        if (!response.ok) {
+            throw new Error(`Pinata upload failed: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+        const ipfsHash = result.IpfsHash;
+
+        // Construct Public Gateway URL
+        // Using standard gateway.pinata.cloud
+        const fileUrl = `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
+
+        return {
+            url: fileUrl,
+            publicId: ipfsHash,
+            downloadUrl: fileUrl // IPFS URLs are direct downloads essentially
+        };
+    } catch (error) {
+        console.error('Error uploading to Pinata:', error);
+        throw error;
     }
-
-    const data = await response.json();
-    return {
-        url: data.secure_url,
-        publicId: data.public_id,
-    };
 }
 
 /**
- * Deletes a file from Cloudinary.
- * Note: Deletion from client requires signed requests (API secret).
- * For now we skip client-side deletion — files can be cleaned up
- * from the Cloudinary dashboard or via a server function later.
+ * Unpin (Delete) a file from Pinata.
  */
 export async function deleteFromCloudinary(publicId) {
-    // Client-side deletion requires API secret (not safe to expose)
-    // Files will remain in Cloudinary until manually cleaned up
-    console.log('[Cloudinary] File deletion requires server-side API. PublicId:', publicId);
+    if (!publicId) return;
+
+    try {
+        const url = `https://api.pinata.cloud/pinning/unpin/${publicId}`;
+        await fetch(url, {
+            method: 'DELETE',
+            headers: {
+                'pinata_api_key': PINATA_API_KEY,
+                'pinata_secret_api_key': PINATA_SECRET_KEY,
+            },
+        });
+        console.log('[Pinata] File unpinned (deleted):', publicId);
+    } catch (err) {
+        console.error('[Pinata] Delete failed:', err);
+    }
 }

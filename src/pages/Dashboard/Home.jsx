@@ -5,7 +5,7 @@ import { BookOpen, AlertCircle, Calendar, MessageSquare, ArrowRight, TrendingUp,
 
 import { subscribeToNotes, subscribeToAssignments, subscribeToAnnouncements } from '../../lib/firestore';
 import { NotificationHistory } from '../../components/NotificationHistory';
-import { isCalendarConnected } from '../../lib/googleCalendar';
+import { isCalendarConnected, syncCalendar } from '../../lib/googleCalendar';
 import { loginWithGoogle } from '../../auth';
 
 
@@ -21,6 +21,14 @@ export function DashboardHome() {
   const navigate = useNavigate();
   const [statsData, setStatsData] = useState(defaultStats);
   const [activities, setActivities] = useState([]);
+  // State for calendar connection status
+  const [isCalendarConnected, setIsCalendarConnected] = useState(() => !!sessionStorage.getItem('gcal_token'));
+
+  const handleDisconnectCalendar = () => {
+    sessionStorage.removeItem('gcal_token');
+    setIsCalendarConnected(false);
+  };
+
   const [greeting] = useState(() => {
     const hour = new Date().getHours();
     if (hour < 12) return 'Good morning';
@@ -40,6 +48,18 @@ export function DashboardHome() {
       ...announcementsRef.current.slice(0, 2).map(a => ({ id: 'an-' + a.id, type: 'announcement', title: a.title, sub: 'Posted announcement', time: a.date, icon: MessageSquare, color: 'bg-purple-100 text-purple-600', path: '/announcements' })),
     ].sort((a, b) => new Date(b.time) - new Date(a.time)).slice(0, 5);
     setActivities(allActivities);
+    setActivities(allActivities);
+  };
+
+  // Helper to filter assignments that should be in calendar (i.e., NOT completed)
+  const filterPendingAssignments = (assignments, uid) => {
+    if (!uid) return [];
+    return assignments.filter(a => {
+      // Check individual status if present
+      const status = a.userStatuses?.[uid];
+      if (status === 'Completed') return false; // Remove completed
+      return true; // Keep Pending/Overdue
+    });
   };
 
   // Real-time listeners for all three collections
@@ -71,6 +91,10 @@ export function DashboardHome() {
         return next;
       });
       rebuildActivities();
+
+      // Trigger Calendar Sync (Add Pending, Remove Completed/Deleted)
+      const pendingAssignments = filterPendingAssignments(data, user?.uid);
+      syncCalendar(user, pendingAssignments, announcementsRef.current);
     });
 
     const unsubAnnouncements = subscribeToAnnouncements(userProfile, (data) => {
@@ -81,6 +105,10 @@ export function DashboardHome() {
         return next;
       });
       rebuildActivities();
+
+      // Trigger Calendar Sync when announcements change
+      const pendingAssignments = filterPendingAssignments(assignmentsRef.current, user?.uid);
+      syncCalendar(user, pendingAssignments, data);
     });
 
     return () => {
@@ -220,22 +248,30 @@ export function DashboardHome() {
 
             <div className="mt-8 p-4 rounded-xl bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100">
               <h3 className="font-bold text-indigo-900 mb-2">
-                {isCalendarConnected() ? 'Calendar Connected ✅' : 'Google Calendar'}
+                {isCalendarConnected ? 'Calendar Connected ✅' : 'Google Calendar'}
               </h3>
               <p className="text-sm text-indigo-700 leading-relaxed">
-                {isCalendarConnected()
+                {isCalendarConnected
                   ? 'New assignments will automatically sync to your Google Calendar with reminders.'
                   : 'Connect your Google Calendar to sync assignments automatically.'}
               </p>
-              {!isCalendarConnected() && (
+              {!isCalendarConnected ? (
                 <button
                   onClick={async () => {
                     await loginWithGoogle();
-                    window.location.reload();
+                    setIsCalendarConnected(!!sessionStorage.getItem('gcal_token'));
+                    // window.location.reload(); // Optional reload if needed
                   }}
                   className="mt-3 text-xs font-bold text-indigo-600 hover:text-indigo-800 uppercase tracking-wider"
                 >
                   Connect Now
+                </button>
+              ) : (
+                <button
+                  onClick={handleDisconnectCalendar}
+                  className="mt-3 text-xs font-bold text-red-500 hover:text-red-700 uppercase tracking-wider"
+                >
+                  Disconnect / Stop Sync
                 </button>
               )}
             </div>

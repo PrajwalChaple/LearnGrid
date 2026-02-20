@@ -94,6 +94,7 @@ function subscribeToCollection(collectionName, profile, callback) {
     }, (err) => {
         console.error(`[Firestore] Error listening to ${collectionName}:`, err);
         console.error(`[Firestore] Error code: ${err.code}, message: ${err.message}`);
+        callback([]);
     });
 }
 
