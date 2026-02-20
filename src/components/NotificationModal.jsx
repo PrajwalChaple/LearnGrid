@@ -7,7 +7,7 @@ import { useAuth } from '../context/AuthContext';
 export function NotificationModal({ isOpen, onClose, noteData, userProfile, onConfirmSuccess, itemType = 'note' }) {
     const { user } = useAuth();
     const [scope, setScope] = useState('class'); // Default to class
-    const [notifyMethod, setNotifyMethod] = useState('bell'); // 'email' = Email + In-App, 'bell' = In-App only
+    const [sendEmail, setSendEmail] = useState(false); // Default: In-App Only (Email OFF)
     const [loading, setLoading] = useState(false);
     const [recipientCount, setRecipientCount] = useState(0);
     const [calculating, setCalculating] = useState(false);
@@ -18,6 +18,7 @@ export function NotificationModal({ isOpen, onClose, noteData, userProfile, onCo
     useEffect(() => {
         if (isOpen && userProfile) {
             calculateRecipients();
+            setSendEmail(false); // Always reset email toggle to OFF when modal opens
         }
     }, [isOpen, scope, userProfile, user?.uid]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -45,11 +46,11 @@ export function NotificationModal({ isOpen, onClose, noteData, userProfile, onCo
                 const count = recipients.length;
                 console.log(`Sending to ${count} recipients...`);
 
-                // 2. Send Emails (only if method is 'email')
-                let emailStatus = notifyMethod === 'email' ? 'sent' : 'skipped';
+                // 2. Send Emails (only if toggle is ON)
+                let emailStatus = sendEmail ? 'sent' : 'skipped';
                 let emailError = '';
 
-                if (notifyMethod === 'email') {
+                if (sendEmail) {
                     try {
                         const emailResult = await sendEmailBatch(recipients, noteData, userProfile, itemType);
                         if (!emailResult.success) {
@@ -81,7 +82,7 @@ export function NotificationModal({ isOpen, onClose, noteData, userProfile, onCo
                 console.log('Creating notification:', notificationData);
                 await createNotification(notificationData);
 
-                // Create in-app notifications for each recipient
+                // Create in-app notifications for each recipient (ALWAYS)
                 const typeLabels = { note: 'note', assignment: 'assignment', announcement: 'announcement' };
                 const label = typeLabels[itemType] || 'note';
                 await createUserNotifications(recipients, {
@@ -169,31 +170,28 @@ export function NotificationModal({ isOpen, onClose, noteData, userProfile, onCo
                         />
                     </div>
 
-                    {/* Notification Method Toggle */}
+                    {/* Email Toggle Switch */}
                     {scope !== 'none' && (
-                        <div className="mt-2 animate-fade-in">
-                            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Notification Method</p>
-                            <div className="flex gap-2">
-                                <button
-                                    onClick={() => setNotifyMethod('email')}
-                                    className={`flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg border-2 text-sm font-medium transition-all ${notifyMethod === 'email'
-                                        ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
-                                        : 'border-gray-200 bg-white text-gray-500 hover:border-gray-300'
-                                        }`}
-                                >
-                                    <Mail size={16} />
-                                    Email + In-App
-                                </button>
-                                <button
-                                    onClick={() => setNotifyMethod('bell')}
-                                    className={`flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg border-2 text-sm font-medium transition-all ${notifyMethod === 'bell'
-                                        ? 'border-purple-500 bg-purple-50 text-purple-700'
-                                        : 'border-gray-200 bg-white text-gray-500 hover:border-gray-300'
-                                        }`}
-                                >
-                                    <Bell size={16} />
-                                    In-App Only
-                                </button>
+                        <div className="mt-4 animate-fade-in">
+                            <div
+                                className={`flex items-center justify-between p-3 rounded-xl border transition-all cursor-pointer ${sendEmail ? 'bg-indigo-50 border-indigo-200' : 'bg-white border-gray-200 hover:bg-gray-50'
+                                    }`}
+                                onClick={() => setSendEmail(!sendEmail)}
+                            >
+                                <div className="flex items-center gap-3">
+                                    <div className={`p-1.5 rounded-lg transition-colors ${sendEmail ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-400'}`}>
+                                        <Mail size={18} />
+                                    </div>
+                                    <span className={`font-semibold text-sm ${sendEmail ? 'text-indigo-900' : 'text-gray-700'}`}>
+                                        Send Email
+                                    </span>
+                                </div>
+                                <div className={`relative w-10 h-6 rounded-full transition-colors duration-200 ease-in-out ${sendEmail ? 'bg-indigo-600' : 'bg-gray-300'}`}>
+                                    <span
+                                        className={`inline-block w-4 h-4 transform bg-white rounded-full shadow transition-transform duration-200 ease-in-out mt-1 ml-1 ${sendEmail ? 'translate-x-4' : 'translate-x-0'
+                                            }`}
+                                    />
+                                </div>
                             </div>
                         </div>
                     )}
