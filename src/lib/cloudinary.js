@@ -10,6 +10,8 @@
 
 const CLOUD_NAME = 'dkppiv7lx';
 const UPLOAD_PRESET = 'learngrid_notes';
+/** Create in Cloudinary: Settings → Upload → Add upload preset → Unsigned, name: learngrid_profilepicture */
+const UPLOAD_PRESET_PROFILE = 'learngrid_profilepicture';
 
 /**
  * Uploads a file to Cloudinary using unsigned upload.
@@ -48,6 +50,37 @@ export async function uploadToCloudinary(file, userId) {
         console.error('Error uploading to Cloudinary:', error);
         throw error;
     }
+}
+
+/**
+ * Uploads a user profile picture to Cloudinary in folder: learngrid/profilepicture
+ * Uses a separate upload preset so uploads do not go to the notes folder.
+ *
+ * @param {File} file - Image file (e.g. from input type="file", accept="image/*")
+ * @param {string} userId - User ID (for unique public_id)
+ * @returns {Promise<string>} Secure URL of the uploaded image
+ */
+export async function uploadProfilePictureToCloudinary(file, userId) {
+    const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', UPLOAD_PRESET_PROFILE);
+    formData.append('folder', 'learngrid/profilepicture');
+    formData.append('public_id', `user_${userId}_${Date.now()}`);
+
+    const response = await fetch(url, {
+        method: 'POST',
+        body: formData,
+    });
+
+    if (!response.ok) {
+        const errBody = await response.text();
+        throw new Error(`Cloudinary upload failed: ${response.status} - ${errBody}`);
+    }
+
+    const result = await response.json();
+    return result.secure_url;
 }
 
 /**

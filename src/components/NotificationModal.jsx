@@ -3,6 +3,7 @@ import { X, Users, Check, BookOpen, School, Mail, Bell } from 'lucide-react';
 import { getRecipientCount, getRecipients, createNotification, createUserNotifications } from '../lib/firestore';
 import { sendEmailBatch } from '../lib/email';
 import { useAuth } from '../context/AuthContext';
+import { getFriendlyMessage } from '../ui';
 
 export function NotificationModal({ isOpen, onClose, noteData, userProfile, onConfirmSuccess, onUpload, itemType = 'note' }) {
     const { user } = useAuth();
@@ -52,23 +53,43 @@ export function NotificationModal({ isOpen, onClose, noteData, userProfile, onCo
             // 2. Fetch Recipients (excluding current user)
             const currentUid = user?.uid || '';
             const recipients = await getRecipients(userProfile, scope, currentUid);
-            const count = recipients.length;
-            console.log(`Sending to ${count} recipients...`);
+            const totalRecipients = recipients.length;
 
-            // 3. Send Emails (only if toggle is ON)
+            // Filter recipients by their notification preferences (assignmentAlerts, announcementAlerts, channel)
+            const wantsTypeAlert = (r) => {
+                const prefs = r.settings?.notifications;
+                if (!prefs) return true; // no settings = opt-in
+                if (itemType === 'assignment') return prefs.assignmentAlerts !== false;
+                if (itemType === 'announcement') return prefs.announcementAlerts !== false;
+                return true; // note
+            };
+            const wantsInApp = (r) => {
+                const ch = r.settings?.notifications?.channel;
+                return ch === 'app' || ch === 'both' || !ch;
+            };
+            const wantsEmail = (r) => {
+                const ch = r.settings?.notifications?.channel;
+                return ch === 'email' || ch === 'both' || !ch;
+            };
+            const recipientsInApp = sendInApp ? recipients.filter(r => wantsTypeAlert(r) && wantsInApp(r)) : [];
+            const recipientsEmail = sendEmail ? recipients.filter(r => wantsTypeAlert(r) && wantsEmail(r)) : [];
+
+            const count = totalRecipients;
+
+            // 3. Send Emails only to recipients who want email for this type
             let emailStatus = sendEmail ? 'sent' : 'skipped';
             let emailError = '';
 
-            if (sendEmail) {
+            if (sendEmail && recipientsEmail.length > 0) {
                 try {
-                    const emailResult = await sendEmailBatch(recipients, savedData, userProfile, itemType);
+                    const emailResult = await sendEmailBatch(recipientsEmail, savedData, userProfile, itemType);
                     if (!emailResult.success) {
                         emailStatus = 'failed';
                     }
                 } catch (err) {
                     console.error("Email sending error:", err);
                     emailStatus = 'failed';
-                    emailError = err.message || 'Unknown error';
+                    emailError = getFriendlyMessage(err);
                 }
             }
 
@@ -91,11 +112,11 @@ export function NotificationModal({ isOpen, onClose, noteData, userProfile, onCo
             console.log('Creating notification:', notificationData);
             await createNotification(notificationData);
 
-            // 5. Create in-app notifications only if toggle is ON
-            if (sendInApp) {
+            // 5. Create in-app notifications only for recipients who want in-app for this type
+            if (sendInApp && recipientsInApp.length > 0) {
                 const typeLabels = { note: 'note', assignment: 'assignment', announcement: 'announcement' };
                 const label = typeLabels[itemType] || 'note';
-                await createUserNotifications(recipients, {
+                await createUserNotifications(recipientsInApp, {
                     senderName: userProfile?.name || userProfile?.displayName || 'Someone',
                     type: itemType || 'note',
                     title: savedData?.title || '',
@@ -108,7 +129,7 @@ export function NotificationModal({ isOpen, onClose, noteData, userProfile, onCo
             onClose();
         } catch (error) {
             console.error("Notification creation failed:", error);
-            alert("Failed: " + error.message);
+            alert(getFriendlyMessage(error));
         } finally {
             setLoading(false);
         }

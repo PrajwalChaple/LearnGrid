@@ -58,7 +58,7 @@ export function Assignments() {
     if (!pendingItemData) return null;
     try {
       const newId = await addAssignment(pendingItemData);
-      // Sync to Google Calendar if connected
+      // Sync to Google Calendar when connected
       const token = getCalendarToken();
       if (token) {
         const calResult = await addEventToCalendar(token, { ...pendingItemData, id: newId });

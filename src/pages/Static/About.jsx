@@ -21,6 +21,7 @@ export function About() {
                     <p className="text-gray-500 text-lg leading-relaxed">
                         A smarter way for students to manage their academic life — built with passion, designed with purpose.
                     </p>
+                    <p className="text-sm text-gray-400 mt-2">Version 1.0.0</p>
                 </div>
             </section>
 

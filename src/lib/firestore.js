@@ -16,6 +16,11 @@ export async function saveUserProfile(uid, data) {
     await setDoc(doc(db, 'users', uid), data, { merge: true });
 }
 
+/** Delete user profile document (call before deleting Auth account). */
+export async function deleteUserProfile(uid) {
+    await deleteDoc(doc(db, 'users', uid));
+}
+
 // ─── Class filter builder ───────────────────────────────────────
 
 function buildClassFilters(profile) {
@@ -316,5 +321,22 @@ export async function deleteAllNotifications(userId) {
     const snap = await getDocs(q);
     const promises = snap.docs.map(d => deleteDoc(doc(db, 'user_notifications', d.id)));
     await Promise.all(promises);
+}
+
+/**
+ * Delete all Firestore data created by or belonging to the user (notes, assignments, announcements, notifications).
+ * Does NOT delete the user profile or Auth account — only their content data.
+ */
+export async function deleteAllUserData(uid) {
+    const deleteDocsInCollection = async (collectionName, field, value) => {
+        const q = query(collection(db, collectionName), where(field, '==', value));
+        const snap = await getDocs(q);
+        return Promise.all(snap.docs.map(d => deleteDoc(doc(db, collectionName, d.id))));
+    };
+
+    await deleteDocsInCollection('notes', 'userId', uid);
+    await deleteDocsInCollection('assignments', 'userId', uid);
+    await deleteDocsInCollection('announcements', 'userId', uid);
+    await deleteAllNotifications(uid);
 }
 

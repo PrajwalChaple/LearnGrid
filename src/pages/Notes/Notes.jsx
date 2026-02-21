@@ -103,7 +103,7 @@ export function Notes() {
       return { ...finalData, id: newNoteId };
     } catch (err) {
       console.error('[Notes] Upload/save error:', err);
-      alert('Failed to upload note: ' + (err.message || 'Unknown error'));
+      alert('Failed to upload note. Please try again.');
       return null;
     } finally {
       setUploading(false);

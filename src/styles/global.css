@@ -56,6 +56,15 @@
     --transition-smooth: 500ms cubic-bezier(0.4, 0, 0.2, 1);
   }
 
+  html.dark {
+    --color-background: #0f0f1a;
+    --color-surface: #1a1a2e;
+    --color-text-main: #e2e8f0;
+    --color-text-muted: #94a3b8;
+    --color-border: #334155;
+    --color-primary-bg: rgba(99, 102, 241, 0.2);
+  }
+
   html {
     scroll-behavior: smooth;
   }

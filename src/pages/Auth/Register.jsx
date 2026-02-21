@@ -42,7 +42,7 @@ export function Register() {
     } else if (result.success) {
       navigate('/dashboard');
     } else {
-      setError(result.message);
+      setError(result.message || 'Something went wrong. Please try again.');
     }
   };
 
@@ -52,7 +52,7 @@ export function Register() {
     if (result.success) {
       setResendMsg('Verification email sent again! Check your inbox.');
     } else {
-      setResendMsg(result.message || 'Failed to resend. Try again later.');
+      setResendMsg(result.message || 'Something went wrong. Please try again.');
     }
   };
 
@@ -64,7 +64,7 @@ export function Register() {
     if (result.success) {
       navigate('/dashboard');
     } else {
-      setError(result.message);
+      setError(result.message || 'Something went wrong. Please try again.');
     }
   };
 

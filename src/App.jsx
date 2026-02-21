@@ -1,5 +1,6 @@
 import React from 'react';
 import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { DashboardLayout } from './layouts/DashboardLayout';
 import { StaticLayout } from './layouts/StaticLayout';
@@ -79,9 +80,11 @@ function AppContent() {
 function App() {
   return (
     <AuthProvider>
-      <HashRouter>
-        <AppContent />
-      </HashRouter>
+      <ThemeProvider>
+        <HashRouter>
+          <AppContent />
+        </HashRouter>
+      </ThemeProvider>
     </AuthProvider>
   );
 }

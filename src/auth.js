@@ -8,7 +8,12 @@ import {
     signInWithPopup,
     updateProfile,
     sendPasswordResetEmail,
-    sendEmailVerification
+    sendEmailVerification,
+    updatePassword,
+    reauthenticateWithCredential,
+    EmailAuthProvider,
+    unlink,
+    deleteUser
 } from 'firebase/auth';
 
 // --- Authentication Logic ---
@@ -104,4 +109,84 @@ export const logoutUser = async () => {
 
 export const subscribeToAuthChanges = (callback) => {
     return onAuthStateChanged(auth, callback);
+};
+
+/** Update Firebase Auth profile (e.g. displayName). Use for profile edit. */
+export const updateAuthProfile = async (updates) => {
+    if (!auth.currentUser) return;
+    await updateProfile(auth.currentUser, updates);
+};
+
+/** Whether the current user has Google as a linked provider. */
+export const isGoogleLinked = (user) => {
+    if (!user || !user.providerData) return false;
+    return user.providerData.some((p) => p.providerId === 'google.com');
+};
+
+/** Whether the current user has email/password (so they can change password or stay logged in after unlinking Google). */
+export const hasEmailProvider = (user) => {
+    if (!user || !user.providerData) return false;
+    return user.providerData.some((p) => p.providerId === 'password');
+};
+
+/** Reauthenticate with email and password (required before sensitive actions). */
+export const reauthenticateWithEmail = async (email, password) => {
+    if (!auth.currentUser) return { success: false, error: { message: 'Not signed in' } };
+    try {
+        const credential = EmailAuthProvider.credential(email, password);
+        await reauthenticateWithCredential(auth.currentUser, credential);
+        return { success: true, error: null };
+    } catch (error) {
+        return { success: false, error };
+    }
+};
+
+/** Change password (email users only). Requires current password. */
+export const changePassword = async (currentPassword, newPassword) => {
+    if (!auth.currentUser) return { success: false, error: { message: 'Not signed in' } };
+    if (!hasEmailProvider(auth.currentUser)) {
+        return { success: false, error: { message: 'Password change is only for email accounts' } };
+    }
+    try {
+        const email = auth.currentUser.email;
+        const reauth = await reauthenticateWithEmail(email, currentPassword);
+        if (!reauth.success) return reauth;
+        await updatePassword(auth.currentUser, newPassword);
+        return { success: true, error: null };
+    } catch (error) {
+        return { success: false, error };
+    }
+};
+
+/** Disconnect Google from account. User must have email/password to stay signed in. */
+export const unlinkGoogle = async () => {
+    if (!auth.currentUser) return { success: false, error: { message: 'Not signed in' } };
+    if (!hasEmailProvider(auth.currentUser)) {
+        return { success: false, error: { message: 'Add email/password in Account settings before disconnecting Google' } };
+    }
+    try {
+        await unlink(auth.currentUser, 'google.com');
+        if (typeof sessionStorage !== 'undefined') sessionStorage.removeItem('gcal_token');
+        return { success: true, error: null };
+    } catch (error) {
+        return { success: false, error };
+    }
+};
+
+/** Permanently delete the current user's Firebase Auth account. Reauth required for email users. */
+export const deleteUserAccount = async (passwordOrNull) => {
+    const user = auth.currentUser;
+    if (!user) return { success: false, error: { message: 'Not signed in' } };
+    try {
+        if (hasEmailProvider(user) && user.email) {
+            if (!passwordOrNull) return { success: false, error: { message: 'Password required to delete account' } };
+            const reauth = await reauthenticateWithEmail(user.email, passwordOrNull);
+            if (!reauth.success) return reauth;
+        }
+        await deleteUser(user);
+        if (typeof sessionStorage !== 'undefined') sessionStorage.removeItem('gcal_token');
+        return { success: true, error: null };
+    } catch (error) {
+        return { success: false, error };
+    }
 };

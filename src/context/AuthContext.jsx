@@ -95,7 +95,7 @@ export function AuthProvider({ children }) {
         if (result.success) {
             return { success: true };
         }
-        return { success: false, message: result.error?.message || 'Failed to resend verification email' };
+        return { success: false, message: formatErrorMessage(result.error?.code) || 'Failed to resend verification email' };
     };
 
     const loginGoogle = async () => {
@@ -114,6 +114,8 @@ export function AuthProvider({ children }) {
         await logoutUser();
         setUser(null);
         setUserProfile(null);
+        // Force navigation to landing so UI updates (avoids white screen when Navigate alone is used)
+        if (typeof window !== 'undefined') window.location.hash = '#/';
     };
 
     const forgotPassword = async (email) => {

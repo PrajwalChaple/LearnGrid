@@ -92,9 +92,11 @@ export function DashboardHome() {
       });
       rebuildActivities();
 
-      // Trigger Calendar Sync (Add Pending, Remove Completed/Deleted)
-      const pendingAssignments = filterPendingAssignments(data, user?.uid);
-      syncCalendar(user, pendingAssignments, announcementsRef.current);
+      // Trigger Calendar Sync when Google Calendar is connected
+      if (isCalendarConnected()) {
+        const pendingAssignments = filterPendingAssignments(data, user?.uid);
+        syncCalendar(user, pendingAssignments, announcementsRef.current);
+      }
     });
 
     const unsubAnnouncements = subscribeToAnnouncements(userProfile, (data) => {
@@ -107,8 +109,10 @@ export function DashboardHome() {
       rebuildActivities();
 
       // Trigger Calendar Sync when announcements change
-      const pendingAssignments = filterPendingAssignments(assignmentsRef.current, user?.uid);
-      syncCalendar(user, pendingAssignments, data);
+      if (isCalendarConnected()) {
+        const pendingAssignments = filterPendingAssignments(assignmentsRef.current, user?.uid);
+        syncCalendar(user, pendingAssignments, data);
+      }
     });
 
     return () => {
@@ -118,8 +122,10 @@ export function DashboardHome() {
     };
   }, [userProfile]);
 
+  const compactMode = !!userProfile?.settings?.appearance?.compactMode;
+
   return (
-    <div className="flex flex-col gap-8">
+    <div className={`flex flex-col ${compactMode ? 'gap-4' : 'gap-8'}`}>
       {/* Welcome Banner */}
       <div className="relative overflow-hidden rounded-3xl bg-indigo-600 text-white p-8 md:p-12 shadow-2xl shadow-indigo-200">
         <div className="relative z-10">
@@ -149,9 +155,9 @@ export function DashboardHome() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 ${compactMode ? 'gap-3' : 'gap-6'}`}>
         {statsData.map((stat, i) => (
-          <div key={i} className={`bg-white p-6 rounded-2xl border ${stat.border} shadow-sm hover:shadow-md transition-shadow`}>
+          <div key={i} className={`bg-white rounded-2xl border ${stat.border} shadow-sm hover:shadow-md transition-shadow ${compactMode ? 'p-4' : 'p-6'}`}>
             <div className="flex justify-between items-start mb-4">
               <div className={`w-12 h-12 rounded-xl ${stat.bg} ${stat.color} flex items-center justify-center`}>
                 <stat.icon size={24} />
@@ -173,10 +179,10 @@ export function DashboardHome() {
             <button onClick={() => navigate('/notes')} className="text-indigo-600 font-semibold text-sm hover:bg-indigo-50 px-3 py-1.5 rounded-lg transition-colors">View All</button>
           </div>
 
-          <div className="space-y-4">
+          <div className={compactMode ? 'space-y-1' : 'space-y-4'}>
             {activities.length > 0 ? (
               activities.map((item) => (
-                <div key={item.id} onClick={() => navigate(item.path)} className="flex items-center gap-4 p-4 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer group border border-transparent hover:border-gray-100">
+                <div key={item.id} onClick={() => navigate(item.path)} className={`flex items-center gap-4 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer group border border-transparent hover:border-gray-100 ${compactMode ? 'py-2 px-3' : 'p-4'}`}>
                   <div className={`w-12 h-12 rounded-full ${item.color} flex items-center justify-center flex-shrink-0`}>
                     <item.icon size={20} />
                   </div>

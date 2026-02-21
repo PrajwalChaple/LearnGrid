@@ -40,7 +40,7 @@ export function Login() {
     if (result.success) {
       navigate('/dashboard');
     } else {
-      setError(result.message);
+      setError(result.message || 'Something went wrong. Please try again.');
       if (result.needsVerification) {
         setNeedsVerification(true);
       }
@@ -53,7 +53,7 @@ export function Login() {
     if (result.success) {
       setResendMsg('Verification email sent! Check your inbox.');
     } else {
-      setResendMsg(result.message || 'Failed to resend. Try again later.');
+      setResendMsg(result.message || 'Something went wrong. Please try again.');
     }
   };
 
@@ -65,7 +65,7 @@ export function Login() {
     if (result.success) {
       navigate('/dashboard');
     } else {
-      setError(result.message);
+      setError(result.message || 'Something went wrong. Please try again.');
     }
   };
 
@@ -79,7 +79,7 @@ export function Login() {
     if (result.success) {
       setResetMsg('Password reset email sent! Check your inbox.');
     } else {
-      setError(result.message);
+      setError(result.message || 'Something went wrong. Please try again.');
     }
   };
 
@@ -109,20 +109,6 @@ export function Login() {
           </div>
         </div>
 
-        {/* Testimonial / Social Proof */}
-        <div className="relative z-10 mt-auto bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/10">
-          <div className="flex gap-1 mb-4 text-yellow-400">
-            {[1, 2, 3, 4, 5].map(i => <Star key={i} size={16} fill="currentColor" />)}
-          </div>
-          <p className="text-lg font-medium italic mb-4">"LearnGrid has completely transformed how I study. I can't imagine going back to my old messy spreadsheets."</p>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-indigo-300 flex items-center justify-center font-bold text-indigo-900">JS</div>
-            <div>
-              <p className="font-bold">Jessica Smith</p>
-              <p className="text-sm text-indigo-200">Computer Science Major</p>
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Right Column - Login Form */}

@@ -27,7 +27,7 @@ export function VerifyEmail() {
         if (result.success) {
             setResendMsg('Verification email sent! Check your inbox.');
         } else {
-            setResendMsg(result.message || 'Failed to resend. Please try again later.');
+            setResendMsg(result.message || 'Something went wrong. Please try again.');
         }
     };
 

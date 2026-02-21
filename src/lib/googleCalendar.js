@@ -40,6 +40,14 @@ export function getCalendarToken() {
 }
 
 /**
+ * Disconnect Calendar: remove token and clear sync map for this user.
+ */
+export function disconnectCalendar(userId) {
+    sessionStorage.removeItem('gcal_token');
+    if (userId) try { localStorage.removeItem(`gcal_synced_assignments_${userId}`); } catch (_) {}
+}
+
+/**
  * Saves an assignment's calendar event ID to the sync map.
  * Call this after successfully adding an event to Calendar.
  */
