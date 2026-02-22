@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { BookOpen, AlertCircle, Calendar, MessageSquare, ArrowRight, TrendingUp, MoreHorizontal, Clock, CheckCircle2 } from 'lucide-react';
+import { BookOpen, AlertCircle, Calendar, MessageSquare, ArrowRight, TrendingUp, MoreHorizontal, Clock, CheckCircle2, ClipboardList } from 'lucide-react';
 
 import { subscribeToNotes, subscribeToAssignments, subscribeToAnnouncements } from '../../lib/firestore';
 import { NotificationHistory } from '../../components/NotificationHistory';
@@ -11,7 +11,7 @@ import { loginWithGoogle } from '../../auth';
 
 const defaultStats = [
   { label: 'Total Notes', value: '0', icon: BookOpen, color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-100' },
-  { label: 'Assignments', value: '0', icon: AlertCircle, color: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-100' },
+  { label: 'Assignments', value: '0', icon: ClipboardList, color: 'text-sky-700', bg: 'bg-sky-50', border: 'border-sky-100' },
   { label: 'Pending Tasks', value: '0', icon: Clock, color: 'text-rose-600', bg: 'bg-rose-50', border: 'border-rose-100' },
   { label: 'Announcements', value: '0', icon: MessageSquare, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100' },
 ];
@@ -44,7 +44,7 @@ export function DashboardHome() {
   const rebuildActivities = () => {
     const allActivities = [
       ...notesRef.current.slice(0, 3).map(n => ({ id: 'n-' + n.id, type: 'note', title: n.title, sub: 'New note uploaded', time: n.date, icon: BookOpen, color: 'bg-indigo-100 text-indigo-600', path: '/notes' })),
-      ...assignmentsRef.current.slice(0, 3).map(a => ({ id: 'a-' + a.id, type: 'assignment', title: a.title, sub: `Due: ${a.deadline}`, time: a.deadline, icon: AlertCircle, color: 'bg-orange-100 text-orange-600', path: '/assignments' })),
+      ...assignmentsRef.current.slice(0, 3).map(a => ({ id: 'a-' + a.id, type: 'assignment', title: a.title, sub: `Due: ${a.deadline}`, time: a.deadline, icon: ClipboardList, color: 'bg-sky-100 text-sky-700', path: '/assignments' })),
       ...announcementsRef.current.slice(0, 2).map(a => ({ id: 'an-' + a.id, type: 'announcement', title: a.title, sub: 'Posted announcement', time: a.date, icon: MessageSquare, color: 'bg-purple-100 text-purple-600', path: '/announcements' })),
     ].sort((a, b) => new Date(b.time) - new Date(a.time)).slice(0, 5);
     setActivities(allActivities);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { X, Users, Check, BookOpen, School, Mail, Bell } from 'lucide-react';
 import { getRecipientCount, getRecipients, createNotification, createUserNotifications } from '../lib/firestore';
 import { sendEmailBatch } from '../lib/email';
@@ -14,12 +14,14 @@ export function NotificationModal({ isOpen, onClose, noteData, userProfile, onCo
     const [recipientCount, setRecipientCount] = useState(0);
     const [calculating, setCalculating] = useState(false);
 
+    const prevIsOpenRef = useRef(false);
     useEffect(() => {
-        if (isOpen && userProfile) {
+        if (isOpen && !prevIsOpenRef.current && userProfile) {
             calculateRecipients();
             setSendInApp(false);
             setSendEmail(false);
         }
+        prevIsOpenRef.current = isOpen;
     }, [isOpen, scope, userProfile, user?.uid]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const calculateRecipients = async () => {

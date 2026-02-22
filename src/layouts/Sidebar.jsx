@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
   LayoutDashboard,
@@ -14,7 +14,7 @@ import {
 
 const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
-  { icon: FileText, label: 'My Notes', path: '/notes' },
+  { icon: FileText, label: 'Notes', path: '/notes' },
   { icon: ClipboardList, label: 'Assignments', path: '/assignments' },
   { icon: Megaphone, label: 'Announcements', path: '/announcements' },
   { icon: Calendar, label: 'Calendar', path: '/calendar' },
@@ -24,11 +24,9 @@ const navItems = [
 
 export function Sidebar({ isOpen, onClose }) {
   const { logout } = useAuth();
-  const navigate = useNavigate();
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
+  const handleLogout = async () => {
+    await logout();
   };
 
   return (

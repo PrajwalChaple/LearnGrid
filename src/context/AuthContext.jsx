@@ -114,8 +114,15 @@ export function AuthProvider({ children }) {
         await logoutUser();
         setUser(null);
         setUserProfile(null);
-        // Force navigation to landing so UI updates (avoids white screen when Navigate alone is used)
-        if (typeof window !== 'undefined') window.location.hash = '#/';
+        // Redirect to login; use replace+push so back from login goes to landing in 1 step (not 2)
+        if (typeof window !== 'undefined') {
+            const base = window.location.pathname + window.location.search;
+            const landingUrl = base + '#/';
+            const loginUrl = base + '#/login';
+            window.history.replaceState(null, '', landingUrl);
+            window.history.pushState(null, '', loginUrl);
+            window.dispatchEvent(new HashChangeEvent('hashchange'));
+        }
     };
 
     const forgotPassword = async (email) => {

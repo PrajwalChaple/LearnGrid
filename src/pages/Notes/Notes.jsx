@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { FileText, Calendar, Eye, Trash2, Upload, User, Loader2 } from 'lucide-react';
+import { FileText, Calendar, Eye, Trash2, Upload, User, Loader2, Plus, X, Search } from 'lucide-react';
 import { subscribeToNotes, addNote, deleteNoteDoc } from '../../lib/firestore';
 import { uploadToCloudinary } from '../../lib/cloudinary';
 import { NotificationModal } from '../../components/NotificationModal';
@@ -9,11 +9,17 @@ export function Notes() {
   const { user, userProfile } = useAuth();
 
   const [notes, setNotes] = useState([]);
+  const [filteredNotes, setFilteredNotes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [showNotificationModal, setShowNotificationModal] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const [pendingNoteData, setPendingNoteData] = useState(null); // Data prepared but NOT saved yet
+  const [formData, setFormData] = useState({ title: '', description: '' });
+  const [selectedFile, setSelectedFile] = useState(null);
   const fileInputRef = React.useRef(null);
+  const isOpeningFileDialog = React.useRef(false);
 
   // Real-time listener — notes auto-sync from Firestore
   useEffect(() => {
@@ -27,14 +33,46 @@ export function Notes() {
     return () => unsubscribe();
   }, [userProfile]);
 
+  // Clear file selection when form opens
+  useEffect(() => {
+    if (showForm) {
+      setSelectedFile(null);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  }, [showForm]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Filter notes based on search query
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setFilteredNotes(notes);
+      return;
+    }
+    const query = searchQuery.toLowerCase();
+    const filtered = notes.filter(note => {
+      const title = (note.title || '').toLowerCase();
+      const description = (note.description || '').toLowerCase();
+      const fileName = (note.fileName || '').toLowerCase();
+      return title.includes(query) || description.includes(query) || fileName.includes(query);
+    });
+    setFilteredNotes(filtered);
+  }, [searchQuery, notes]);
+
   const isOwner = (note) => {
     return user && note.userId === user.uid;
   };
 
-  const handleFileSelect = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    if (!formData.title.trim()) {
+      alert('Please enter a title.');
+      return;
+    }
+    if (!fileInputRef.current?.files?.[0]) {
+      alert('Please select a PDF file.');
+      return;
+    }
 
+    const file = fileInputRef.current.files[0];
     if (file.type !== 'application/pdf') {
       alert('Only PDF files are allowed.');
       return;
@@ -45,11 +83,10 @@ export function Notes() {
       return;
     }
 
-    e.target.value = null;
-
     // Only prepare metadata — do NOT upload to Cloudinary yet
     const noteData = {
-      title: file.name.replace('.pdf', ''),
+      title: formData.title.trim(),
+      description: formData.description.trim() || '',
       subject: 'PDF Upload',
       date: new Date().toISOString(),
       fileName: file.name,
@@ -74,6 +111,10 @@ export function Notes() {
     // Show Notification Modal — upload happens ONLY on Confirm
     setPendingNoteData(noteData);
     setShowNotificationModal(true);
+    setShowForm(false);
+    setFormData({ title: '', description: '' });
+    setSelectedFile(null); // Clear selected file display
+    fileInputRef.current.value = '';
   };
 
   // Called by NotificationModal on Confirm — does Cloudinary upload + Firestore save
@@ -153,22 +194,90 @@ export function Notes() {
         onConfirmSuccess={() => {
           setShowNotificationModal(false);
           setPendingNoteData(null);
+          setSelectedFile(null); // Clear selected file after successful upload
         }}
       />
       <div className="page-header">
-        <h1>My Notes</h1>
-        <button className="btn-add" onClick={() => fileInputRef.current.click()} disabled={uploading}>
-          {uploading ? <Loader2 size={18} className="spin-icon" /> : <Upload size={18} />}
-          <span>{uploading ? 'Uploading...' : 'Upload PDF'}</span>
+        <h1>Notes</h1>
+        <button className="btn-add" onClick={() => {
+          if (!showForm) {
+            // Opening form - clear previous state
+            setSelectedFile(null);
+            setFormData({ title: '', description: '' });
+            if (fileInputRef.current) fileInputRef.current.value = '';
+          }
+          setShowForm(!showForm);
+        }} disabled={uploading}>
+          <Plus size={18} />
+          <span>Add Notes</span>
         </button>
-        <input
-          type="file"
-          accept="application/pdf"
-          ref={fileInputRef}
-          onChange={handleFileSelect}
-          style={{ display: 'none' }}
-        />
       </div>
+
+      {showForm && (
+        <form className="add-notes-form animate-fade-in" onSubmit={handleFormSubmit}>
+          <div className="form-row">
+            <input
+              type="text"
+              placeholder="Note Title *"
+              required
+              value={formData.title}
+              onChange={e => setFormData({ ...formData, title: e.target.value })}
+              className="form-input"
+            />
+          </div>
+          <div className="form-row">
+            <textarea
+              placeholder="Description (optional)"
+              value={formData.description}
+              onChange={e => setFormData({ ...formData, description: e.target.value })}
+              className="form-textarea"
+              rows="3"
+            />
+          </div>
+          <div className="form-row">
+            <div className="file-upload-label" onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              if (isOpeningFileDialog.current) return;
+              isOpeningFileDialog.current = true;
+              fileInputRef.current?.click();
+              setTimeout(() => { isOpeningFileDialog.current = false; }, 500);
+            }}>
+              <Upload size={18} />
+              <span>Upload PDF *</span>
+              {selectedFile && (
+                <span className="file-name">{selectedFile.name}</span>
+              )}
+            </div>
+            <input
+              type="file"
+              accept="application/pdf"
+              ref={fileInputRef}
+                onChange={(e) => {
+                  const file = e.target.files?.[0] || null;
+                  isOpeningFileDialog.current = false;
+                  setSelectedFile(file);
+                }}
+              required
+              style={{ display: 'none' }}
+            />
+          </div>
+          <div className="form-actions">
+            <button type="submit" className="btn-save" disabled={uploading}>
+              {uploading ? <Loader2 size={18} className="spin-icon" /> : 'Save Note'}
+            </button>
+            <button type="button" className="btn-cancel" onClick={() => {
+              setShowForm(false);
+              setFormData({ title: '', description: '' });
+              setSelectedFile(null);
+              if (fileInputRef.current) fileInputRef.current.value = '';
+            }}>
+              <X size={18} />
+              Cancel
+            </button>
+          </div>
+        </form>
+      )}
 
       <div className="notes-grid">
         {loading ? (
@@ -176,8 +285,8 @@ export function Notes() {
             <div className="empty-icon"><FileText size={48} /></div>
             <h3>Loading notes...</h3>
           </div>
-        ) : notes.length > 0 ? (
-          notes.map((note, i) => (
+        ) : filteredNotes.length > 0 ? (
+          filteredNotes.map((note, i) => (
             <div key={note.id} className="note-card animate-fade-in" style={{ animationDelay: `${i * 60}ms` }}>
               <div className="note-accent"></div>
               <div className="note-body">
@@ -199,6 +308,15 @@ export function Notes() {
                 </div>
 
                 <h3 className="note-title">{note.title}</h3>
+                {note.description && (
+                  <p className="note-description">{note.description}</p>
+                )}
+                {note.fileName && (
+                  <div className="note-file-name">
+                    <FileText size={12} />
+                    <span>{note.fileName}</span>
+                  </div>
+                )}
 
                 <div className="note-footer">
                   <div className="note-date">
@@ -213,13 +331,21 @@ export function Notes() {
               </div>
             </div>
           ))
+        ) : searchQuery ? (
+          <div className="empty-state">
+            <div className="empty-icon">
+              <Search size={48} />
+            </div>
+            <h3>No notes found</h3>
+            <p>Try a different search term.</p>
+          </div>
         ) : (
           <div className="empty-state">
             <div className="empty-icon">
               <FileText size={48} />
             </div>
             <h3>No notes yet</h3>
-            <p>Upload your first PDF note to get started.</p>
+            <p>Click "Add Notes" to create your first note.</p>
           </div>
         )}
       </div>
@@ -250,6 +376,173 @@ export function Notes() {
 
         .btn-add:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
         .btn-add:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+
+        .search-container {
+          margin-bottom: 1.5rem;
+        }
+
+        .search-box {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          background: white;
+          padding: 0.75rem 1rem;
+          border-radius: var(--radius-lg);
+          box-shadow: var(--shadow-sm);
+          border: 1px solid var(--color-border);
+        }
+
+        .search-box svg {
+          color: var(--color-text-muted);
+          flex-shrink: 0;
+        }
+
+        .search-input {
+          flex: 1;
+          border: none;
+          outline: none;
+          font-size: 0.9rem;
+          color: var(--color-text-main);
+        }
+
+        .search-input::placeholder {
+          color: var(--color-text-muted);
+        }
+
+        .add-notes-form {
+          background: white;
+          padding: 1.5rem;
+          border-radius: var(--radius-lg);
+          box-shadow: var(--shadow-md);
+          margin-bottom: 1.5rem;
+          border: 1px solid var(--color-primary-bg);
+        }
+
+        .form-row {
+          margin-bottom: 1rem;
+        }
+
+        .form-row:last-of-type {
+          margin-bottom: 0;
+        }
+
+        .form-input, .form-textarea {
+          width: 100%;
+          padding: 0.75rem 1rem;
+          border: 1px solid var(--color-border);
+          border-radius: var(--radius-md);
+          font-size: 0.9rem;
+          transition: border-color var(--transition-fast);
+          font-family: inherit;
+        }
+
+        .form-input:focus, .form-textarea:focus {
+          outline: none;
+          border-color: var(--color-primary);
+          box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .form-textarea {
+          resize: vertical;
+          min-height: 80px;
+        }
+
+        .file-upload-label {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.75rem 1rem;
+          border: 2px dashed var(--color-border);
+          border-radius: var(--radius-md);
+          cursor: pointer;
+          transition: all var(--transition-fast);
+          color: var(--color-text-muted);
+        }
+
+        .file-upload-label:hover {
+          border-color: var(--color-primary);
+          background: var(--color-primary-bg);
+          color: var(--color-primary);
+        }
+
+        .file-name {
+          margin-left: auto;
+          font-size: 0.85rem;
+          color: var(--color-primary);
+          font-weight: 500;
+        }
+
+        .form-actions {
+          display: flex;
+          gap: 0.75rem;
+          margin-top: 1rem;
+        }
+
+        .btn-save {
+          flex: 1;
+          padding: 0.75rem 1.25rem;
+          background: var(--gradient-primary);
+          color: white;
+          border-radius: var(--radius-md);
+          font-weight: 600;
+          font-size: 0.9rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          transition: all var(--transition-fast);
+        }
+
+        .btn-save:hover {
+          transform: translateY(-2px);
+          box-shadow: var(--shadow-md);
+        }
+
+        .btn-save:disabled {
+          opacity: 0.7;
+          cursor: not-allowed;
+          transform: none;
+        }
+
+        .btn-cancel {
+          padding: 0.75rem 1.25rem;
+          border: 1px solid var(--color-border);
+          border-radius: var(--radius-md);
+          color: var(--color-text-muted);
+          font-weight: 500;
+          font-size: 0.9rem;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          transition: all var(--transition-fast);
+        }
+
+        .btn-cancel:hover {
+          background: var(--color-primary-bg);
+          border-color: var(--color-primary);
+          color: var(--color-primary);
+        }
+
+        .note-description {
+          font-size: 0.85rem;
+          color: var(--color-text-muted);
+          line-height: 1.5;
+          margin-top: 0.5rem;
+          word-break: break-word;
+        }
+
+        .note-file-name {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          font-size: 0.75rem;
+          color: var(--color-text-muted);
+          margin-top: 0.5rem;
+          padding: 0.25rem 0.5rem;
+          background: var(--color-primary-bg);
+          border-radius: var(--radius-sm);
+          width: fit-content;
+        }
 
         .spin-icon { animation: spin 1s linear infinite; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }

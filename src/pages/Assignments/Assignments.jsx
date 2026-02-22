@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { CheckCircle, Clock, FileQuestion, Plus, X, User } from 'lucide-react';
+import { CheckCircle, Clock, FileQuestion, Plus, X, User, Upload, FileText, Eye } from 'lucide-react';
 import { subscribeToAssignments, addAssignment, deleteAssignmentDoc, updateAssignment } from '../../lib/firestore';
 import { NotificationModal } from '../../components/NotificationModal';
 import { addEventToCalendar, getCalendarToken, saveEventToSyncMap, removeCalendarEvent } from '../../lib/googleCalendar';
+import { uploadAssignmentPDFToCloudinary } from '../../lib/cloudinary';
 
 export function Assignments() {
   const { user, userProfile } = useAuth();
@@ -12,9 +13,14 @@ export function Assignments() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('All');
   const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState({ subject: '', title: '', deadline: '' });
+  const [formData, setFormData] = useState({ subject: '', title: '', deadline: '', description: '' });
+  const [uploading, setUploading] = useState(false);
   const [showNotificationModal, setShowNotificationModal] = useState(false);
   const [pendingItemData, setPendingItemData] = useState(null); // Prepared but NOT saved yet
+  const [pendingFile, setPendingFile] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const fileInputRef = React.useRef(null);
+  const isOpeningFileDialog = React.useRef(false);
 
   // Real-time listener
   useEffect(() => {
@@ -26,12 +32,23 @@ export function Assignments() {
     return () => unsubscribe();
   }, [userProfile]);
 
+  // Clear file selection when form opens
+  useEffect(() => {
+    if (showForm) {
+      setSelectedFile(null);
+      setPendingFile(null);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  }, [showForm]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const isOwner = (item) => {
     return user && item.userId === user.uid;
   };
 
   const handleAdd = async (e) => {
     e.preventDefault();
+    const file = fileInputRef.current?.files?.[0];
+    
     // Only prepare the data — do NOT save to Firestore yet
     const assignmentData = {
       ...formData,
@@ -44,34 +61,75 @@ export function Assignments() {
       ...(userProfile.roleType === 'college'
         ? { department: userProfile.department, year: userProfile.year }
         : { standard: userProfile.standard, section: userProfile.section }),
+      _file: file, // Store file for later upload
     };
 
     // Show notification modal — save happens ONLY on Confirm
     setPendingItemData(assignmentData);
-    setFormData({ subject: '', title: '', deadline: '' });
+    setPendingFile(file);
+    setFormData({ subject: '', title: '', deadline: '', description: '' });
+    setSelectedFile(null); // Clear selected file display
+    if (fileInputRef.current) fileInputRef.current.value = '';
     setShowForm(false);
     setShowNotificationModal(true);
   };
 
-  // Called by NotificationModal on Confirm — does the actual Firestore save + Calendar sync
+  // Called by NotificationModal on Confirm — does the actual Firestore save + Calendar sync + PDF upload
   const handleUploadAssignment = async () => {
     if (!pendingItemData) return null;
+    setUploading(true);
     try {
-      const newId = await addAssignment(pendingItemData);
+      let fileUrl = null;
+      let downloadUrl = null;
+      let cloudinaryId = null;
+      let fileName = null;
+
+      // Upload PDF if present
+      if (pendingFile) {
+        if (pendingFile.type !== 'application/pdf') {
+          alert('Only PDF files are allowed.');
+          setUploading(false);
+          return null;
+        }
+        if (pendingFile.size > 10 * 1024 * 1024) {
+          alert('File size must be less than 10MB.');
+          setUploading(false);
+          return null;
+        }
+        console.log('[Assignments] Uploading PDF to Cloudinary...');
+        const uploadResult = await uploadAssignmentPDFToCloudinary(pendingFile, user.uid);
+        fileUrl = uploadResult.url;
+        downloadUrl = uploadResult.downloadUrl;
+        cloudinaryId = uploadResult.publicId;
+        fileName = pendingFile.name;
+        console.log('[Assignments] PDF uploaded:', fileUrl);
+      }
+
+      // Prepare final data (remove _file)
+      const { _file, ...finalData } = pendingItemData;
+      const assignmentData = {
+        ...finalData,
+        ...(fileUrl && { fileUrl, downloadUrl, cloudinaryId, fileName }),
+      };
+
+      const newId = await addAssignment(assignmentData);
       // Sync to Google Calendar when connected
       const token = getCalendarToken();
       if (token) {
-        const calResult = await addEventToCalendar(token, { ...pendingItemData, id: newId });
+        const calResult = await addEventToCalendar(token, { ...assignmentData, id: newId });
         if (calResult.success && calResult.eventId) {
           saveEventToSyncMap(user.uid, newId, calResult.eventId);
           console.log('[Assignments] Synced to Google Calendar:', calResult.eventId);
         }
       }
-      return { ...pendingItemData, id: newId, title: pendingItemData.title };
+      return { ...assignmentData, id: newId, title: assignmentData.title };
     } catch (err) {
       console.error('Error adding assignment:', err);
-      alert('Failed to add assignment.');
+      alert('Failed to add assignment. Please try again.');
       return null;
+    } finally {
+      setUploading(false);
+      setPendingFile(null);
     }
   };
 
@@ -153,7 +211,12 @@ export function Assignments() {
         userProfile={userProfile}
         itemType="assignment"
         onUpload={handleUploadAssignment}
-        onConfirmSuccess={() => { setShowNotificationModal(false); setPendingItemData(null); }}
+        onConfirmSuccess={() => {
+          setShowNotificationModal(false);
+          setPendingItemData(null);
+          setSelectedFile(null);
+          setPendingFile(null);
+        }}
       />
       <div className="page-header">
         <h1>Assignments</h1>
@@ -165,7 +228,16 @@ export function Assignments() {
               </button>
             ))}
           </div>
-          <button className="btn-add" onClick={() => setShowForm(!showForm)}>
+          <button className="btn-add" onClick={() => {
+            if (!showForm) {
+              // Opening form - clear previous state
+              setSelectedFile(null);
+              setPendingFile(null);
+              setFormData({ subject: '', title: '', deadline: '', description: '' });
+              if (fileInputRef.current) fileInputRef.current.value = '';
+            }
+            setShowForm(!showForm);
+          }}>
             <Plus size={18} />
             <span>Add Assignment</span>
           </button>
@@ -189,9 +261,53 @@ export function Assignments() {
             value={formData.deadline}
             onChange={e => setFormData({ ...formData, deadline: e.target.value })}
           />
+          <textarea
+            placeholder="Description (optional)"
+            value={formData.description}
+            onChange={e => setFormData({ ...formData, description: e.target.value })}
+            className="form-textarea"
+            rows="3"
+          />
+          <div className="file-upload-label" onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (isOpeningFileDialog.current) return;
+            isOpeningFileDialog.current = true;
+            fileInputRef.current?.click();
+            setTimeout(() => { isOpeningFileDialog.current = false; }, 500);
+          }}>
+            <Upload size={18} />
+            <span>Upload PDF (optional)</span>
+            {selectedFile && (
+              <span className="file-name">{selectedFile.name}</span>
+            )}
+          </div>
+          <input
+            type="file"
+            accept="application/pdf"
+            ref={fileInputRef}
+            onChange={(e) => {
+              const file = e.target.files?.[0] || null;
+              isOpeningFileDialog.current = false;
+              setSelectedFile(file);
+              setPendingFile(file);
+            }}
+            style={{ display: 'none' }}
+          />
           <div className="form-actions">
-            <button type="submit" className="btn-save">Save</button>
-            <button type="button" className="btn-cancel" onClick={() => setShowForm(false)}>Cancel</button>
+            <button type="submit" className="btn-save" disabled={uploading}>
+              {uploading ? 'Saving...' : 'Save'}
+            </button>
+            <button type="button" className="btn-cancel" onClick={() => {
+              setShowForm(false);
+              setFormData({ subject: '', title: '', deadline: '', description: '' });
+              setSelectedFile(null);
+              setPendingFile(null);
+              if (fileInputRef.current) fileInputRef.current.value = '';
+            }}>
+              <X size={18} />
+              Cancel
+            </button>
           </div>
         </form>
       )}
@@ -222,7 +338,26 @@ export function Assignments() {
                   <td>
                     <span className="subject-tech">{assignment.subject}</span>
                   </td>
-                  <td className="title-cell">{assignment.title}</td>
+                  <td className="title-cell">
+                    <div className="title-with-desc">
+                      <div className="assignment-title">{assignment.title}</div>
+                      {assignment.description && (
+                        <div className="assignment-description">{assignment.description}</div>
+                      )}
+                      {assignment.fileUrl && (
+                        <a
+                          href={assignment.fileUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="pdf-link"
+                          onClick={e => e.stopPropagation()}
+                        >
+                          <FileText size={14} />
+                          <span>{assignment.fileName || 'View PDF'}</span>
+                        </a>
+                      )}
+                    </div>
+                  </td>
                   <td className="date-cell">{assignment.deadline}</td>
                   <td>
                     <span
@@ -343,7 +478,7 @@ export function Assignments() {
           border: 1px solid var(--color-primary-bg);
         }
 
-        .add-form input {
+        .add-form input, .add-form textarea {
           flex: 1;
           min-width: 180px;
           padding: 0.65rem 1rem;
@@ -351,11 +486,45 @@ export function Assignments() {
           border-radius: var(--radius-md);
           font-size: 0.9rem;
           transition: border-color var(--transition-fast);
+          font-family: inherit;
         }
 
-        .add-form input:focus {
+        .add-form textarea {
+          resize: vertical;
+          min-height: 80px;
+        }
+
+        .add-form input:focus, .add-form textarea:focus {
           border-color: var(--color-primary);
           box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+          outline: none;
+        }
+
+        .file-upload-label {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.65rem 1rem;
+          border: 2px dashed var(--color-border);
+          border-radius: var(--radius-md);
+          cursor: pointer;
+          transition: all var(--transition-fast);
+          color: var(--color-text-muted);
+          flex: 1;
+          min-width: 180px;
+        }
+
+        .file-upload-label:hover {
+          border-color: var(--color-primary);
+          background: var(--color-primary-bg);
+          color: var(--color-primary);
+        }
+
+        .file-name {
+          margin-left: auto;
+          font-size: 0.85rem;
+          color: var(--color-primary);
+          font-weight: 500;
         }
 
         .form-actions {
@@ -423,6 +592,39 @@ export function Assignments() {
         }
 
         .title-cell { font-weight: 500; }
+
+        .title-with-desc {
+          display: flex;
+          flex-direction: column;
+          gap: 0.4rem;
+        }
+
+        .assignment-title {
+          font-weight: 500;
+        }
+
+        .assignment-description {
+          font-size: 0.8rem;
+          color: var(--color-text-muted);
+          line-height: 1.4;
+        }
+
+        .pdf-link {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.4rem;
+          font-size: 0.8rem;
+          color: var(--color-primary);
+          text-decoration: none;
+          font-weight: 500;
+          margin-top: 0.25rem;
+          transition: all var(--transition-fast);
+        }
+
+        .pdf-link:hover {
+          color: var(--color-primary-dark);
+          text-decoration: underline;
+        }
 
         .status-badge {
           display: inline-flex;

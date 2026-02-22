@@ -46,19 +46,58 @@ export function Navbar({ onMenuClick }) {
 
   const searchResults = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
-    const match = (title) => !q || (title && String(title).toLowerCase().includes(q));
+    const matchText = (text) => !q || (text && String(text).toLowerCase().includes(q));
     const list = [];
     const noteLabel = (n) => (n.title && n.subject ? `${n.title} (${n.subject})` : (n.title || n.subject));
     const assignmentLabel = (a) => (a.title && a.subject ? `${a.title} (${a.subject})` : (a.title || a.subject));
+
     if (searchFilter === 'all' || searchFilter === 'notes') {
-      notes.filter(n => match(n.title) || match(n.subject)).forEach(n => list.push({ type: 'note', id: n.id, title: noteLabel(n), path: '/notes' }));
+      notes
+        .filter((n) =>
+          matchText(n.title) ||
+          matchText(n.subject) ||
+          matchText(n.description) ||
+          matchText(n.fileName)
+        )
+        .forEach((n) =>
+          list.push({
+            type: 'note',
+            id: n.id,
+            title: noteLabel(n),
+            path: '/notes',
+          })
+        );
     }
+
     if (searchFilter === 'all' || searchFilter === 'assignments') {
-      assignments.filter(a => match(a.title) || match(a.subject)).forEach(a => list.push({ type: 'assignment', id: a.id, title: assignmentLabel(a), path: '/assignments' }));
+      assignments
+        .filter((a) =>
+          matchText(a.title) ||
+          matchText(a.subject)
+        )
+        .forEach((a) =>
+          list.push({
+            type: 'assignment',
+            id: a.id,
+            title: assignmentLabel(a),
+            path: '/assignments',
+          })
+        );
     }
+
     if (searchFilter === 'all' || searchFilter === 'announcements') {
-      announcements.filter(a => match(a.title)).forEach(a => list.push({ type: 'announcement', id: a.id, title: a.title, path: '/announcements' }));
+      announcements
+        .filter((a) => matchText(a.title))
+        .forEach((a) =>
+          list.push({
+            type: 'announcement',
+            id: a.id,
+            title: a.title,
+            path: '/announcements',
+          })
+        );
     }
+
     return list.slice(0, 20);
   }, [searchQuery, searchFilter, notes, assignments, announcements]);
 

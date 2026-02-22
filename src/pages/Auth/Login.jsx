@@ -27,6 +27,16 @@ export function Login() {
     }
   }, [user, navigate]);
 
+  // When opened directly (#/login bookmark), ensure landing is before login so 1 back = landing
+  useEffect(() => {
+    const base = window.location.pathname + window.location.search;
+    if (window.history.length === 1 && window.location.hash === '#/login') {
+      window.history.replaceState(null, '', base + '#/');
+      window.history.pushState(null, '', base + '#/login');
+      window.dispatchEvent(new HashChangeEvent('hashchange'));
+    }
+  }, []);
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -225,7 +235,7 @@ export function Login() {
           </form>
 
           <p className="mt-8 text-center text-xs text-gray-400">
-            By signing in, you agree to our <a href="#" className="underline">Terms of Service</a> and <a href="#" className="underline">Privacy Policy</a>.
+            By signing in, you agree to our <Link to="/terms-of-service" className="underline hover:text-indigo-500 transition-colors">Terms of Service</Link> and <Link to="/privacy-policy" className="underline hover:text-indigo-500 transition-colors">Privacy Policy</Link>.
           </p>
 
           {/* Forgot Password Modal Overlay */}

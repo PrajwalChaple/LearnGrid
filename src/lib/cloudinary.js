@@ -12,6 +12,8 @@ const CLOUD_NAME = 'dkppiv7lx';
 const UPLOAD_PRESET = 'learngrid_notes';
 /** Create in Cloudinary: Settings → Upload → Add upload preset → Unsigned, name: learngrid_profilepicture */
 const UPLOAD_PRESET_PROFILE = 'learngrid_profilepicture';
+/** Assignments PDFs — Create in Cloudinary: Settings → Upload → Add upload preset → Unsigned, name: learngrid_assignments. Optional: set "Folder" to learngrid/assignments (or learngrind/assignments if that's your root). */
+const UPLOAD_PRESET_ASSIGNMENTS = 'learngrid_assignments';
 
 /**
  * Uploads a file to Cloudinary using unsigned upload.
@@ -81,6 +83,46 @@ export async function uploadProfilePictureToCloudinary(file, userId) {
 
     const result = await response.json();
     return result.secure_url;
+}
+
+/**
+ * Uploads an assignment PDF to Cloudinary in folder: learngrid/assignments/{userId}
+ * Uses a separate upload preset so uploads do not go to the notes folder.
+ *
+ * @param {File} file - PDF file
+ * @param {string} userId - User ID (for folder context)
+ * @returns {Promise<{ url: string, publicId: string, downloadUrl: string }>}
+ */
+export async function uploadAssignmentPDFToCloudinary(file, userId) {
+    const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`;
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', UPLOAD_PRESET_ASSIGNMENTS);
+    formData.append('folder', `learngrid/assignments/${userId}`);
+
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            body: formData,
+        });
+
+        if (!response.ok) {
+            const errBody = await response.text();
+            throw new Error(`Cloudinary upload failed: ${response.status} - ${errBody}`);
+        }
+
+        const result = await response.json();
+
+        return {
+            url: result.secure_url,
+            publicId: result.public_id,
+            downloadUrl: result.secure_url,
+        };
+    } catch (error) {
+        console.error('Error uploading assignment PDF to Cloudinary:', error);
+        throw error;
+    }
 }
 
 /**
