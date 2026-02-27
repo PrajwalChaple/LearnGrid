@@ -6,6 +6,7 @@ import {
     onAuthStateChanged,
     GoogleAuthProvider,
     signInWithPopup,
+    reauthenticateWithPopup,
     updateProfile,
     sendPasswordResetEmail,
     sendEmailVerification,
@@ -173,15 +174,20 @@ export const unlinkGoogle = async () => {
     }
 };
 
-/** Permanently delete the current user's Firebase Auth account. Reauth required for email users. */
+/** Permanently delete the current user's Firebase Auth account. Reauth required. */
 export const deleteUserAccount = async (passwordOrNull) => {
     const user = auth.currentUser;
     if (!user) return { success: false, error: { message: 'Not signed in' } };
     try {
+        // Re-authenticate based on provider
         if (hasEmailProvider(user) && user.email) {
             if (!passwordOrNull) return { success: false, error: { message: 'Password required to delete account' } };
             const reauth = await reauthenticateWithEmail(user.email, passwordOrNull);
             if (!reauth.success) return reauth;
+        } else if (isGoogleLinked(user)) {
+            // Google users need re-auth via popup
+            const provider = new GoogleAuthProvider();
+            await reauthenticateWithPopup(user, provider);
         }
         await deleteUser(user);
         if (typeof sessionStorage !== 'undefined') sessionStorage.removeItem('gcal_token');

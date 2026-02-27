@@ -5,8 +5,7 @@ import { BookOpen, AlertCircle, Calendar, MessageSquare, ArrowRight, TrendingUp,
 
 import { subscribeToNotes, subscribeToAssignments, subscribeToAnnouncements } from '../../lib/firestore';
 import { NotificationHistory } from '../../components/NotificationHistory';
-import { isCalendarConnected, syncCalendar } from '../../lib/googleCalendar';
-import { loginWithGoogle } from '../../auth';
+import { NetworkList } from './components/NetworkList';
 
 
 const defaultStats = [
@@ -21,20 +20,8 @@ export function DashboardHome() {
   const navigate = useNavigate();
   const [statsData, setStatsData] = useState(defaultStats);
   const [activities, setActivities] = useState([]);
-  // State for calendar connection status
-  const [isCalendarConnected, setIsCalendarConnected] = useState(() => !!sessionStorage.getItem('gcal_token'));
 
-  const handleDisconnectCalendar = () => {
-    sessionStorage.removeItem('gcal_token');
-    setIsCalendarConnected(false);
-  };
-
-  const [greeting] = useState(() => {
-    const hour = new Date().getHours();
-    if (hour < 12) return 'Good morning';
-    if (hour < 18) return 'Good afternoon';
-    return 'Good evening';
-  });
+  const [greeting] = useState('Welcome back');
 
   // Keep latest data in refs for cross-listener activity computation
   const notesRef = React.useRef([]);
@@ -48,18 +35,6 @@ export function DashboardHome() {
       ...announcementsRef.current.slice(0, 2).map(a => ({ id: 'an-' + a.id, type: 'announcement', title: a.title, sub: 'Posted announcement', time: a.date, icon: MessageSquare, color: 'bg-purple-100 text-purple-600', path: '/announcements' })),
     ].sort((a, b) => new Date(b.time) - new Date(a.time)).slice(0, 5);
     setActivities(allActivities);
-    setActivities(allActivities);
-  };
-
-  // Helper to filter assignments that should be in calendar (i.e., NOT completed)
-  const filterPendingAssignments = (assignments, uid) => {
-    if (!uid) return [];
-    return assignments.filter(a => {
-      // Check individual status if present
-      const status = a.userStatuses?.[uid];
-      if (status === 'Completed') return false; // Remove completed
-      return true; // Keep Pending/Overdue
-    });
   };
 
   // Real-time listeners for all three collections
@@ -91,12 +66,6 @@ export function DashboardHome() {
         return next;
       });
       rebuildActivities();
-
-      // Trigger Calendar Sync when Google Calendar is connected
-      if (isCalendarConnected()) {
-        const pendingAssignments = filterPendingAssignments(data, user?.uid);
-        syncCalendar(user, pendingAssignments, announcementsRef.current);
-      }
     });
 
     const unsubAnnouncements = subscribeToAnnouncements(userProfile, (data) => {
@@ -107,12 +76,6 @@ export function DashboardHome() {
         return next;
       });
       rebuildActivities();
-
-      // Trigger Calendar Sync when announcements change
-      if (isCalendarConnected()) {
-        const pendingAssignments = filterPendingAssignments(assignmentsRef.current, user?.uid);
-        syncCalendar(user, pendingAssignments, data);
-      }
     });
 
     return () => {
@@ -172,120 +135,53 @@ export function DashboardHome() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Recent Activity */}
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-gray-900">Recent Activity</h2>
-            <button onClick={() => navigate('/notes')} className="text-indigo-600 font-semibold text-sm hover:bg-indigo-50 px-3 py-1.5 rounded-lg transition-colors">View All</button>
-          </div>
+        <div className="lg:col-span-2 space-y-8 text-slate-900">
+          {/* Recent Activity */}
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-bold text-gray-900">Recent Activity</h2>
+              <button onClick={() => navigate('/notes')} className="text-indigo-600 font-semibold text-sm hover:bg-indigo-50 px-3 py-1.5 rounded-lg transition-colors">View All</button>
+            </div>
 
-          <div className={compactMode ? 'space-y-1' : 'space-y-4'}>
-            {activities.length > 0 ? (
-              activities.map((item) => (
-                <div key={item.id} onClick={() => navigate(item.path)} className={`flex items-center gap-4 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer group border border-transparent hover:border-gray-100 ${compactMode ? 'py-2 px-3' : 'p-4'}`}>
-                  <div className={`w-12 h-12 rounded-full ${item.color} flex items-center justify-center flex-shrink-0`}>
-                    <item.icon size={20} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-bold text-gray-900 truncate group-hover:text-indigo-600 transition-colors">{item.title}</h4>
-                    <p className="text-sm text-gray-500">{item.sub}</p>
-                  </div>
-                  <div className="text-right flex items-center gap-4">
-                    <span className="text-xs font-medium text-gray-400 bg-gray-100 px-2 py-1 rounded-md">{item.time}</span>
-                    <div className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-400 group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-600 transition-all">
-                      <ArrowRight size={14} />
+            <div className={compactMode ? 'space-y-1' : 'space-y-4'}>
+              {activities.length > 0 ? (
+                activities.map((item) => (
+                  <div key={item.id} onClick={() => navigate(item.path)} className={`flex items-center gap-4 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer group border border-transparent hover:border-gray-100 ${compactMode ? 'py-2 px-3' : 'p-4'}`}>
+                    <div className={`w-12 h-12 rounded-full ${item.color} flex items-center justify-center flex-shrink-0`}>
+                      <item.icon size={20} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-bold text-gray-900 truncate group-hover:text-indigo-600 transition-colors">{item.title}</h4>
+                      <p className="text-sm text-gray-500">{item.sub}</p>
+                    </div>
+                    <div className="text-right flex items-center gap-4">
+                      <span className="text-xs font-medium text-gray-400 bg-gray-100 px-2 py-1 rounded-md">{item.time}</span>
+                      <div className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-400 group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-600 transition-all">
+                        <ArrowRight size={14} />
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))
-            ) : (
-              <div className="text-center py-12 bg-gray-50 rounded-xl border border-dashed border-gray-200">
-                <div className="mx-auto w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-gray-400 mb-3">
-                  <Clock size={20} />
-                </div>
-                <p className="text-gray-500 font-medium">No recent activity found</p>
-                <p className="text-xs text-gray-400">Your recent actions will appear here</p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Quick Actions */}
-
-        <div className="space-y-8 h-fit">
-          {/* Quick Actions */}
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 h-fit">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-bold text-gray-900">Quick Actions</h2>
-              <button className="text-gray-400 hover:text-gray-600"><MoreHorizontal size={20} /></button>
-            </div>
-
-            <div className="grid grid-cols-1 gap-3">
-              <button onClick={() => navigate('/notes')} className="flex items-center gap-4 p-4 rounded-xl border border-gray-100 hover:border-indigo-200 hover:shadow-md hover:bg-indigo-50/50 transition-all group text-left">
-                <div className="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <BookOpen size={20} />
-                </div>
-                <div>
-                  <span className="block font-bold text-gray-900">Upload Note</span>
-                  <span className="text-xs text-gray-500">Share resources</span>
-                </div>
-              </button>
-
-              <button onClick={() => navigate('/assignments')} className="flex items-center gap-4 p-4 rounded-xl border border-gray-100 hover:border-indigo-200 hover:shadow-md hover:bg-indigo-50/50 transition-all group text-left">
-                <div className="w-10 h-10 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <AlertCircle size={20} />
-                </div>
-                <div>
-                  <span className="block font-bold text-gray-900">Add Assignment</span>
-                  <span className="text-xs text-gray-500">Track deadlines</span>
-                </div>
-              </button>
-
-              <button onClick={() => navigate('/calendar')} className="flex items-center gap-4 p-4 rounded-xl border border-gray-100 hover:border-indigo-200 hover:shadow-md hover:bg-indigo-50/50 transition-all group text-left">
-                <div className="w-10 h-10 rounded-lg bg-green-100 text-green-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Calendar size={20} />
-                </div>
-                <div>
-                  <span className="block font-bold text-gray-900">View Calendar</span>
-                  <span className="text-xs text-gray-500">Check schedule</span>
-                </div>
-              </button>
-            </div>
-
-            <div className="mt-8 p-4 rounded-xl bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100">
-              <h3 className="font-bold text-indigo-900 mb-2">
-                {isCalendarConnected ? 'Calendar Connected ✅' : 'Google Calendar'}
-              </h3>
-              <p className="text-sm text-indigo-700 leading-relaxed">
-                {isCalendarConnected
-                  ? 'New assignments will automatically sync to your Google Calendar with reminders.'
-                  : 'Connect your Google Calendar to sync assignments automatically.'}
-              </p>
-              {!isCalendarConnected ? (
-                <button
-                  onClick={async () => {
-                    await loginWithGoogle();
-                    setIsCalendarConnected(!!sessionStorage.getItem('gcal_token'));
-                    // window.location.reload(); // Optional reload if needed
-                  }}
-                  className="mt-3 text-xs font-bold text-indigo-600 hover:text-indigo-800 uppercase tracking-wider"
-                >
-                  Connect Now
-                </button>
+                ))
               ) : (
-                <button
-                  onClick={handleDisconnectCalendar}
-                  className="mt-3 text-xs font-bold text-red-500 hover:text-red-700 uppercase tracking-wider"
-                >
-                  Disconnect / Stop Sync
-                </button>
+                <div className="text-center py-12 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+                  <div className="mx-auto w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-gray-400 mb-3">
+                    <Clock size={20} />
+                  </div>
+                  <p className="text-gray-500 font-medium">No recent activity found</p>
+                  <p className="text-xs text-gray-400">Your recent actions will appear here</p>
+                </div>
               )}
             </div>
           </div>
-
-          <NotificationHistory />
         </div>
 
+        <div className="space-y-8 h-fit text-slate-900">
+          {/* Network / Peers Feature */}
+          <NetworkList userProfile={userProfile} />
+
+          {/* Notification History */}
+          <NotificationHistory />
+        </div>
       </div>
     </div>
   );

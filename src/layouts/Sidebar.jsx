@@ -41,7 +41,8 @@ export function Sidebar({ isOpen, onClose }) {
       </div>
 
       <nav className="sidebar-nav">
-        <span className="nav-section-label">MENU</span>
+
+        <span className="nav-section-label">GENERAL</span>
         {navItems.slice(0, 5).map((item) => (
           <NavLink
             key={item.path}
@@ -52,7 +53,7 @@ export function Sidebar({ isOpen, onClose }) {
             onClick={onClose}
           >
             <div className="nav-icon-wrap">
-              <item.icon size={20} />
+              <item.icon size={18} strokeWidth={2.5} />
             </div>
             <span>{item.label}</span>
           </NavLink>
@@ -69,7 +70,7 @@ export function Sidebar({ isOpen, onClose }) {
             onClick={onClose}
           >
             <div className="nav-icon-wrap">
-              <item.icon size={20} />
+              <item.icon size={18} strokeWidth={2.5} />
             </div>
             <span>{item.label}</span>
           </NavLink>
@@ -87,124 +88,115 @@ export function Sidebar({ isOpen, onClose }) {
 
       <style jsx="true">{`
         .sidebar {
-        width: 270px;
-      height: 100vh;
-      background: #1e1b4b; /* Solid dark color as base */
-      background-image: linear-gradient(160deg, #1e1b4b 0%, #312e81 100%);
-      display: flex;
-      flex-direction: column;
-      position: fixed;
-      left: 0;
-      top: 0;
-      z-index: 50;
-      transition: transform var(--transition-normal);
-      overflow: hidden;
-      box-shadow: 4px 0 24px rgba(0,0,0,0.15);
+          width: 270px;
+          height: 100vh;
+          background: #f8fafc;
+          border-right: 1px solid #e2e8f0;
+          display: flex;
+          flex-direction: column;
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 50;
+          transition: transform var(--transition-normal);
+          overflow: hidden;
         }
 
       .sidebar-header {
-        padding: 2rem 1.75rem 1.5rem;
+        padding: 1.5rem 1.5rem 1rem;
         }
 
       .logo {
         display: flex;
-      align-items: center;
-      gap: 1rem;
+        align-items: center;
+        gap: 0.75rem;
         }
 
       .logo-icon {
-        width: 42px;
-      height: 42px;
-      background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: 800;
-      font-size: 1.4rem;
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        width: 32px;
+        height: 32px;
+        background: #2563eb;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 800;
+        font-size: 1.2rem;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
         }
 
       .logo-text {
-        color: white;
-      font-weight: 700;
-      font-size: 1.35rem;
-      letter-spacing: -0.5px;
+        color: #0f172a;
+        font-weight: 700;
+        font-size: 1.2rem;
+        letter-spacing: -0.5px;
         }
 
       .sidebar-nav {
         flex: 1;
-      padding: 0.5rem 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      overflow-y: auto;
+        padding: 0.5rem 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        overflow-y: auto;
         }
 
       .nav-section-label {
-        font - size: 0.7rem;
-      font-weight: 700;
-      color: rgba(255,255,255,0.4);
-      letter-spacing: 1.2px;
-      padding: 1rem 0.75rem 0.5rem;
-      text-transform: uppercase;
-      margin-top: 0.5rem;
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: #94a3b8;
+        letter-spacing: 1.2px;
+        padding: 1rem 0.75rem 0.5rem;
+        text-transform: uppercase;
+        margin-top: 0.5rem;
         }
 
       .nav-item {
         display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 0.8rem 1rem;
-      border-radius: 12px;
-      color: rgba(255,255,255,0.7);
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      text-decoration: none;
-      font-weight: 500;
-      font-size: 0.95rem;
-      position: relative;
-      border: 1px solid transparent;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.6rem 0.75rem;
+        border-radius: 10px;
+        color: #64748b;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        position: relative;
+        border: 1px solid transparent;
         }
 
       .nav-icon-wrap {
         width: 24px;
-      height: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
         }
 
       .nav-item:hover {
-        color: white;
-      background: rgba(255,255,255,0.08);
-      transform: translateX(4px);
+        color: #0f172a;
+        background: #f1f5f9;
         }
 
       .nav-item.active {
-        background: linear-gradient(90deg, rgba(99, 102, 241, 0.15) 0%, rgba(99, 102, 241, 0.05) 100%);
-      color: white;
-      font-weight: 600;
-      border: 1px solid rgba(99, 102, 241, 0.3);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-
-      .nav-item.active .nav-icon-wrap {
-        color: #a5b4fc;
-      transform: scale(1.1);
+        background: #e0e7ff;
+        color: #312e81;
+        font-weight: 700;
         }
 
       .sidebar-footer {
         padding: 1.5rem;
-      border-top: 1px solid rgba(255,255,255,0.08);
-      background: rgba(0,0,0,0.1);
+        border-top: 1px solid #f1f5f9;
+        background: white;
         }
 
       .logout-btn {
         width: 100%;
-      text-align: left;
-      color: #fca5a5;
+        text-align: left;
+        color: #ef4444;
         }
 
       .logout-btn:hover {

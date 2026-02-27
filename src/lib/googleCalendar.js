@@ -29,7 +29,28 @@ function saveSyncedMap(userId, map) {
  * Checks if user has a Google Calendar token saved.
  */
 export function isCalendarConnected() {
-    return !!sessionStorage.getItem('gcal_token');
+    const token = sessionStorage.getItem('gcal_token');
+    // #region agent log
+    fetch('http://127.0.0.1:7431/ingest/8d894928-30cc-40ea-96dd-adf1ce5bf673', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Debug-Session-Id': 'd424bd',
+        },
+        body: JSON.stringify({
+            sessionId: 'd424bd',
+            runId: 'pre-fix',
+            hypothesisId: 'H1',
+            location: 'googleCalendar.js:isCalendarConnected',
+            message: 'Check if calendar is connected',
+            data: {
+                hasToken: !!token,
+            },
+            timestamp: Date.now(),
+        }),
+    }).catch(() => {});
+    // #endregion agent log
+    return !!token;
 }
 
 /**
@@ -85,6 +106,30 @@ export async function removeCalendarEvent(userId, assignmentId) {
  */
 export async function syncCalendar(user, assignments, announcements) {
     const accessToken = sessionStorage.getItem('gcal_token');
+    // #region agent log
+    fetch('http://127.0.0.1:7431/ingest/8d894928-30cc-40ea-96dd-adf1ce5bf673', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Debug-Session-Id': 'd424bd',
+        },
+        body: JSON.stringify({
+            sessionId: 'd424bd',
+            runId: 'pre-fix',
+            hypothesisId: 'H1-H3',
+            location: 'googleCalendar.js:syncCalendar',
+            message: 'syncCalendar called',
+            data: {
+                hasToken: !!accessToken,
+                hasUser: !!user,
+                userId: user && user.uid,
+                assignmentsCount: Array.isArray(assignments) ? assignments.length : -1,
+                announcementsCount: Array.isArray(announcements) ? announcements.length : -1,
+            },
+            timestamp: Date.now(),
+        }),
+    }).catch(() => {});
+    // #endregion agent log
     if (!accessToken || !user) return; // Not connected
 
     const userId = user.uid;
@@ -156,6 +201,29 @@ export async function addEventToCalendar(accessToken, item) {
             body: JSON.stringify(event),
         });
 
+        // #region agent log
+        fetch('http://127.0.0.1:7431/ingest/8d894928-30cc-40ea-96dd-adf1ce5bf673', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Debug-Session-Id': 'd424bd',
+            },
+            body: JSON.stringify({
+                sessionId: 'd424bd',
+                runId: 'pre-fix',
+                hypothesisId: 'H2',
+                location: 'googleCalendar.js:addEventToCalendar',
+                message: 'addEventToCalendar response',
+                data: {
+                    isAssignment,
+                    status: response.status,
+                    ok: response.ok,
+                },
+                timestamp: Date.now(),
+            }),
+        }).catch(() => {});
+        // #endregion agent log
+
         if (!response.ok) {
             // Rate limiting or auth error
             if (response.status === 401) {
@@ -168,6 +236,27 @@ export async function addEventToCalendar(accessToken, item) {
         const data = await response.json();
         return { success: true, eventId: data.id };
     } catch (err) {
+        // #region agent log
+        fetch('http://127.0.0.1:7431/ingest/8d894928-30cc-40ea-96dd-adf1ce5bf673', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Debug-Session-Id': 'd424bd',
+            },
+            body: JSON.stringify({
+                sessionId: 'd424bd',
+                runId: 'pre-fix',
+                hypothesisId: 'H2',
+                location: 'googleCalendar.js:addEventToCalendar:catch',
+                message: 'addEventToCalendar error',
+                data: {
+                    isAssignment,
+                    error: err && err.message,
+                },
+                timestamp: Date.now(),
+            }),
+        }).catch(() => {});
+        // #endregion agent log
         return { success: false, error: err.message };
     }
 }
@@ -179,14 +268,55 @@ export async function deleteEventFromCalendar(accessToken, eventId) {
     if (!eventId) return;
 
     try {
-        await fetch(`${CALENDAR_API_BASE}/${eventId}`, {
+        const response = await fetch(`${CALENDAR_API_BASE}/${eventId}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
             },
         });
+        // #region agent log
+        fetch('http://127.0.0.1:7431/ingest/8d894928-30cc-40ea-96dd-adf1ce5bf673', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Debug-Session-Id': 'd424bd',
+            },
+            body: JSON.stringify({
+                sessionId: 'd424bd',
+                runId: 'pre-fix',
+                hypothesisId: 'H5',
+                location: 'googleCalendar.js:deleteEventFromCalendar',
+                message: 'deleteEventFromCalendar response',
+                data: {
+                    status: response.status,
+                    ok: response.ok,
+                },
+                timestamp: Date.now(),
+            }),
+        }).catch(() => {});
+        // #endregion agent log
         return { success: true };
     } catch (err) {
+        // #region agent log
+        fetch('http://127.0.0.1:7431/ingest/8d894928-30cc-40ea-96dd-adf1ce5bf673', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Debug-Session-Id': 'd424bd',
+            },
+            body: JSON.stringify({
+                sessionId: 'd424bd',
+                runId: 'pre-fix',
+                hypothesisId: 'H5',
+                location: 'googleCalendar.js:deleteEventFromCalendar:catch',
+                message: 'deleteEventFromCalendar error',
+                data: {
+                    error: err && err.message,
+                },
+                timestamp: Date.now(),
+            }),
+        }).catch(() => {});
+        // #endregion agent log
         return { success: false, error: err.message };
     }
 }

@@ -57,17 +57,17 @@ export function Onboarding() {
                 name: user.displayName || '',
                 email: user.email || '',
                 roleType,
-                institutionName,
-                rollNumber,
+                institutionName: institutionName.toUpperCase().trim(),
+                rollNumber: rollNumber.toUpperCase().trim(),
             };
 
             if (roleType === 'school') {
                 profileData.standard = standard;
-                profileData.section = section;
+                profileData.section = section.toUpperCase().trim();
             } else {
-                profileData.department = department;
+                profileData.department = department.toUpperCase().trim();
                 profileData.year = year;
-                profileData.section = collegeSection || '';
+                profileData.section = (collegeSection || '').toUpperCase().trim();
             }
 
             await saveUserProfile(user.uid, profileData);
@@ -161,10 +161,10 @@ export function Onboarding() {
                                     <label className="block text-sm font-medium text-gray-700 mb-1.5">School Name *</label>
                                     <input
                                         type="text" required
-                                        className="block w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                                        placeholder="e.g. Delhi Public School"
+                                        className="block w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                                         value={institutionName}
-                                        onChange={(e) => setInstitutionName(e.target.value)}
+                                        onChange={(e) => setInstitutionName(e.target.value.toUpperCase())}
+                                        style={{ textTransform: 'uppercase' }}
                                     />
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
@@ -184,10 +184,10 @@ export function Onboarding() {
                                         <label className="block text-sm font-medium text-gray-700 mb-1.5">Section *</label>
                                         <input
                                             type="text" required
-                                            className="block w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                                            placeholder="e.g. A"
+                                            className="block w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                                             value={section}
-                                            onChange={(e) => setSection(e.target.value)}
+                                            onChange={(e) => setSection(e.target.value.toUpperCase())}
+                                            style={{ textTransform: 'uppercase' }}
                                         />
                                     </div>
                                 </div>
@@ -195,10 +195,10 @@ export function Onboarding() {
                                     <label className="block text-sm font-medium text-gray-700 mb-1.5">Class Roll Number *</label>
                                     <input
                                         type="text" required
-                                        className="block w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                                        placeholder="e.g. 15"
+                                        className="block w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                                         value={rollNumber}
-                                        onChange={(e) => setRollNumber(e.target.value)}
+                                        onChange={(e) => setRollNumber(e.target.value.toUpperCase())}
+                                        style={{ textTransform: 'uppercase' }}
                                     />
                                 </div>
                             </div>
@@ -227,10 +227,10 @@ export function Onboarding() {
                                     <label className="block text-sm font-medium text-gray-700 mb-1.5">College Name *</label>
                                     <input
                                         type="text" required
-                                        className="block w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                                        placeholder="e.g. Govt. College of Engineering, Nagpur"
+                                        className="block w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                                         value={institutionName}
-                                        onChange={(e) => setInstitutionName(e.target.value)}
+                                        onChange={(e) => setInstitutionName(e.target.value.toUpperCase())}
+                                        style={{ textTransform: 'uppercase' }}
                                     />
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
@@ -238,10 +238,10 @@ export function Onboarding() {
                                         <label className="block text-sm font-medium text-gray-700 mb-1.5">Department *</label>
                                         <input
                                             type="text" required
-                                            className="block w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                                            placeholder="e.g. Computer Science"
+                                            className="block w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                                             value={department}
-                                            onChange={(e) => setDepartment(e.target.value)}
+                                            onChange={(e) => setDepartment(e.target.value.toUpperCase())}
+                                            style={{ textTransform: 'uppercase' }}
                                         />
                                     </div>
                                     <div>
@@ -261,20 +261,20 @@ export function Onboarding() {
                                     <label className="block text-sm font-medium text-gray-700 mb-1.5">Section *</label>
                                     <input
                                         type="text" required
-                                        className="block w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                                        placeholder="e.g. A"
+                                        className="block w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                                         value={collegeSection}
-                                        onChange={(e) => setCollegeSection(e.target.value)}
+                                        onChange={(e) => setCollegeSection(e.target.value.toUpperCase())}
+                                        style={{ textTransform: 'uppercase' }}
                                     />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1.5">Class Roll Number *</label>
                                     <input
                                         type="text" required
-                                        className="block w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                                        placeholder="e.g. 101"
+                                        className="block w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                                         value={rollNumber}
-                                        onChange={(e) => setRollNumber(e.target.value)}
+                                        onChange={(e) => setRollNumber(e.target.value.toUpperCase())}
+                                        style={{ textTransform: 'uppercase' }}
                                     />
                                 </div>
                             </div>

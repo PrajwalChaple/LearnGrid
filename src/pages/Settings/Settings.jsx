@@ -45,6 +45,8 @@ export function Settings() {
     const [showConfirmPass, setShowConfirmPass] = useState(false);
     const [forgotSending, setForgotSending] = useState(false);
     const [deletePassword, setDeletePassword] = useState('');
+    const [deleteDataConfirm, setDeleteDataConfirm] = useState('');
+    const [deleteAccountConfirm, setDeleteAccountConfirm] = useState('');
     const [authError, setAuthError] = useState('');
     const [authSuccess, setAuthSuccess] = useState('');
     const [loading, setLoading] = useState(false);
@@ -87,7 +89,7 @@ export function Settings() {
             if (cancelled) return;
             setNotesCount(notes.length);
             setMyNotesCount(notes.filter((n) => n.userId === user?.uid).length);
-        }).catch(() => {});
+        }).catch(() => { });
         return () => { cancelled = true; };
     }, [userProfile, user?.uid]);
 
@@ -151,10 +153,16 @@ export function Settings() {
         }
         setLoading(true);
         try {
+            // Step 1: Delete all user data (notes, assignments, announcements, notifications)
+            await deleteAllUserData(user.uid);
+            // Step 2: Delete user profile from Firestore
             await deleteUserProfile(user.uid);
+            // Step 3: Delete Firebase Auth account (triggers re-auth popup for Google users)
             const result = await deleteUserAccount(hasEmailProvider(user) ? deletePassword : null);
             if (result.success) {
-                window.location.href = '/#/';
+                // Clear session and redirect to landing page
+                sessionStorage.clear();
+                window.location.replace('/#/');
                 return;
             }
             setAuthError(getFriendlyMessage(result.error) || 'Could not delete account.');
@@ -186,7 +194,30 @@ export function Settings() {
             setAuthError(getFriendlyMessage(error) || 'Could not connect Google.');
         } else {
             refreshProfile();
-            setCalendarConnected(isCalendarConnected());
+            const connected = isCalendarConnected();
+            setCalendarConnected(connected);
+            // #region agent log
+            fetch('http://127.0.0.1:7431/ingest/8d894928-30cc-40ea-96dd-adf1ce5bf673', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Debug-Session-Id': 'd424bd',
+                },
+                body: JSON.stringify({
+                    sessionId: 'd424bd',
+                    runId: 'pre-fix',
+                    hypothesisId: 'H1',
+                    location: 'Settings.jsx:handleConnectGoogle',
+                    message: 'After loginWithGoogle, checking calendar connection',
+                    data: {
+                        connected,
+                        hasToken: !!sessionStorage.getItem('gcal_token'),
+                        userId: user?.uid,
+                    },
+                    timestamp: Date.now(),
+                }),
+            }).catch(() => { });
+            // #endregion agent log
         }
     };
 
@@ -385,13 +416,22 @@ export function Settings() {
 
             {/* Delete my data modal */}
             {deleteDataModal && (
-                <div className="modal-overlay" onClick={() => !loading && setDeleteDataModal(false)}>
+                <div className="modal-overlay" onClick={() => { if (!loading) { setDeleteDataModal(false); setDeleteDataConfirm(''); } }}>
                     <div className="modal-card danger" onClick={(e) => e.stopPropagation()}>
                         <h3>Delete all your data?</h3>
                         <p className="modal-warning">This will permanently delete your notes, assignments, announcements and notifications from the database. Your account will stay active and you can continue using LearnGrid.</p>
+                        <p className="confirm-instruction">Type <strong>DELETE DATA</strong> to confirm:</p>
+                        <input
+                            type="text"
+                            value={deleteDataConfirm}
+                            onChange={(e) => setDeleteDataConfirm(e.target.value.toUpperCase())}
+                            className="input confirm-input"
+                            style={{ textTransform: 'uppercase' }}
+                            autoComplete="off"
+                        />
                         <div className="modal-actions">
-                            <button type="button" className="btn-secondary" onClick={() => setDeleteDataModal(false)} disabled={loading}>Cancel</button>
-                            <button type="button" className="btn-danger" onClick={handleDeleteMyData} disabled={loading}>
+                            <button type="button" className="btn-secondary" onClick={() => { setDeleteDataModal(false); setDeleteDataConfirm(''); }} disabled={loading}>Cancel</button>
+                            <button type="button" className="btn-danger" onClick={handleDeleteMyData} disabled={loading || deleteDataConfirm !== 'DELETE DATA'}>
                                 {loading ? <Loader2 size={18} className="spin" /> : 'Delete my data'}
                             </button>
                         </div>
@@ -461,16 +501,25 @@ export function Settings() {
 
             {/* Delete account modal */}
             {deleteModal && (
-                <div className="modal-overlay" onClick={() => !loading && setDeleteModal(false)}>
+                <div className="modal-overlay" onClick={() => { if (!loading) { setDeleteModal(false); setDeleteAccountConfirm(''); setDeletePassword(''); } }}>
                     <div className="modal-card danger" onClick={(e) => e.stopPropagation()}>
                         <h3>Delete account permanently?</h3>
                         <p className="modal-warning">This will remove your account and all data. You cannot undo this.</p>
                         {hasEmailProvider(user) && (
-                            <input type="password" placeholder="Enter your password to confirm" value={deletePassword} onChange={(e) => setDeletePassword(e.target.value)} className="input" />
+                            <input type="password" value={deletePassword} onChange={(e) => setDeletePassword(e.target.value)} className="input" />
                         )}
+                        <p className="confirm-instruction">Type <strong>DELETE ACCOUNT</strong> to confirm:</p>
+                        <input
+                            type="text"
+                            value={deleteAccountConfirm}
+                            onChange={(e) => setDeleteAccountConfirm(e.target.value.toUpperCase())}
+                            className="input confirm-input"
+                            style={{ textTransform: 'uppercase' }}
+                            autoComplete="off"
+                        />
                         <div className="modal-actions">
-                            <button type="button" className="btn-secondary" onClick={() => setDeleteModal(false)} disabled={loading}>Cancel</button>
-                            <button type="button" className="btn-danger" onClick={handleDeleteAccount} disabled={loading || (hasEmailProvider(user) && !deletePassword.trim())}>
+                            <button type="button" className="btn-secondary" onClick={() => { setDeleteModal(false); setDeleteAccountConfirm(''); setDeletePassword(''); }} disabled={loading}>Cancel</button>
+                            <button type="button" className="btn-danger" onClick={handleDeleteAccount} disabled={loading || deleteAccountConfirm !== 'DELETE ACCOUNT' || (hasEmailProvider(user) && !deletePassword.trim())}>
                                 {loading ? <Loader2 size={18} className="spin" /> : 'Delete my account'}
                             </button>
                         </div>
@@ -514,7 +563,7 @@ export function Settings() {
                 .link-arrow { color: var(--color-primary); font-weight: 500; font-size: 0.9rem; text-decoration: none; }
                 .link-arrow:hover { text-decoration: underline; }
                 .link-group { display: flex; gap: 1rem; }
-                .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 1rem; }
+                .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.35); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 1rem; }
                 .modal-card { background: var(--color-surface); border-radius: var(--radius-xl); padding: 1.5rem 2rem; max-width: 400px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.2); border: 1px solid var(--color-border); }
                 .modal-card h3 { margin: 0 0 1rem 0; font-size: 1.25rem; color: var(--color-text-main); }
                 .password-input-wrap { position: relative; margin-bottom: 0.5rem; }
@@ -533,6 +582,10 @@ export function Settings() {
                 .btn-danger { padding: 0.5rem 1rem; border-radius: var(--radius-md); border: none; background: #dc2626; color: white; font-weight: 600; cursor: pointer; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 0.5rem; }
                 .btn-danger:hover:not(:disabled) { background: #b91c1c; }
                 .modal-card.danger .modal-warning { color: var(--color-text-muted); font-size: 0.9rem; margin: 0 0 1rem 0; }
+                .confirm-instruction { font-size: 0.85rem; color: var(--color-text-muted); margin: 0 0 0.5rem 0; }
+                .confirm-instruction strong { color: #dc2626; font-weight: 700; letter-spacing: 0.5px; }
+                .confirm-input { font-weight: 600 !important; letter-spacing: 1px; }
+                .btn-danger:disabled { opacity: 0.5; cursor: not-allowed; background: #9ca3af; }
             `}</style>
         </div>
     );

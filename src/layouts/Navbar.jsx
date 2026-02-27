@@ -268,10 +268,8 @@ export function Navbar({ onMenuClick }) {
       <style>{`
         .navbar {
           height: 70px;
-          background: rgba(255, 255, 255, 0.8);
-          backdrop-filter: blur(16px);
-          -webkit-backdrop-filter: blur(16px);
-          border-bottom: 1px solid rgba(229, 231, 235, 0.6);
+          background: #f8fafc;
+          border-bottom: none;
           display: flex;
           align-items: center;
           justify-content: space-between;
@@ -322,9 +320,10 @@ export function Navbar({ onMenuClick }) {
         .search-bar input {
           width: 100%;
           padding: 0.65rem 1rem 0.65rem 2.75rem;
-          border: 1px solid var(--color-border);
+          border: 1px solid transparent;
           border-radius: var(--radius-full);
-          background-color: var(--color-background);
+          background-color: white;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.04);
           transition: all var(--transition-fast);
           font-size: 0.9rem;
           color: var(--color-text-main);

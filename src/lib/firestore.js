@@ -139,6 +139,127 @@ export async function updateAssignment(id, fields) {
     await updateDoc(doc(db, 'assignments', id), fields);
 }
 
+// ─── Dynamic Audience Queries ───────────────────────────────────
+
+/**
+ * Get distinct institution names for a given roleType ('school' or 'college').
+ * Derives from user profiles — returns schools/colleges that have registered users.
+ */
+export async function getDistinctInstitutions(roleType) {
+    const q = query(collection(db, 'users'), where('roleType', '==', roleType));
+    const snap = await getDocs(q);
+    const names = new Set();
+    snap.docs.forEach(d => {
+        const name = d.data().institutionName;
+        if (name) names.add(name);
+    });
+    return [...names].sort();
+}
+
+/**
+ * Get distinct branches (departments) for a given college.
+ */
+export async function getBranchesForCollege(collegeName) {
+    const q = query(
+        collection(db, 'users'),
+        where('roleType', '==', 'college'),
+        where('institutionName', '==', collegeName)
+    );
+    const snap = await getDocs(q);
+    const branches = new Set();
+    snap.docs.forEach(d => {
+        const dept = d.data().department;
+        if (dept) branches.add(dept);
+    });
+    return [...branches].sort();
+}
+
+/**
+ * Get sections for a given school + standard.
+ * Always includes default A–E, plus any extras found in DB.
+ */
+export async function getSectionsForSchool(schoolName, standard) {
+    const defaults = ['A', 'B', 'C', 'D', 'E'];
+    const q = query(
+        collection(db, 'users'),
+        where('roleType', '==', 'school'),
+        where('institutionName', '==', schoolName),
+        where('standard', '==', standard)
+    );
+    const snap = await getDocs(q);
+    const sections = new Set(defaults);
+    snap.docs.forEach(d => {
+        const sec = d.data().section;
+        if (sec) sections.add(sec.toUpperCase());
+    });
+    return [...sections].sort();
+}
+
+/**
+ * Get divisions for a given college + branch + year.
+ * Always includes default A–E, plus any extras found in DB.
+ */
+export async function getDivisionsForCollege(collegeName, branch, year) {
+    const defaults = ['A', 'B', 'C', 'D', 'E'];
+    const q = query(
+        collection(db, 'users'),
+        where('roleType', '==', 'college'),
+        where('institutionName', '==', collegeName),
+        where('department', '==', branch),
+        where('year', '==', year)
+    );
+    const snap = await getDocs(q);
+    const divisions = new Set(defaults);
+    snap.docs.forEach(d => {
+        const sec = d.data().section;
+        if (sec) divisions.add(sec.toUpperCase());
+    });
+    return [...divisions].sort();
+}
+
+/**
+ * Build Firestore constraints from explicit audience parameters.
+ * Only adds constraints for non-empty fields.
+ */
+function buildDynamicConstraints(params) {
+    const constraints = [];
+    if (params.roleType) constraints.push(where('roleType', '==', params.roleType));
+    if (params.institutionName) constraints.push(where('institutionName', '==', params.institutionName));
+    if (params.standard) constraints.push(where('standard', '==', params.standard));
+    if (params.section) constraints.push(where('section', '==', params.section));
+    if (params.department) constraints.push(where('department', '==', params.department));
+    if (params.year) constraints.push(where('year', '==', params.year));
+    return constraints;
+}
+
+/**
+ * Get recipient count using explicit audience parameters.
+ * @param {Object} params - { roleType, institutionName, standard?, section?, department?, year? }
+ */
+export async function getDynamicRecipientCount(params, currentUid = '') {
+    const constraints = buildDynamicConstraints(params);
+    if (constraints.length === 0) return 0;
+    const q = query(collection(db, 'users'), ...constraints);
+    const snap = await getDocs(q);
+    return currentUid
+        ? snap.docs.filter(d => d.id !== currentUid).length
+        : snap.size;
+}
+
+/**
+ * Get recipients using explicit audience parameters.
+ * @param {Object} params - { roleType, institutionName, standard?, section?, department?, year? }
+ */
+export async function getDynamicRecipients(params, currentUid = '') {
+    const constraints = buildDynamicConstraints(params);
+    if (constraints.length === 0) return [];
+    const q = query(collection(db, 'users'), ...constraints);
+    const snap = await getDocs(q);
+    return snap.docs
+        .filter(d => !currentUid || d.id !== currentUid)
+        .map(d => ({ uid: d.id, ...d.data() }));
+}
+
 // ─── Notifications ──────────────────────────────────────────────
 
 export async function createNotification(data) {
@@ -188,27 +309,46 @@ export async function getRecipients(profile, scope, currentUid = '') {
 function buildRecipientConstraints(profile, scope) {
     let constraints = [
         where('institutionName', '==', profile.institutionName),
-        // where('roleType', '==', 'student') // Removed to allow notifying everyone including faculty if needed, or re-add if strict
     ];
 
     if (scope === 'class') {
+        // College: same dept + year + section; School: same standard + section
         if (profile.roleType === 'college') {
             constraints.push(where('department', '==', profile.department));
             constraints.push(where('year', '==', profile.year));
+            if (profile.section) constraints.push(where('section', '==', profile.section));
         } else {
             constraints.push(where('standard', '==', profile.standard));
             constraints.push(where('section', '==', profile.section));
         }
+    } else if (scope === 'year') {
+        // College: same dept + year (all sections)
+        constraints.push(where('department', '==', profile.department));
+        constraints.push(where('year', '==', profile.year));
     } else if (scope === 'branch') {
+        // College: same department (all years)
         if (profile.roleType === 'college') {
             constraints.push(where('department', '==', profile.department));
         } else {
-            constraints.push(where('department', '==', profile.department || 'General'));
+            constraints.push(where('standard', '==', profile.standard));
+        }
+    } else if (scope === 'section') {
+        // School: same standard + section
+        if (profile.roleType === 'school') {
+            constraints.push(where('standard', '==', profile.standard));
+            constraints.push(where('section', '==', profile.section));
+        }
+    } else if (scope === 'standard') {
+        // School: same standard (all sections)
+        if (profile.roleType === 'school') {
+            constraints.push(where('standard', '==', profile.standard));
         }
     }
+    // scope === 'college' or 'school' => entire institution (no extra filters needed)
 
     return constraints;
 }
+
 
 export function subscribeToNotifications(userId, callback) {
     // Listen for notifications sent BY this user

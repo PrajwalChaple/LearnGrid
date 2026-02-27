@@ -115,6 +115,28 @@ export function Assignments() {
       const newId = await addAssignment(assignmentData);
       // Sync to Google Calendar when connected
       const token = getCalendarToken();
+      // #region agent log
+      fetch('http://127.0.0.1:7431/ingest/8d894928-30cc-40ea-96dd-adf1ce5bf673', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Debug-Session-Id': 'd424bd',
+        },
+        body: JSON.stringify({
+          sessionId: 'd424bd',
+          runId: 'pre-fix',
+          hypothesisId: 'H1-H4',
+          location: 'Assignments.jsx:handleUploadAssignment',
+          message: 'handleUploadAssignment calendar sync check',
+          data: {
+            hasToken: !!token,
+            userId: user?.uid,
+            assignmentId: newId,
+          },
+          timestamp: Date.now(),
+        }),
+      }).catch(() => {});
+      // #endregion agent log
       if (token) {
         const calResult = await addEventToCalendar(token, { ...assignmentData, id: newId });
         if (calResult.success && calResult.eventId) {

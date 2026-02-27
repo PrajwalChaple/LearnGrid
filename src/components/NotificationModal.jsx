@@ -1,69 +1,294 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Users, Check, BookOpen, School, Mail, Bell } from 'lucide-react';
-import { getRecipientCount, getRecipients, createNotification, createUserNotifications } from '../lib/firestore';
+import { X, Users, Check, Mail, Bell, ChevronDown, Loader2, School, Building2 } from 'lucide-react';
+import {
+    getDistinctInstitutions,
+    getBranchesForCollege,
+    getSectionsForSchool,
+    getDivisionsForCollege,
+    getDynamicRecipientCount,
+    getDynamicRecipients,
+    createNotification,
+    createUserNotifications,
+} from '../lib/firestore';
 import { sendEmailBatch } from '../lib/email';
 import { useAuth } from '../context/AuthContext';
 import { getFriendlyMessage } from '../ui';
 
+const SCHOOL_STANDARDS = Array.from({ length: 12 }, (_, i) => `${i + 1}th`);
+const COLLEGE_YEARS = ['1st', '2nd', '3rd', '4th'];
+
 export function NotificationModal({ isOpen, onClose, noteData, userProfile, onConfirmSuccess, onUpload, itemType = 'note' }) {
     const { user } = useAuth();
-    const [scope, setScope] = useState('class');
+    const isCollege = userProfile?.roleType === 'college';
+
+    // ── Audience state ──────────────────────────────────────────
+    // School flow
+    const [schools, setSchools] = useState([]);
+    const [selectedSchool, setSelectedSchool] = useState('');
+    const [selectedStandard, setSelectedStandard] = useState('');
+    const [sections, setSections] = useState([]);
+    const [selectedSection, setSelectedSection] = useState('');
+
+    // College flow
+    const [colleges, setColleges] = useState([]);
+    const [selectedCollege, setSelectedCollege] = useState('');
+    const [branches, setBranches] = useState([]);
+    const [selectedBranch, setSelectedBranch] = useState('');
+    const [selectedYear, setSelectedYear] = useState('');
+    const [divisions, setDivisions] = useState([]);
+    const [selectedDivision, setSelectedDivision] = useState('');
+
+    // Loading states
+    const [loadingInstitutions, setLoadingInstitutions] = useState(false);
+    const [loadingBranches, setLoadingBranches] = useState(false);
+    const [loadingSections, setLoadingSections] = useState(false);
+    const [loadingDivisions, setLoadingDivisions] = useState(false);
+
+    // Delivery & misc
     const [sendInApp, setSendInApp] = useState(false);
     const [sendEmail, setSendEmail] = useState(false);
     const [loading, setLoading] = useState(false);
     const [recipientCount, setRecipientCount] = useState(0);
     const [calculating, setCalculating] = useState(false);
 
+    // Recipient name preview
+    const [recipientNames, setRecipientNames] = useState([]);
+    const [loadingRecipients, setLoadingRecipients] = useState(false);
+
+    // ── Dropdown open states ────────────────────────────────────
+    const [openDropdown, setOpenDropdown] = useState(null);
+    const dropdownAreaRef = useRef(null);
+
+    // ── Reset on open ───────────────────────────────────────────
     const prevIsOpenRef = useRef(false);
     useEffect(() => {
         if (isOpen && !prevIsOpenRef.current && userProfile) {
-            calculateRecipients();
-            setSendInApp(false);
-            setSendEmail(false);
+            resetAll();
+            fetchInstitutions();
         }
         prevIsOpenRef.current = isOpen;
-    }, [isOpen, scope, userProfile, user?.uid]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [isOpen]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    const calculateRecipients = async () => {
+    // Close dropdown on outside click
+    useEffect(() => {
+        const handle = (e) => {
+            if (dropdownAreaRef.current && !dropdownAreaRef.current.contains(e.target)) {
+                setOpenDropdown(null);
+            }
+        };
+        document.addEventListener('mousedown', handle);
+        return () => document.removeEventListener('mousedown', handle);
+    }, []);
+
+    function resetAll() {
+        setSelectedSchool(''); setSelectedStandard(''); setSelectedSection('');
+        setSections([]); setSchools([]);
+        setSelectedCollege(''); setSelectedBranch(''); setSelectedYear(''); setSelectedDivision('');
+        setBranches([]); setDivisions([]); setColleges([]);
+        setSendInApp(false); setSendEmail(false);
+        setRecipientCount(0); setRecipientNames([]); setOpenDropdown(null);
+    }
+
+    // ── Fetch institutions on open ──────────────────────────────
+    async function fetchInstitutions() {
+        setLoadingInstitutions(true);
+        try {
+            const roleType = isCollege ? 'college' : 'school';
+            const list = await getDistinctInstitutions(roleType);
+            if (isCollege) setColleges(list);
+            else setSchools(list);
+        } catch (err) {
+            console.error('Error fetching institutions:', err);
+        } finally {
+            setLoadingInstitutions(false);
+        }
+    }
+
+    // ── Fetch & show recipient names + count ────────────────────
+    async function fetchRecipientsPreview(params) {
+        setLoadingRecipients(true);
         setCalculating(true);
         try {
             const currentUid = user?.uid || '';
-            const count = await getRecipientCount(userProfile, scope, currentUid);
-            setRecipientCount(count);
-        } catch (error) {
-            console.error("Error calculating recipients:", error);
+            const recipients = await getDynamicRecipients(params, currentUid);
+            setRecipientCount(recipients.length);
+            setRecipientNames(
+                recipients.map(r => ({
+                    name: r.name || r.displayName || r.email || 'Unknown',
+                    email: r.email || '',
+                }))
+            );
+        } catch (err) {
+            console.error('Error fetching recipients:', err);
             setRecipientCount(0);
+            setRecipientNames([]);
         } finally {
+            setLoadingRecipients(false);
             setCalculating(false);
         }
-    };
+    }
 
+    // ── School flow handlers ────────────────────────────────────
+    function handleSchoolSelect(school) {
+        setSelectedSchool(school);
+        setSelectedStandard('');
+        setSelectedSection('');
+        setSections([]);
+        setRecipientCount(0);
+        setRecipientNames([]);
+        setOpenDropdown(null);
+    }
+
+    function handleStandardSelect(std) {
+        setSelectedStandard(std);
+        setSelectedSection('');
+        setRecipientCount(0);
+        setRecipientNames([]);
+        setOpenDropdown(null);
+        fetchSections(selectedSchool, std);
+    }
+
+    async function fetchSections(school, standard) {
+        setLoadingSections(true);
+        try {
+            const list = await getSectionsForSchool(school, standard);
+            setSections(list);
+        } catch (err) {
+            console.error('Error fetching sections:', err);
+        } finally {
+            setLoadingSections(false);
+        }
+    }
+
+    function handleSectionSelect(sec) {
+        setSelectedSection(sec);
+        setOpenDropdown(null);
+        fetchRecipientsPreview({
+            roleType: 'school',
+            institutionName: selectedSchool,
+            standard: selectedStandard,
+            section: sec,
+        });
+    }
+
+    // ── College flow handlers ───────────────────────────────────
+    function handleCollegeSelect(college) {
+        setSelectedCollege(college);
+        setSelectedBranch('');
+        setSelectedYear('');
+        setSelectedDivision('');
+        setBranches([]);
+        setDivisions([]);
+        setRecipientCount(0);
+        setRecipientNames([]);
+        setOpenDropdown(null);
+        fetchBranches(college);
+    }
+
+    async function fetchBranches(college) {
+        setLoadingBranches(true);
+        try {
+            const list = await getBranchesForCollege(college);
+            setBranches(list);
+        } catch (err) {
+            console.error('Error fetching branches:', err);
+        } finally {
+            setLoadingBranches(false);
+        }
+    }
+
+    function handleBranchSelect(branch) {
+        setSelectedBranch(branch);
+        setSelectedYear('');
+        setSelectedDivision('');
+        setDivisions([]);
+        setRecipientCount(0);
+        setRecipientNames([]);
+        setOpenDropdown(null);
+    }
+
+    function handleYearSelect(yr) {
+        setSelectedYear(yr);
+        setSelectedDivision('');
+        setRecipientCount(0);
+        setRecipientNames([]);
+        setOpenDropdown(null);
+        fetchDivisions(selectedCollege, selectedBranch, yr);
+    }
+
+    async function fetchDivisions(college, branch, year) {
+        setLoadingDivisions(true);
+        try {
+            const list = await getDivisionsForCollege(college, branch, year);
+            setDivisions(list);
+        } catch (err) {
+            console.error('Error fetching divisions:', err);
+        } finally {
+            setLoadingDivisions(false);
+        }
+    }
+
+    function handleDivisionSelect(div) {
+        setSelectedDivision(div);
+        setOpenDropdown(null);
+        fetchRecipientsPreview({
+            roleType: 'college',
+            institutionName: selectedCollege,
+            department: selectedBranch,
+            year: selectedYear,
+            section: div,
+        });
+    }
+
+    // ── Validation ──────────────────────────────────────────────
+    const isAudienceComplete = isCollege
+        ? !!(selectedCollege && selectedBranch && selectedYear && selectedDivision)
+        : !!(selectedSchool && selectedStandard && selectedSection);
+
+    // ── Build audience params ───────────────────────────────────
+    function buildAudienceParams() {
+        if (isCollege) {
+            return {
+                roleType: 'college',
+                institutionName: selectedCollege,
+                department: selectedBranch,
+                year: selectedYear,
+                section: selectedDivision,
+            };
+        }
+        return {
+            roleType: 'school',
+            institutionName: selectedSchool,
+            standard: selectedStandard,
+            section: selectedSection,
+        };
+    }
+
+    // ── Confirm handler ─────────────────────────────────────────
     const handleConfirm = async () => {
+        if (!isAudienceComplete) return;
         setLoading(true);
         try {
-            // 1. First, do the actual upload/save if onUpload is provided
+            // 1. Upload/save if needed
             let savedData = noteData;
             if (onUpload) {
                 savedData = await onUpload();
-                if (!savedData) {
-                    // Upload failed or was cancelled
-                    setLoading(false);
-                    return;
-                }
+                if (!savedData) { setLoading(false); return; }
             }
 
-            // 2. Fetch Recipients (excluding current user)
+            // 2. Fetch recipients
+            const params = buildAudienceParams();
             const currentUid = user?.uid || '';
-            const recipients = await getRecipients(userProfile, scope, currentUid);
+            const recipients = await getDynamicRecipients(params, currentUid);
             const totalRecipients = recipients.length;
 
-            // Filter recipients by their notification preferences (assignmentAlerts, announcementAlerts, channel)
+            // Filter by preferences
             const wantsTypeAlert = (r) => {
                 const prefs = r.settings?.notifications;
-                if (!prefs) return true; // no settings = opt-in
+                if (!prefs) return true;
                 if (itemType === 'assignment') return prefs.assignmentAlerts !== false;
                 if (itemType === 'announcement') return prefs.announcementAlerts !== false;
-                return true; // note
+                return true;
             };
             const wantsInApp = (r) => {
                 const ch = r.settings?.notifications?.channel;
@@ -76,18 +301,13 @@ export function NotificationModal({ isOpen, onClose, noteData, userProfile, onCo
             const recipientsInApp = sendInApp ? recipients.filter(r => wantsTypeAlert(r) && wantsInApp(r)) : [];
             const recipientsEmail = sendEmail ? recipients.filter(r => wantsTypeAlert(r) && wantsEmail(r)) : [];
 
-            const count = totalRecipients;
-
-            // 3. Send Emails only to recipients who want email for this type
+            // 3. Send emails
             let emailStatus = sendEmail ? 'sent' : 'skipped';
             let emailError = '';
-
             if (sendEmail && recipientsEmail.length > 0) {
                 try {
                     const emailResult = await sendEmailBatch(recipientsEmail, savedData, userProfile, itemType);
-                    if (!emailResult.success) {
-                        emailStatus = 'failed';
-                    }
+                    if (!emailResult.success) emailStatus = 'failed';
                 } catch (err) {
                     console.error("Email sending error:", err);
                     emailStatus = 'failed';
@@ -95,26 +315,32 @@ export function NotificationModal({ isOpen, onClose, noteData, userProfile, onCo
                 }
             }
 
-            // 4. Save Notification Record
+            // 4. Machine-readable scope for NotificationHistory filters
+            const scope = isCollege ? 'class' : 'section';
+
+            // 5. Save notification record
             const notificationData = {
                 senderId: user?.uid || '',
                 senderName: userProfile?.name || userProfile?.displayName || 'Unknown',
-                institutionName: userProfile?.institutionName || '',
-                department: userProfile?.department || '',
-                year: userProfile?.year || '',
-                section: userProfile?.section || userProfile?.sector || '',
+                institutionName: params.institutionName,
+                department: params.department || '',
+                year: params.year || '',
+                section: params.section || '',
+                standard: params.standard || '',
                 scope: scope,
+                scopeDesc: isCollege
+                    ? `${selectedCollege} · ${selectedBranch} · ${selectedYear} Year · Div ${selectedDivision}`
+                    : `${selectedSchool} · Std ${selectedStandard} · Sec ${selectedSection}`,
                 noteId: savedData?.id || '',
                 noteTitle: savedData?.title || '',
-                recipientCount: count,
+                recipientCount: totalRecipients,
                 status: emailStatus,
-                error: emailError
+                error: emailError,
             };
 
-            console.log('Creating notification:', notificationData);
             await createNotification(notificationData);
 
-            // 5. Create in-app notifications only for recipients who want in-app for this type
+            // 6. In-app notifications
             if (sendInApp && recipientsInApp.length > 0) {
                 const typeLabels = { note: 'note', assignment: 'assignment', announcement: 'announcement' };
                 const label = typeLabels[itemType] || 'note';
@@ -139,6 +365,61 @@ export function NotificationModal({ isOpen, onClose, noteData, userProfile, onCo
 
     if (!isOpen) return null;
 
+    // ── Custom dropdown renderer ────────────────────────────────
+    const renderDropdown = ({ id, label, icon, value, options, onSelect, isLoading, disabled, emptyMsg, renderLabel }) => {
+        const isOpenDd = openDropdown === id;
+        const displayValue = value || '';
+        const displayLabel = renderLabel ? renderLabel(displayValue) : displayValue;
+
+        return (
+            <div className={`nmodal-aud-field ${disabled ? 'nmodal-aud-field--disabled' : ''}`}>
+                <label className="nmodal-aud-label">{label}</label>
+                <button
+                    type="button"
+                    className={`nmodal-aud-select ${isOpenDd ? 'nmodal-aud-select--open' : ''} ${disabled ? 'nmodal-aud-select--disabled' : ''}`}
+                    onClick={() => !disabled && setOpenDropdown(isOpenDd ? null : id)}
+                    disabled={disabled}
+                >
+                    <div className="nmodal-aud-select-left">
+                        <div className={`nmodal-aud-icon ${value ? 'nmodal-aud-icon--active' : ''}`}>
+                            {isLoading ? <Loader2 size={14} className="nmodal-aud-spinner" /> : icon}
+                        </div>
+                        <span className={`nmodal-aud-select-text ${!value ? 'nmodal-aud-select-placeholder' : ''}`}>
+                            {isLoading ? 'Loading...' : (displayLabel || `Select ${label}`)}
+                        </span>
+                    </div>
+                    <ChevronDown size={14} className={`nmodal-aud-chevron ${isOpenDd ? 'nmodal-aud-chevron--open' : ''}`} />
+                </button>
+
+                {isOpenDd && !disabled && !isLoading && (
+                    <div className="nmodal-aud-menu">
+                        {options.length === 0 ? (
+                            <div className="nmodal-aud-empty">{emptyMsg || 'No options found'}</div>
+                        ) : (
+                            options.map(opt => {
+                                const optValue = typeof opt === 'string' ? opt : opt.value;
+                                const optLabel = renderLabel ? renderLabel(optValue) : (typeof opt === 'string' ? opt : opt.label);
+                                return (
+                                    <button
+                                        key={optValue}
+                                        type="button"
+                                        className={`nmodal-aud-menu-item ${value === optValue ? 'nmodal-aud-menu-item--active' : ''}`}
+                                        onClick={() => onSelect(optValue)}
+                                    >
+                                        <span>{optLabel}</span>
+                                        {value === optValue && (
+                                            <div className="nmodal-aud-check"><Check size={10} className="text-white" /></div>
+                                        )}
+                                    </button>
+                                );
+                            })
+                        )}
+                    </div>
+                )}
+            </div>
+        );
+    };
+
     return (
         <div className="fixed inset-0 z-50" style={{ overflow: 'auto' }}>
             {/* Backdrop */}
@@ -149,7 +430,6 @@ export function NotificationModal({ isOpen, onClose, noteData, userProfile, onCo
 
             {/* Centering wrapper */}
             <div className="nmodal-center-wrap">
-                {/* Modal — wide & short */}
                 <div className="nmodal-card animate-nmodal-scale">
 
                     {/* Header */}
@@ -166,35 +446,148 @@ export function NotificationModal({ isOpen, onClose, noteData, userProfile, onCo
                     {/* Body — two-column layout */}
                     <div className="nmodal-body">
 
-                        {/* LEFT: Scope selection */}
-                        <div className="nmodal-col-left">
+                        {/* LEFT: Dynamic Audience */}
+                        <div className="nmodal-col-left" ref={dropdownAreaRef}>
                             <p className="nmodal-section-label">Audience</p>
-                            <div className="nmodal-scope-grid">
-                                <ScopeCard
-                                    icon={<Users size={18} className="text-indigo-500" />}
-                                    title="My Class"
-                                    subtitle={`${userProfile?.year || userProfile?.standard || ''}${userProfile?.section ? ' – ' + userProfile.section : userProfile?.sector ? ' – ' + userProfile.sector : ''}`}
-                                    selected={scope === 'class'}
-                                    onClick={() => setScope('class')}
-                                />
-                                <ScopeCard
-                                    icon={<BookOpen size={18} className="text-purple-500" />}
-                                    title="My Branch"
-                                    subtitle={userProfile?.department || ''}
-                                    selected={scope === 'branch'}
-                                    onClick={() => setScope('branch')}
-                                />
-                                <ScopeCard
-                                    icon={<School size={18} className="text-pink-500" />}
-                                    title="Entire College"
-                                    subtitle={userProfile?.institutionName || ''}
-                                    selected={scope === 'college'}
-                                    onClick={() => setScope('college')}
-                                />
+
+                            {/* ── SCHOOL FLOW ── */}
+                            {!isCollege && (
+                                <div className="nmodal-aud-stack">
+                                    {renderDropdown({
+                                        id: 'school',
+                                        label: 'School',
+                                        icon: <School size={14} />,
+                                        value: selectedSchool,
+                                        options: schools,
+                                        onSelect: handleSchoolSelect,
+                                        isLoading: loadingInstitutions,
+                                        disabled: false,
+                                        emptyMsg: 'No schools found',
+                                    })}
+
+                                    {selectedSchool && renderDropdown({
+                                        id: 'standard',
+                                        label: 'Standard',
+                                        icon: <Users size={14} />,
+                                        value: selectedStandard,
+                                        options: SCHOOL_STANDARDS,
+                                        onSelect: handleStandardSelect,
+                                        isLoading: false,
+                                        disabled: !selectedSchool,
+                                        emptyMsg: 'No standards',
+                                        renderLabel: (v) => v ? `Class ${v}` : '',
+                                    })}
+
+                                    {selectedStandard && renderDropdown({
+                                        id: 'section',
+                                        label: 'Section',
+                                        icon: <Users size={14} />,
+                                        value: selectedSection,
+                                        options: sections,
+                                        onSelect: handleSectionSelect,
+                                        isLoading: loadingSections,
+                                        disabled: !selectedStandard,
+                                        emptyMsg: 'No sections found',
+                                        renderLabel: (v) => v ? `Section ${v}` : '',
+                                    })}
+                                </div>
+                            )}
+
+                            {/* ── COLLEGE FLOW ── */}
+                            {isCollege && (
+                                <div className="nmodal-aud-stack">
+                                    {renderDropdown({
+                                        id: 'college',
+                                        label: 'College',
+                                        icon: <Building2 size={14} />,
+                                        value: selectedCollege,
+                                        options: colleges,
+                                        onSelect: handleCollegeSelect,
+                                        isLoading: loadingInstitutions,
+                                        disabled: false,
+                                        emptyMsg: 'No colleges found',
+                                    })}
+
+                                    {selectedCollege && renderDropdown({
+                                        id: 'branch',
+                                        label: 'Branch',
+                                        icon: <Users size={14} />,
+                                        value: selectedBranch,
+                                        options: branches,
+                                        onSelect: handleBranchSelect,
+                                        isLoading: loadingBranches,
+                                        disabled: !selectedCollege,
+                                        emptyMsg: 'No branches found',
+                                    })}
+
+                                    {selectedBranch && renderDropdown({
+                                        id: 'year',
+                                        label: 'Year',
+                                        icon: <Users size={14} />,
+                                        value: selectedYear,
+                                        options: COLLEGE_YEARS,
+                                        onSelect: handleYearSelect,
+                                        isLoading: false,
+                                        disabled: !selectedBranch,
+                                        emptyMsg: 'No years',
+                                        renderLabel: (v) => v ? `${v} Year` : '',
+                                    })}
+
+                                    {selectedYear && renderDropdown({
+                                        id: 'division',
+                                        label: 'Division',
+                                        icon: <Users size={14} />,
+                                        value: selectedDivision,
+                                        options: divisions,
+                                        onSelect: handleDivisionSelect,
+                                        isLoading: loadingDivisions,
+                                        disabled: !selectedYear,
+                                        emptyMsg: 'No divisions found',
+                                        renderLabel: (v) => v ? `Division ${v}` : '',
+                                    })}
+                                </div>
+                            )}
+
+                            {/* Estimated Reach + Recipient Names */}
+                            <div className="nmodal-reach" style={{ marginTop: '0.75rem' }}>
+                                <Users size={13} className="text-indigo-600" />
+                                <span>
+                                    {calculating || loadingRecipients
+                                        ? 'Calculating...'
+                                        : isAudienceComplete
+                                            ? `~${recipientCount} students will be notified`
+                                            : 'Complete selection to see count'}
+                                </span>
                             </div>
+
+                            {/* Recipient Name List */}
+                            {isAudienceComplete && recipientNames.length > 0 && !loadingRecipients && (
+                                <div className="nmodal-recipients-list">
+                                    <p className="nmodal-recipients-title">Recipients</p>
+                                    <div className="nmodal-recipients-scroll">
+                                        {recipientNames.map((r, i) => (
+                                            <div key={i} className="nmodal-recipient-item">
+                                                <div className="nmodal-recipient-avatar">
+                                                    {(r.name || '?')[0].toUpperCase()}
+                                                </div>
+                                                <div className="nmodal-recipient-info">
+                                                    <span className="nmodal-recipient-name">{r.name}</span>
+                                                    {r.email && <span className="nmodal-recipient-email">{r.email}</span>}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {isAudienceComplete && recipientNames.length === 0 && !loadingRecipients && (
+                                <div className="nmodal-recipients-empty">
+                                    No students found for this selection
+                                </div>
+                            )}
                         </div>
 
-                        {/* RIGHT: Delivery toggles + reach */}
+                        {/* RIGHT: Delivery toggles */}
                         <div className="nmodal-col-right">
                             <p className="nmodal-section-label">Delivery</p>
 
@@ -229,23 +622,17 @@ export function NotificationModal({ isOpen, onClose, noteData, userProfile, onCo
                                     <span className="nmodal-switch-knob" />
                                 </div>
                             </div>
-
-                            {/* Estimated Reach */}
-                            <div className="nmodal-reach">
-                                <Users size={13} className="text-indigo-600" />
-                                <span>
-                                    {calculating
-                                        ? 'Calculating...'
-                                        : `~${recipientCount} students will be notified`}
-                                </span>
-                            </div>
                         </div>
                     </div>
 
                     {/* Footer */}
                     <div className="nmodal-footer">
                         <button onClick={onClose} className="nmodal-btn-skip">Skip</button>
-                        <button onClick={handleConfirm} disabled={loading} className="nmodal-btn-confirm">
+                        <button
+                            onClick={handleConfirm}
+                            disabled={loading || !isAudienceComplete}
+                            className="nmodal-btn-confirm"
+                        >
                             {loading && <div className="nmodal-spinner"></div>}
                             Confirm
                         </button>
@@ -263,7 +650,7 @@ export function NotificationModal({ isOpen, onClose, noteData, userProfile, onCo
 
                 /* ── card ── */
                 .nmodal-card {
-                    width: 100%; max-width: 38rem;
+                    width: 100%; max-width: 42rem;
                     background: rgba(255,255,255,.88);
                     backdrop-filter: blur(16px);
                     border-radius: 1.125rem;
@@ -292,7 +679,7 @@ export function NotificationModal({ isOpen, onClose, noteData, userProfile, onCo
                     display: grid; grid-template-columns: 1fr 1fr;
                     gap: 1rem; padding: 1rem 1.25rem;
                 }
-                @media (max-width: 540px) {
+                @media (max-width: 600px) {
                     .nmodal-body { grid-template-columns: 1fr; }
                 }
                 .nmodal-section-label {
@@ -300,37 +687,133 @@ export function NotificationModal({ isOpen, onClose, noteData, userProfile, onCo
                     letter-spacing: .06em; color: #9ca3af; margin: 0 0 .5rem 2px;
                 }
 
-                /* ── scope grid (left col) ── */
-                .nmodal-col-left {}
-                .nmodal-scope-grid { display: flex; flex-direction: column; gap: .4rem; }
-                .nmodal-scope {
-                    display: flex; align-items: center; gap: .6rem;
-                    padding: .55rem .7rem; border-radius: .75rem;
+                /* ── audience stack ── */
+                .nmodal-aud-stack {
+                    display: flex; flex-direction: column; gap: .5rem;
+                }
+
+                /* ── audience field ── */
+                .nmodal-aud-field {
+                    position: relative;
+                    animation: nmodal-field-in .25s ease-out;
+                }
+                @keyframes nmodal-field-in {
+                    from { opacity: 0; transform: translateY(-6px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                .nmodal-aud-field--disabled { opacity: .5; pointer-events: none; }
+                .nmodal-aud-label {
+                    display: block; font-size: .62rem; font-weight: 600;
+                    color: #6b7280; margin-bottom: 3px; text-transform: uppercase;
+                    letter-spacing: .04em;
+                }
+
+                /* ── select button ── */
+                .nmodal-aud-select {
+                    width: 100%;
+                    display: flex; align-items: center; justify-content: space-between;
+                    padding: .5rem .65rem; border-radius: .6rem;
                     border: 1.5px solid #e5e7eb; background: #fff;
-                    cursor: pointer; transition: all .2s; width: 100%;
-                    text-align: left;
+                    cursor: pointer; transition: all .2s;
+                    text-align: left; font-size: .78rem;
                 }
-                .nmodal-scope:hover { border-color: #c7d2fe; background: #fafafe; }
-                .nmodal-scope--selected {
-                    border-color: #6366f1; background: rgba(99,102,241,.06);
-                    box-shadow: 0 0 0 2px rgba(99,102,241,.1);
-                }
-                .nmodal-scope-icon {
-                    width: 32px; height: 32px; border-radius: .5rem;
+                .nmodal-aud-select:hover { border-color: #c7d2fe; }
+                .nmodal-aud-select--open { border-color: #818cf8; box-shadow: 0 0 0 3px rgba(99,102,241,.1); }
+                .nmodal-aud-select--disabled { cursor: not-allowed; background: #f9fafb; }
+                .nmodal-aud-select-left { display: flex; align-items: center; gap: .5rem; }
+                .nmodal-aud-icon {
+                    width: 28px; height: 28px; border-radius: .4rem;
                     display: flex; align-items: center; justify-content: center;
-                    background: #f5f5f5; flex-shrink: 0; transition: background .2s;
+                    background: #f3f4f6; color: #9ca3af; flex-shrink: 0;
+                    transition: all .2s;
                 }
-                .nmodal-scope--selected .nmodal-scope-icon { background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
-                .nmodal-scope-title { font-size: .8rem; font-weight: 600; color: #374151; display: block; }
-                .nmodal-scope-sub { font-size: .65rem; color: #9ca3af; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; }
-                .nmodal-scope--selected .nmodal-scope-title { color: #312e81; }
-                .nmodal-scope-check {
-                    width: 16px; height: 16px; border-radius: 50%; margin-left: auto;
-                    border: 2px solid #d1d5db; display: flex; align-items: center;
-                    justify-content: center; flex-shrink: 0; transition: all .2s;
+                .nmodal-aud-icon--active { background: #eef2ff; color: #6366f1; }
+                .nmodal-aud-select-text { font-weight: 500; color: #1f2937; }
+                .nmodal-aud-select-placeholder { color: #9ca3af; font-weight: 400; }
+                .nmodal-aud-chevron { color: #9ca3af; transition: transform .2s; flex-shrink: 0; }
+                .nmodal-aud-chevron--open { transform: rotate(180deg); }
+                .nmodal-aud-spinner { animation: nmodal-spin .6s linear infinite; }
+
+                /* ── dropdown menu ── */
+                .nmodal-aud-menu {
+                    position: absolute; top: calc(100% + 3px); left: 0; right: 0;
+                    background: #fff; border: 1.5px solid #e5e7eb; border-radius: .6rem;
+                    box-shadow: 0 8px 24px rgba(0,0,0,.10);
+                    z-index: 20; overflow: hidden; max-height: 180px; overflow-y: auto;
+                    animation: nmodal-dropdown-in .15s ease-out;
                 }
-                .nmodal-scope--selected .nmodal-scope-check {
-                    border-color: #6366f1; background: #6366f1;
+                @keyframes nmodal-dropdown-in {
+                    from { opacity: 0; transform: translateY(-4px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                .nmodal-aud-menu-item {
+                    width: 100%;
+                    display: flex; align-items: center; justify-content: space-between;
+                    padding: .45rem .65rem;
+                    border: none; background: none;
+                    cursor: pointer; transition: background .15s;
+                    text-align: left; font-size: .76rem; color: #374151;
+                }
+                .nmodal-aud-menu-item:hover { background: #f8fafc; }
+                .nmodal-aud-menu-item--active { background: #eef2ff; color: #312e81; font-weight: 600; }
+                .nmodal-aud-menu-item + .nmodal-aud-menu-item { border-top: 1px solid #f3f4f6; }
+                .nmodal-aud-check {
+                    width: 16px; height: 16px; border-radius: 50%;
+                    background: #6366f1; display: flex; align-items: center; justify-content: center;
+                    flex-shrink: 0;
+                }
+                .nmodal-aud-empty {
+                    padding: .6rem .65rem; font-size: .74rem; color: #9ca3af; text-align: center;
+                }
+
+                /* ── recipient list ── */
+                .nmodal-recipients-list {
+                    margin-top: .5rem;
+                    border: 1px solid #e0e7ff;
+                    border-radius: .6rem;
+                    background: #fafbff;
+                    overflow: hidden;
+                    animation: nmodal-field-in .25s ease-out;
+                }
+                .nmodal-recipients-title {
+                    font-size: .6rem; font-weight: 700; text-transform: uppercase;
+                    letter-spacing: .05em; color: #6366f1;
+                    padding: .4rem .6rem; margin: 0;
+                    background: #eef2ff; border-bottom: 1px solid #e0e7ff;
+                }
+                .nmodal-recipients-scroll {
+                    max-height: 120px; overflow-y: auto;
+                    padding: .25rem 0;
+                }
+                .nmodal-recipient-item {
+                    display: flex; align-items: center; gap: .45rem;
+                    padding: .3rem .6rem;
+                    transition: background .15s;
+                }
+                .nmodal-recipient-item:hover { background: #eef2ff; }
+                .nmodal-recipient-avatar {
+                    width: 24px; height: 24px; border-radius: 50%;
+                    background: linear-gradient(135deg, #6366f1, #7c3aed);
+                    color: #fff; font-size: .6rem; font-weight: 700;
+                    display: flex; align-items: center; justify-content: center;
+                    flex-shrink: 0;
+                }
+                .nmodal-recipient-info {
+                    display: flex; flex-direction: column; min-width: 0;
+                }
+                .nmodal-recipient-name {
+                    font-size: .72rem; font-weight: 600; color: #1f2937;
+                    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+                }
+                .nmodal-recipient-email {
+                    font-size: .58rem; color: #9ca3af;
+                    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+                }
+                .nmodal-recipients-empty {
+                    margin-top: .5rem; padding: .5rem .6rem;
+                    border: 1px dashed #e0e7ff; border-radius: .5rem;
+                    font-size: .7rem; color: #9ca3af; text-align: center;
+                    animation: nmodal-field-in .25s ease-out;
                 }
 
                 /* ── right col ── */
@@ -375,7 +858,7 @@ export function NotificationModal({ isOpen, onClose, noteData, userProfile, onCo
                 .nmodal-reach {
                     display: flex; align-items: center; gap: .4rem;
                     background: #eef2ff; border: 1px solid #e0e7ff;
-                    border-radius: .5rem; padding: .4rem .6rem; margin-top: .25rem;
+                    border-radius: .5rem; padding: .4rem .6rem;
                     font-size: .68rem; color: #4338ca; font-weight: 500;
                 }
 
@@ -420,24 +903,5 @@ export function NotificationModal({ isOpen, onClose, noteData, userProfile, onCo
                 .animate-nmodal-fade { animation: nmodal-fade .2s ease-out forwards; }
             `}</style>
         </div>
-    );
-}
-
-/* ── Scope Card sub-component ── */
-function ScopeCard({ icon, title, subtitle, selected, onClick }) {
-    return (
-        <button
-            onClick={onClick}
-            className={`nmodal-scope ${selected ? 'nmodal-scope--selected' : ''}`}
-        >
-            <div className="nmodal-scope-icon">{icon}</div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-                <span className="nmodal-scope-title">{title}</span>
-                <span className="nmodal-scope-sub">{subtitle}</span>
-            </div>
-            <div className="nmodal-scope-check">
-                {selected && <Check size={10} className="text-white" />}
-            </div>
-        </button>
     );
 }
