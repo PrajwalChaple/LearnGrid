@@ -68,13 +68,10 @@ export function About() {
                                     <h3 className="text-2xl font-bold text-slate-900 mb-1">Prajwal Chaple</h3>
                                     <p className="text-sm font-semibold text-blue-600 uppercase tracking-wider mb-5">Founder & Developer</p>
                                     <p className="text-base font-medium text-slate-600 leading-relaxed mb-4">
-                                        I’m a student and self-taught developer focused on building practical, user-centric software. While navigating various academic tools, I realized many platforms were unnecessarily complex and distracting. That experience led me to build LearnGrid — a streamlined workspace designed to help students stay organized and focused.
-                                    </p>
-                                    <p className="text-base font-medium text-slate-600 leading-relaxed mb-4">
-                                        I’m particularly interested in modern web technologies, product design, and creating systems that are simple yet scalable. I believe good software should feel intuitive, efficient, and purposeful.
+                                        I’m a student and self-taught developer focused on building practical, user-centric software. Frustrated by complex academic tools, I built LearnGrid — a streamlined workspace designed to help students stay organized and focused.
                                     </p>
                                     <p className="text-base font-medium text-slate-600 leading-relaxed mb-8">
-                                        Beyond development, I’m constantly learning, refining my skills, and working on projects that solve real-world problems. My aim is to build tools that genuinely improve how students manage their academic life.
+                                        Beyond development, I’m constantly learning and working on projects that solve real-world problems. I believe good software should feel intuitive, efficient, and purposeful.
                                     </p>
 
                                     {/* Social icons */}
