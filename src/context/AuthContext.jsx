@@ -102,7 +102,6 @@ export function AuthProvider({ children }) {
         setAuthError(null);
         const { user: u, error } = await loginWithGoogle();
         if (error) {
-            console.error('[AuthContext] Google login error code:', error.code, 'message:', error.message);
             const msg = formatErrorMessage(error.code);
             setAuthError(msg);
             return { success: false, message: msg };

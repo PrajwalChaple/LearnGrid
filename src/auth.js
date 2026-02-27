@@ -90,7 +90,6 @@ export const loginWithGoogle = async () => {
 
         return { user: result.user, accessToken, error: null };
     } catch (error) {
-        console.error('[Auth] Google sign-in failed:', error.code, error.message, error);
         return { user: null, error };
     }
 };
