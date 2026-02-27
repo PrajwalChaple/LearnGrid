@@ -56,7 +56,7 @@ export function About() {
                                 {/* Profile image */}
                                 <div className="flex-shrink-0 relative">
                                     <div className="w-36 h-36 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/20 overflow-hidden border-2 border-slate-100 group-hover:border-blue-100 transition-colors">
-                                        <img src="https://avatars.githubusercontent.com/PrajwalChaple" alt="Prajwal Chaple" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                        <img src="profilepicture.png" alt="Prajwal Chaple" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                                     </div>
                                     <div className="absolute -bottom-3 -right-3 w-10 h-10 bg-white rounded-xl shadow-md flex items-center justify-center text-blue-500 border border-slate-100">
                                         <Code2 size={20} strokeWidth={2.5} />
