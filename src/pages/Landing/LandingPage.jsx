@@ -27,7 +27,9 @@ import {
     Flag,
     Lightbulb,
     Database,
-    BookOpen
+    BookOpen,
+    ClipboardList,
+    Eye
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -68,9 +70,9 @@ export const LandingPage = () => {
                     </div>
 
                     <div className="hidden md:flex items-center gap-4">
-                        <Link to="/login" className="text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors no-underline px-4 py-2">Sign in</Link>
+                        <Link to="/login" className="text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors no-underline px-4 py-2">Login</Link>
                         <Link to="/register" className="px-5 py-2.5 bg-white border border-slate-200 text-slate-900 text-sm font-semibold rounded-full shadow-sm hover:shadow-md hover:border-slate-300 transition-all no-underline">
-                            Get Started
+                            Sign in
                         </Link>
                     </div>
 
@@ -86,31 +88,18 @@ export const LandingPage = () => {
                         <Link to="/blog" className="text-slate-600 font-medium py-2 text-lg no-underline" onClick={toggleMenu}>Blog</Link>
                         <Link to="/about" className="text-slate-600 font-medium py-2 text-lg no-underline" onClick={toggleMenu}>About Us</Link>
                         <hr className="border-slate-100 my-2" />
-                        <Link to="/login" className="text-slate-600 font-medium py-2 text-lg no-underline" onClick={toggleMenu}>Sign in</Link>
-                        <Link to="/register" className="px-6 py-3 bg-blue-600 text-white text-center rounded-xl font-semibold text-lg no-underline" onClick={toggleMenu}>Get Started</Link>
+                        <Link to="/login" className="text-slate-600 font-medium py-2 text-lg no-underline" onClick={toggleMenu}>Login</Link>
+                        <Link to="/register" className="px-6 py-3 bg-blue-600 text-white text-center rounded-xl font-semibold text-lg no-underline" onClick={toggleMenu}>Sign in</Link>
                     </div>
                 )}
             </nav>
 
             {/* ─── HERO SECTION ─── */}
-            <section className="relative pt-40 pb-32 overflow-hidden bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-repeat">
+            <section className="relative min-h-screen flex flex-col justify-center pt-20 pb-12 overflow-hidden bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-repeat">
                 {/* Dotted Background overlay for texture */}
                 <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, black 1px, transparent 0)', backgroundSize: '24px 24px' }}></div>
 
-                <div className="max-w-6xl mx-auto px-6 text-center relative z-10">
-
-                    {/* Floating Center Icon */}
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.5 }}
-                        className="mx-auto w-16 h-16 bg-white rounded-2xl shadow-xl border border-slate-100 flex flex-wrap p-3 gap-1 mb-8"
-                    >
-                        <div className="w-[18px] h-[18px] bg-blue-500 rounded-full"></div>
-                        <div className="w-[18px] h-[18px] bg-slate-800 rounded-full"></div>
-                        <div className="w-[18px] h-[18px] bg-slate-800 rounded-full"></div>
-                        <div className="w-[18px] h-[18px] bg-slate-800 rounded-full"></div>
-                    </motion.div>
+                <div className="w-full max-w-6xl mx-auto px-6 text-center relative z-10">
 
                     <motion.h1
                         initial={{ opacity: 0, y: 20 }}
@@ -126,78 +115,45 @@ export const LandingPage = () => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 0.2 }}
-                        className="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto mb-10 font-medium"
+                        className="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto mb-16 font-medium"
                     >
                         Efficiently manage your assignments, notes, and boost your college productivity.
                     </motion.p>
 
+                    {/* Floating Hero UI Cards — placed BELOW the text in a flex row */}
                     <motion.div
-                        initial={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.3 }}
+                        transition={{ duration: 0.7, delay: 0.3 }}
+                        className="flex flex-wrap items-start justify-center gap-6 md:gap-10 max-w-5xl mx-auto"
                     >
-                        <Link to="/register" className="inline-block px-8 py-4 bg-blue-600 text-white font-semibold text-lg rounded-2xl hover:bg-blue-700 hover:shadow-xl hover:shadow-blue-500/30 transition-all hover:-translate-y-1 no-underline">
-                            Get free demo
-                        </Link>
-                    </motion.div>
-
-                    {/* Floating Hero UI Elements (Mockups) */}
-                    <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden max-w-7xl mx-auto -z-10">
-
-                        {/* Left Float: Sticky Note */}
+                        {/* Card 1: Sticky Note */}
                         <motion.div
-                            animate={{ y: [0, -15, 0], rotate: [-6, -4, -6] }}
+                            animate={{ y: [0, -10, 0] }}
                             transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                            className="absolute top-20 left-4 md:left-10 lg:left-0 hidden sm:block shadow-2xl"
+                            className="hidden sm:block"
                         >
-                            <div className="w-56 bg-yellow-100 p-5 shadow-sm text-left rotate-[-5deg] relative">
+                            <div className="w-56 bg-yellow-100 p-5 shadow-md shadow-slate-200/50 text-left rotate-[-3deg] relative">
                                 <div className="absolute top-[-5px] left-1/2 w-3 h-3 bg-red-500 rounded-full shadow-sm -translate-x-1/2"></div>
                                 <p className="font-['Caveat',cursive] text-slate-800 text-xl leading-snug">
                                     Upload assignment PDFs to keep track of crucial details, and accomplish more tasks with ease.
                                 </p>
                             </div>
                             {/* Blue Check float over sticky note */}
-                            <div className="absolute -bottom-8 -right-6 w-16 h-16 bg-white rounded-2xl shadow-xl flex items-center justify-center rotate-12">
-                                <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
-                                    <CheckCircle2 size={24} className="text-white" />
+                            <div className="absolute -bottom-6 -right-4 w-14 h-14 bg-white rounded-2xl shadow-lg flex items-center justify-center rotate-12">
+                                <div className="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center">
+                                    <CheckCircle2 size={20} className="text-white" />
                                 </div>
                             </div>
                         </motion.div>
 
-                        {/* Right Float: Reminders */}
+                        {/* Card 2: Today's Tasks */}
                         <motion.div
-                            animate={{ y: [0, 20, 0] }}
-                            transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-                            className="absolute top-10 right-4 md:right-10 lg:-right-4 hidden lg:block"
-                        >
-                            <div className="w-64 bg-slate-50 rounded-2xl p-4 shadow-xl border border-slate-200/60 rotate-3 text-left">
-                                <div className="flex justify-between items-center mb-4">
-                                    <span className="font-bold text-slate-800">Reminders</span>
-                                    <span className="text-xs text-slate-400">Upcoming</span>
-                                </div>
-                                <div className="p-3 bg-white rounded-xl shadow-sm border border-slate-100">
-                                    <p className="text-sm font-semibold text-slate-800 mb-1">OS Lab Submission</p>
-                                    <p className="text-xs text-slate-500 mb-3">Upload PDF to portal</p>
-                                    <div className="flex items-center gap-1.5 text-xs text-blue-600 bg-blue-50 w-max px-2 py-1 rounded-md font-medium">
-                                        <Clock size={12} /> 23:59 - Today
-                                    </div>
-                                </div>
-                            </div>
-                            {/* Clock float over reminders */}
-                            <div className="absolute -left-10 top-10 w-16 h-16 bg-white rounded-2xl shadow-xl flex items-center justify-center -rotate-6">
-                                <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center border-2 border-slate-200">
-                                    <Timer size={20} className="text-slate-800" />
-                                </div>
-                            </div>
-                        </motion.div>
-
-                        {/* Bottom Left: Progress Card */}
-                        <motion.div
-                            animate={{ y: [0, -10, 0] }}
+                            animate={{ y: [0, -8, 0] }}
                             transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-                            className="absolute -bottom-10 left-[10%] hidden md:block"
+                            className="hidden md:block mt-8"
                         >
-                            <div className="w-64 bg-white rounded-2xl p-5 shadow-2xl border border-slate-100 text-left -rotate-6">
+                            <div className="w-64 bg-white rounded-2xl p-5 shadow-md shadow-slate-200/50 border border-slate-100 text-left rotate-[2deg]">
                                 <h4 className="font-bold text-slate-800 mb-4">Today's tasks</h4>
                                 <div className="space-y-4">
                                     <div>
@@ -222,204 +178,361 @@ export const LandingPage = () => {
                             </div>
                         </motion.div>
 
-                    </div>
+                        {/* Card 3: Reminders */}
+                        <motion.div
+                            animate={{ y: [0, -12, 0] }}
+                            transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+                            className="hidden sm:block relative"
+                        >
+                            <div className="w-64 bg-slate-50 rounded-2xl p-4 shadow-md shadow-slate-200/60 border border-slate-200/60 rotate-[3deg] text-left">
+                                <div className="flex justify-between items-center mb-4">
+                                    <span className="font-bold text-slate-800">Reminders</span>
+                                    <span className="text-xs text-slate-400">Upcoming</span>
+                                </div>
+                                <div className="p-3 bg-white rounded-xl shadow-sm border border-slate-100">
+                                    <p className="text-sm font-semibold text-slate-800 mb-1">OS Lab Submission</p>
+                                    <p className="text-xs text-slate-500 mb-3">Upload PDF to portal</p>
+                                    <div className="flex items-center gap-1.5 text-xs text-blue-600 bg-blue-50 w-max px-2 py-1 rounded-md font-medium">
+                                        <Clock size={12} /> 23:59 - Today
+                                    </div>
+                                </div>
+                            </div>
+                            {/* Clock float over reminders */}
+                            <div className="absolute -left-8 top-8 w-14 h-14 bg-white rounded-2xl shadow-lg flex items-center justify-center -rotate-6">
+                                <div className="w-9 h-9 bg-slate-100 rounded-full flex items-center justify-center border-2 border-slate-200">
+                                    <Timer size={18} className="text-slate-800" />
+                                </div>
+                            </div>
+                        </motion.div>
+                    </motion.div>
                 </div>
             </section>
 
             {/* ─── FEATURES: BENTO GRID ─── */}
             <section id="features" className="py-24 bg-white relative z-20">
                 <div className="max-w-6xl mx-auto px-6">
-                    <div className="text-center mb-16">
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, amount: 0.3 }}
+                        transition={{ duration: 0.6 }}
+                        className="text-center mb-16"
+                    >
                         <div className="inline-block px-4 py-1.5 bg-slate-100 text-slate-700 text-sm font-medium rounded-full mb-6 border border-slate-200">
                             Features
                         </div>
                         <h2 className="text-4xl md:text-5xl font-medium tracking-tight text-slate-900 mb-4">
-                            Keep everything in one place
+                            Everything you actually need
                         </h2>
                         <p className="text-lg text-slate-500 pb-4">
-                            Forget complex learning management systems.
+                            No bloat. Just the tools that make your academic life easier.
                         </p>
-                    </div>
+                    </motion.div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* Card 1: Study Collaboration */}
-                        <div className="bento-card bg-[#f8fafc] overflow-hidden group flex flex-col">
-                            <div className="p-8 pb-0 flex-1 relative min-h-[220px]">
-                                <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=800&auto=format&fit=crop"
-                                    alt="Collaboration"
-                                    className="absolute right-0 bottom-0 w-[85%] h-full object-cover rounded-tl-2xl shadow-xl shadow-slate-300 opacity-90 group-hover:scale-105 transition-transform duration-700" />
 
-                                {/* Overlay UI mock */}
-                                <div className="absolute top-10 left-10 w-64 bg-white/95 backdrop-blur-md rounded-xl p-4 shadow-xl border border-slate-100">
-                                    <p className="text-xs font-bold text-slate-400 mb-3 uppercase tracking-wider">My Workspace</p>
+                        {/* ── Card 1: Notes Management ── */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 40 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, amount: 0.2 }}
+                            transition={{ duration: 0.6, delay: 0.1 }}
+                            className="bento-card bg-[#f8fafc] overflow-hidden group flex flex-col"
+                        >
+                            <div className="p-8 pb-0 flex-1 relative min-h-[260px] flex items-center justify-center">
+                                {/* Mock Notes UI */}
+                                <div className="w-full max-w-sm bg-white rounded-xl shadow-lg border border-slate-100 p-5 group-hover:-translate-y-2 transition-all duration-500">
+                                    <div className="flex items-center gap-3 mb-5">
+                                        <div className="flex-1 bg-slate-50 rounded-lg px-3 py-2 flex items-center gap-2 border border-slate-100">
+                                            <div className="w-4 h-4 text-slate-400"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg></div>
+                                            <span className="text-xs text-slate-400 font-medium">Search notes...</span>
+                                        </div>
+                                        <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                                            <Upload size={16} className="text-white" />
+                                        </div>
+                                    </div>
                                     <div className="space-y-3">
-                                        <div className="flex items-center gap-3"><div className="w-6 h-6 rounded bg-purple-100 flex items-center justify-center text-purple-600"><Users size={12} /></div><span className="text-sm font-bold text-slate-700">Study Group A</span></div>
-                                        <div className="flex items-center gap-3"><div className="w-6 h-6 rounded bg-orange-100 flex items-center justify-center text-orange-600"><FileText size={12} /></div><span className="text-sm font-bold text-slate-700">Project Beta</span></div>
-                                        <div className="flex items-center gap-3 opacity-60"><div className="w-6 h-6 rounded bg-blue-100 flex items-center justify-center text-blue-600"><Database size={12} /></div><span className="text-sm font-bold text-slate-700">DBMS Review</span></div>
+                                        <motion.div whileHover={{ x: 4 }} className="flex items-center gap-3 p-2.5 bg-blue-50/80 rounded-lg border border-blue-100 cursor-pointer">
+                                            <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0"><FileText size={14} className="text-red-600" /></div>
+                                            <div className="flex-1 min-w-0"><p className="text-xs font-bold text-slate-800 truncate">DSA Unit 3 — Trees & Graphs</p><p className="text-[10px] text-slate-400 font-medium">Uploaded 2 hrs ago · PDF</p></div>
+                                            <Eye size={14} className="text-slate-400 flex-shrink-0" />
+                                        </motion.div>
+                                        <motion.div whileHover={{ x: 4 }} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer">
+                                            <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0"><FileText size={14} className="text-red-600" /></div>
+                                            <div className="flex-1 min-w-0"><p className="text-xs font-bold text-slate-800 truncate">OS — Process Scheduling</p><p className="text-[10px] text-slate-400 font-medium">Yesterday · PDF</p></div>
+                                            <Eye size={14} className="text-slate-400 flex-shrink-0" />
+                                        </motion.div>
+                                        <motion.div whileHover={{ x: 4 }} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer">
+                                            <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0"><FileText size={14} className="text-red-600" /></div>
+                                            <div className="flex-1 min-w-0"><p className="text-xs font-bold text-slate-800 truncate">DBMS — Normalization Notes</p><p className="text-[10px] text-slate-400 font-medium">3 days ago · PDF</p></div>
+                                            <Eye size={14} className="text-slate-400 flex-shrink-0" />
+                                        </motion.div>
                                     </div>
                                 </div>
                             </div>
                             <div className="p-8 bg-white border-t border-slate-100">
-                                <h3 className="text-2xl font-bold text-slate-900 mb-2">Seamless Sharing</h3>
-                                <p className="text-slate-500 font-medium">Work together with your classmates effortlessly, share notes, and update assignments in real-time.</p>
+                                <div className="flex items-center gap-3 mb-3">
+                                    <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600"><FileText size={20} /></div>
+                                    <h3 className="text-2xl font-bold text-slate-900">Notes Management</h3>
+                                </div>
+                                <p className="text-slate-500 font-medium">Upload, search, and view your PDF notes anytime. Keep all study materials organized in one cloud-backed library.</p>
                             </div>
-                        </div>
+                        </motion.div>
 
-                        {/* Card 2: Time Management */}
-                        <div className="bento-card bg-[#f8fafc] overflow-hidden group flex flex-col">
-                            <div className="p-8 pb-0 flex-1 relative min-h-[220px] flex items-center justify-center">
-                                {/* Mock UI */}
-                                <div className="w-full max-w-sm bg-white rounded-xl shadow-xl border border-slate-100 p-5 group-hover:-translate-y-2 transition-transform duration-500">
-                                    <div className="flex justify-between items-center mb-6">
-                                        <h4 className="font-bold text-slate-800">Weekly schedule</h4>
-                                        <span className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-md font-semibold">This Week</span>
-                                    </div>
-                                    <div className="space-y-3">
-                                        <div className="flex gap-4">
-                                            <div className="text-center w-10"><span className="text-xs font-bold text-slate-400 uppercase">Mon</span><br /><span className="font-bold text-slate-800">15</span></div>
-                                            <div className="flex-1 bg-indigo-50 border border-indigo-100 rounded-lg p-2.5 flex items-center justify-between">
-                                                <div className="flex flex-col"><span className="text-xs font-bold text-indigo-900">OS Lecture</span><span className="text-[10px] text-indigo-500 flex items-center gap-1"><Clock size={10} /> 10:00 - 11:30</span></div>
-                                                <div className="w-6 h-6 rounded bg-indigo-100 flex items-center justify-center"><BookOpen size={12} className="text-indigo-600" /></div>
+                        {/* ── Card 2: Assignment Tracking ── */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 40 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, amount: 0.2 }}
+                            transition={{ duration: 0.6, delay: 0.2 }}
+                            className="bento-card bg-[#f8fafc] overflow-hidden group flex flex-col"
+                        >
+                            <div className="p-8 pb-0 flex-1 relative min-h-[260px] flex items-center justify-center">
+                                <div className="w-full max-w-sm space-y-3 group-hover:-translate-y-1 transition-all duration-500">
+                                    {/* Assignment Item 1 */}
+                                    <motion.div whileHover={{ scale: 1.02 }} className="bg-white rounded-xl shadow-md border border-slate-100 p-4 cursor-pointer">
+                                        <div className="flex items-start justify-between mb-3">
+                                            <div>
+                                                <p className="text-sm font-bold text-slate-800">React Project — Phase 1</p>
+                                                <p className="text-[10px] text-slate-400 font-medium mt-0.5">Uploaded by Prajwal · 2 days ago</p>
                                             </div>
+                                            <span className="px-2.5 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-bold rounded-full border border-emerald-100 flex items-center gap-1"><CheckCircle2 size={10} /> Done</span>
                                         </div>
-                                        <div className="flex gap-4">
-                                            <div className="text-center w-10"><span className="text-xs font-bold text-slate-400 uppercase">Tue</span><br /><span className="font-bold text-slate-800">16</span></div>
-                                            <div className="flex-1 bg-red-50 border border-red-100 rounded-lg p-2.5 flex items-center justify-between">
-                                                <div className="flex flex-col"><span className="text-xs font-bold text-red-900">Assignment Due</span><span className="text-[10px] text-red-500 flex items-center gap-1"><Clock size={10} /> 23:59</span></div>
-                                                <div className="w-6 h-6 rounded bg-red-100 flex items-center justify-center"><Upload size={12} className="text-red-600" /></div>
+                                        <div className="flex items-center gap-3">
+                                            <div className="flex items-center gap-1.5 text-[10px] text-slate-500 bg-slate-50 px-2 py-1 rounded-md font-medium"><Clock size={10} /> Due: Mar 15</div>
+                                            <div className="flex items-center gap-1.5 text-[10px] text-blue-600 bg-blue-50 px-2 py-1 rounded-md font-medium"><Calendar size={10} /> Synced</div>
+                                        </div>
+                                    </motion.div>
+                                    {/* Assignment Item 2 */}
+                                    <motion.div whileHover={{ scale: 1.02 }} className="bg-white rounded-xl shadow-md border border-slate-100 p-4 cursor-pointer">
+                                        <div className="flex items-start justify-between mb-3">
+                                            <div>
+                                                <p className="text-sm font-bold text-slate-800">OS Lab — Scheduling Algo</p>
+                                                <p className="text-[10px] text-slate-400 font-medium mt-0.5">Uploaded by Rohan · 5 hrs ago</p>
                                             </div>
+                                            <span className="px-2.5 py-1 bg-amber-50 text-amber-700 text-[10px] font-bold rounded-full border border-amber-100 flex items-center gap-1"><Clock size={10} /> Pending</span>
                                         </div>
-                                    </div>
+                                        <div className="flex items-center gap-3">
+                                            <div className="flex items-center gap-1.5 text-[10px] text-red-500 bg-red-50 px-2 py-1 rounded-md font-medium"><Clock size={10} /> Due: Today 11:59 PM</div>
+                                            <div className="flex items-center gap-1.5 text-[10px] text-slate-500 bg-slate-50 px-2 py-1 rounded-md font-medium"><FileText size={10} /> PDF attached</div>
+                                        </div>
+                                    </motion.div>
+                                    {/* Assignment Item 3 - subtle */}
+                                    <motion.div whileHover={{ scale: 1.02 }} className="bg-white/60 rounded-xl shadow-sm border border-slate-100/50 p-4 cursor-pointer opacity-60">
+                                        <div className="flex items-start justify-between">
+                                            <p className="text-sm font-bold text-slate-600">DBMS ER Diagram</p>
+                                            <span className="px-2.5 py-1 bg-amber-50 text-amber-700 text-[10px] font-bold rounded-full border border-amber-100 flex items-center gap-1"><Clock size={10} /> Pending</span>
+                                        </div>
+                                    </motion.div>
                                 </div>
                             </div>
                             <div className="p-8 bg-white border-t border-slate-100">
-                                <h3 className="text-2xl font-bold text-slate-900 mb-2">Time Management Tools</h3>
-                                <p className="text-slate-500 font-medium">Optimize your study time with integrated schedule views, calendar sync, and smart reminders.</p>
+                                <div className="flex items-center gap-3 mb-3">
+                                    <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600"><ClipboardList size={20} /></div>
+                                    <h3 className="text-2xl font-bold text-slate-900">Assignment Tracking</h3>
+                                </div>
+                                <p className="text-slate-500 font-medium">Track every assignment with deadlines, status updates, PDF attachments, and automatic Google Calendar sync.</p>
                             </div>
-                        </div>
+                        </motion.div>
 
-                        {/* Card 3: Advanced Task Tracking */}
-                        <div className="bento-card bg-[#f8fafc] overflow-hidden group flex flex-col">
+                        {/* ── Card 3: Announcements ── */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 40 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, amount: 0.2 }}
+                            transition={{ duration: 0.6, delay: 0.1 }}
+                            className="bento-card bg-[#f8fafc] overflow-hidden group flex flex-col"
+                        >
                             <div className="p-8 bg-white border-b border-slate-100">
-                                <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center text-orange-600 mb-6">
-                                    <ArrowRight size={24} />
+                                <div className="flex items-center gap-3 mb-3">
+                                    <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center text-purple-600"><Bell size={20} /></div>
+                                    <h3 className="text-2xl font-bold text-slate-900">Announcements</h3>
                                 </div>
-                                <h3 className="text-2xl font-bold text-slate-900 mb-2">Advanced task tracking</h3>
-                                <p className="text-slate-500 font-medium">A bird's eye view of your entire semester productivity and pending assignments.</p>
+                                <p className="text-slate-500 font-medium">Broadcast important updates to your entire class or specific sections instantly with smart audience targeting.</p>
                             </div>
-                            <div className="p-8 flex-1 relative min-h-[220px] flex items-center justify-center overflow-hidden">
-                                {/* Mock Timeline */}
-                                <div className="absolute right-[-20%] w-[120%] bg-white rounded-xl shadow-xl border border-slate-100 p-5 rotate-3 group-hover:rotate-0 transition-all duration-500">
-                                    <div className="flex justify-between mb-4 border-b border-slate-100 pb-3">
-                                        <span className="font-bold text-slate-800">Semester Timeline</span>
-                                        <span className="font-semibold text-slate-500 text-sm">Oct 2024</span>
-                                    </div>
-                                    <div className="relative pt-6 pb-2">
-                                        <div className="absolute top-0 left-0 w-full flex justify-between text-[10px] font-bold text-slate-400">
-                                            <span>Week 1</span><span>Week 2</span><span>Week 3</span><span>Week 4</span>
+                            <div className="p-8 flex-1 relative min-h-[260px] flex items-center justify-center overflow-hidden">
+                                <div className="w-full max-w-sm group-hover:-translate-y-1 transition-all duration-500">
+                                    {/* Mock announcement card */}
+                                    <motion.div whileHover={{ scale: 1.02 }} className="bg-white rounded-xl shadow-lg border border-slate-100 p-5 mb-3 cursor-pointer">
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <div className="w-7 h-7 bg-purple-100 rounded-full flex items-center justify-center"><Bell size={12} className="text-purple-600" /></div>
+                                            <span className="text-xs font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded-full">New Announcement</span>
+                                            <span className="text-[10px] text-slate-400 ml-auto font-medium">Just now</span>
                                         </div>
-                                        {/* Bars */}
-                                        <div className="w-[60%] h-8 bg-orange-100 rounded-lg border border-orange-200 mb-3 flex items-center px-3 relative left-[10%] shadow-sm">
-                                            <div className="w-6 h-6 rounded-full bg-white shadow-sm flex items-center justify-center border border-orange-100 -ml-1 mr-2"><span className="text-[10px] font-bold">PDF</span></div>
-                                            <span className="text-xs font-bold text-orange-800">React Project Phase 1</span>
-                                            <span className="ml-auto text-xs font-bold text-orange-500">68%</span>
+                                        <p className="text-sm font-bold text-slate-800 mb-1">Lab exam rescheduled to Friday</p>
+                                        <p className="text-xs text-slate-500 mb-3">OS Lab practical exam moved from Wed to Fri. Prepare Scheduling algorithms.</p>
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-[10px] text-blue-600 bg-blue-50 px-2 py-1 rounded-md font-semibold">📢 All Students</span>
+                                            <span className="text-[10px] text-slate-400 bg-slate-50 px-2 py-1 rounded-md font-medium">Std 9th · Sec A</span>
                                         </div>
-                                        <div className="w-[40%] h-8 bg-blue-100 rounded-lg border border-blue-200 mb-2 flex items-center px-3 relative left-[45%] shadow-sm">
-                                            <div className="w-6 h-6 rounded-full bg-white shadow-sm flex items-center justify-center border border-blue-100 -ml-1 mr-2"><span className="text-[10px] font-bold">Doc</span></div>
-                                            <span className="text-xs font-bold text-blue-800">Network Topology Report</span>
+                                    </motion.div>
+                                    <motion.div whileHover={{ scale: 1.02 }} className="bg-white/70 rounded-xl shadow-sm border border-slate-100/50 p-4 cursor-pointer opacity-50">
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <div className="w-6 h-6 bg-indigo-100 rounded-full flex items-center justify-center"><Bell size={10} className="text-indigo-600" /></div>
+                                            <p className="text-xs font-bold text-slate-600">Holiday notice — Republic Day</p>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Card 4: Customizable Workspaces */}
-                        <div className="bento-card bg-[url('https://www.transparenttextures.com/patterns/grid-me.png')] bg-slate-50 overflow-hidden group flex flex-col relative border-dashed border-2 border-slate-300">
-                            <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none z-10"></div>
-
-                            <div className="relative z-0 h-full min-h-[300px] flex items-center justify-center p-8">
-                                {/* Scattered Widgets */}
-                                <div className="absolute top-8 left-8 w-24 h-24 bg-white rounded-2xl shadow-lg border border-slate-100 rotate-[-10deg] group-hover:rotate-[0deg] transition-all p-3">
-                                    <div className="w-full h-2 bg-slate-100 rounded-full mb-3"></div>
-                                    <div className="w-3/4 h-2 bg-slate-100 rounded-full mb-3"></div>
-                                    <div className="w-1/2 h-2 bg-slate-100 rounded-full"></div>
-                                </div>
-
-                                <div className="absolute bottom-10 left-16 w-32 bg-white rounded-2xl shadow-xl border border-slate-100 rotate-[5deg] group-hover:rotate-[0deg] transition-all overflow-hidden z-20">
-                                    <div className="bg-yellow-100 p-2"><span className="text-[10px] font-bold uppercase tracking-wider text-yellow-800">Timer</span></div>
-                                    <div className="p-4 text-center">
-                                        <span className="text-3xl font-bold tracking-tighter text-slate-800">04:21</span>
-                                        <div className="mt-2 flex justify-center gap-2">
-                                            <div className="w-6 h-6 bg-slate-100 rounded-md flex items-center justify-center"><div className="w-2 h-2 bg-slate-800 rounded-sm"></div></div>
-                                            <div className="w-6 h-6 bg-red-100 rounded-md flex items-center justify-center"><div className="w-2 h-2 bg-red-500 rounded-full"></div></div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="absolute top-16 right-8 w-24 bg-white rounded-2xl shadow-md border border-slate-100 rotate-[15deg] group-hover:rotate-[0deg] transition-all p-3 z-10">
-                                    <div className="grid grid-cols-2 gap-2">
-                                        <div className="w-full aspect-square bg-slate-100 rounded-lg"></div>
-                                        <div className="w-full aspect-square bg-slate-100 rounded-lg"></div>
-                                        <div className="w-full aspect-square bg-blue-100 rounded-lg flex items-center justify-center"><ListTodo size={14} className="text-blue-600" /></div>
-                                        <div className="w-full aspect-square bg-slate-100 rounded-lg"></div>
-                                    </div>
+                                        <p className="text-[10px] text-slate-400">No classes on 26th January...</p>
+                                    </motion.div>
                                 </div>
                             </div>
+                        </motion.div>
 
-                            <div className="relative z-20 p-8 pb-10 text-center">
-                                <h3 className="text-2xl font-bold text-slate-900 mb-2">Customizable Workspaces</h3>
-                                <p className="text-slate-500 font-medium max-w-sm mx-auto">Build your perfect dashboard with widgets, themes, and personal task views.</p>
+                        {/* ── Card 4: Calendar View ── */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 40 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, amount: 0.2 }}
+                            transition={{ duration: 0.6, delay: 0.2 }}
+                            className="bento-card bg-[#f8fafc] overflow-hidden group flex flex-col"
+                        >
+                            <div className="p-8 pb-0 flex-1 relative min-h-[260px] flex items-center justify-center">
+                                {/* Mock Calendar */}
+                                <div className="w-full max-w-sm bg-white rounded-xl shadow-lg border border-slate-100 p-5 group-hover:-translate-y-2 transition-all duration-500">
+                                    <div className="flex items-center justify-between mb-5">
+                                        <h4 className="font-bold text-slate-800">March 2026</h4>
+                                        <div className="flex gap-1">
+                                            <div className="w-7 h-7 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center cursor-pointer hover:bg-slate-100 transition-colors"><span className="text-slate-500 text-xs">‹</span></div>
+                                            <div className="w-7 h-7 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center cursor-pointer hover:bg-slate-100 transition-colors"><span className="text-slate-500 text-xs">›</span></div>
+                                        </div>
+                                    </div>
+                                    {/* Day headers */}
+                                    <div className="grid grid-cols-7 gap-1 mb-2">
+                                        {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => <span key={i} className="text-[10px] font-bold text-slate-400 text-center">{d}</span>)}
+                                    </div>
+                                    {/* Calendar grid */}
+                                    <div className="grid grid-cols-7 gap-1">
+                                        {/* Empty cells for alignment */}
+                                        {[...Array(6)].map((_, i) => <div key={`e${i}`} className="aspect-square" />)}
+                                        {/* Days 1–28 */}
+                                        {[...Array(28)].map((_, i) => {
+                                            const day = i + 1;
+                                            const isDeadline = [3, 8, 15, 22].includes(day);
+                                            const isToday = day === 12;
+                                            return (
+                                                <motion.div key={day} whileHover={{ scale: 1.2 }} className={`aspect-square rounded-lg flex flex-col items-center justify-center text-xs font-semibold cursor-pointer transition-colors ${isToday ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30' : 'text-slate-600 hover:bg-slate-50'}`}>
+                                                    {day}
+                                                    {isDeadline && <div className={`w-1 h-1 rounded-full mt-0.5 ${isToday ? 'bg-white' : 'bg-red-500'}`} />}
+                                                </motion.div>
+                                            );
+                                        })}
+                                    </div>
+                                    {/* Legend */}
+                                    <div className="flex items-center gap-3 mt-4 pt-3 border-t border-slate-100">
+                                        <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-red-500" /><span className="text-[10px] text-slate-500 font-medium">Assignment Due</span></div>
+                                        <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-blue-600" /><span className="text-[10px] text-slate-500 font-medium">Today</span></div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                            <div className="p-8 bg-white border-t border-slate-100">
+                                <div className="flex items-center gap-3 mb-3">
+                                    <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-600"><Calendar size={20} /></div>
+                                    <h3 className="text-2xl font-bold text-slate-900">Calendar View</h3>
+                                </div>
+                                <p className="text-slate-500 font-medium">Visual monthly calendar showing all your assignment deadlines at a glance. Never miss a submission date again.</p>
+                            </div>
+                        </motion.div>
+
                     </div>
 
-                    <div className="mt-10 text-center">
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6, delay: 0.3 }}
+                        className="mt-10 text-center"
+                    >
                         <span className="text-slate-500 font-medium">and a lot more features...</span>
-                    </div>
+                    </motion.div>
                 </div>
             </section>
 
-            {/* ─── INTEGRATIONS ─── */}
-            <section className="py-24 bg-[#f8fafc] relative overflow-hidden border-t border-slate-200/60">
-                <div className="absolute w-[100vw] h-[1px] bg-slate-200 top-1/2 left-0 -translate-y-1/2 z-0 hidden md:block"></div>
-                <div className="max-w-5xl mx-auto px-6 relative z-10 text-center">
-                    <div className="inline-block px-4 py-1.5 bg-white text-slate-600 border border-slate-200 shadow-sm text-sm font-medium rounded-full mb-6">
-                        Integrations
-                    </div>
-                    <h2 className="text-4xl md:text-5xl font-medium tracking-tight text-slate-900 mb-16">
-                        Connect integrations<br />you use every day
-                    </h2>
-
-                    <div className="relative">
-                        {/* Center Hub */}
-                        <div className="w-16 h-16 bg-white rounded-2xl shadow-xl shadow-blue-500/10 border border-slate-100 flex flex-wrap p-3 gap-1 mx-auto relative z-20 mb-12">
-                            <div className="w-[18px] h-[18px] bg-blue-500 rounded-full"></div>
-                            <div className="w-[18px] h-[18px] bg-slate-800 rounded-full"></div>
-                            <div className="w-[18px] h-[18px] bg-slate-800 rounded-full"></div>
-                            <div className="w-[18px] h-[18px] bg-slate-800 rounded-full"></div>
+            {/* ─── HOW IT WORKS ─── */}
+            <section className="py-28 bg-[#f8fafc] relative overflow-hidden border-t border-slate-200/60">
+                <div className="max-w-5xl mx-auto px-6 relative z-10">
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, amount: 0.3 }}
+                        transition={{ duration: 0.6 }}
+                        className="text-center mb-20"
+                    >
+                        <div className="inline-block px-4 py-1.5 bg-white text-slate-600 border border-slate-200 shadow-sm text-sm font-medium rounded-full mb-6">
+                            How it works
                         </div>
+                        <h2 className="text-4xl md:text-5xl font-medium tracking-tight text-slate-900 mb-4">
+                            Get started in minutes
+                        </h2>
+                        <p className="text-lg text-slate-500 font-medium">
+                            Three simple steps to supercharge your academic life.
+                        </p>
+                    </motion.div>
 
-                        {/* Web lines */}
-                        <div className="absolute top-8 left-1/2 w-full h-[1px] bg-slate-200 -z-10 -translate-y-1/2"></div>
-                        <div className="absolute top-8 left-1/2 w-[1px] h-full bg-slate-200 -z-10 -translate-x-1/2"></div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6 relative">
+                        {/* Connecting line (desktop only) */}
+                        <div className="hidden md:block absolute top-16 left-[20%] right-[20%] h-[2px] bg-gradient-to-r from-blue-200 via-indigo-200 to-purple-200 z-0" />
 
-                        {/* Integration Icons Grid */}
-                        <div className="flex flex-wrap justify-center gap-4 md:gap-6 max-w-3xl mx-auto">
-                            {integrations.map((app, i) => (
-                                <div key={i} className="relative group">
-                                    <motion.div
-                                        whileHover={{ scale: 1.1, y: -5 }}
-                                        className={`w-16 h-16 sm:w-20 sm:h-20 ${app.bg} rounded-2xl shadow-sm border border-slate-200/50 flex items-center justify-center hover:shadow-xl transition-all duration-300 cursor-pointer bg-white`}
-                                    >
-                                        <app.icon size={28} className={app.color} strokeWidth={2} />
-                                    </motion.div>
-                                    <div className="absolute -top-12 left-1/2 -translate-x-1/2 scale-0 transition-transform duration-200 group-hover:scale-100 bg-slate-800 text-white text-xs font-bold py-1.5 px-3 rounded-lg shadow-lg whitespace-nowrap z-50">
-                                        {app.name}
-                                        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800"></div>
-                                    </div>
+                        {/* Step 1 */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 40 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, amount: 0.3 }}
+                            transition={{ duration: 0.5, delay: 0.1 }}
+                            className="relative z-10 text-center group"
+                        >
+                            <motion.div
+                                whileHover={{ scale: 1.08, rotate: 5 }}
+                                className="w-32 h-32 mx-auto mb-6 bg-white rounded-3xl shadow-lg border border-slate-100 flex items-center justify-center cursor-pointer group-hover:shadow-xl group-hover:border-blue-100 transition-all duration-300"
+                            >
+                                <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center group-hover:bg-blue-100 transition-colors">
+                                    <Mail size={28} className="text-blue-600" />
                                 </div>
-                            ))}
-                        </div>
+                            </motion.div>
+                            <span className="inline-block px-3 py-1 bg-blue-50 text-blue-600 text-xs font-bold rounded-full mb-3 border border-blue-100">Step 1</span>
+                            <h3 className="text-xl font-bold text-slate-900 mb-2">Create Account</h3>
+                            <p className="text-sm text-slate-500 font-medium max-w-xs mx-auto">Sign up with your email or Google account in seconds. No credit card needed.</p>
+                        </motion.div>
+
+                        {/* Step 2 */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 40 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, amount: 0.3 }}
+                            transition={{ duration: 0.5, delay: 0.25 }}
+                            className="relative z-10 text-center group"
+                        >
+                            <motion.div
+                                whileHover={{ scale: 1.08, rotate: -5 }}
+                                className="w-32 h-32 mx-auto mb-6 bg-white rounded-3xl shadow-lg border border-slate-100 flex items-center justify-center cursor-pointer group-hover:shadow-xl group-hover:border-indigo-100 transition-all duration-300"
+                            >
+                                <div className="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center group-hover:bg-indigo-100 transition-colors">
+                                    <GraduationCap size={28} className="text-indigo-600" />
+                                </div>
+                            </motion.div>
+                            <span className="inline-block px-3 py-1 bg-indigo-50 text-indigo-600 text-xs font-bold rounded-full mb-3 border border-indigo-100">Step 2</span>
+                            <h3 className="text-xl font-bold text-slate-900 mb-2">Setup Profile</h3>
+                            <p className="text-sm text-slate-500 font-medium max-w-xs mx-auto">Choose your school or college, select your class, branch, and section to get started.</p>
+                        </motion.div>
+
+                        {/* Step 3 */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 40 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, amount: 0.3 }}
+                            transition={{ duration: 0.5, delay: 0.4 }}
+                            className="relative z-10 text-center group"
+                        >
+                            <motion.div
+                                whileHover={{ scale: 1.08, rotate: 5 }}
+                                className="w-32 h-32 mx-auto mb-6 bg-white rounded-3xl shadow-lg border border-slate-100 flex items-center justify-center cursor-pointer group-hover:shadow-xl group-hover:border-purple-100 transition-all duration-300"
+                            >
+                                <div className="w-16 h-16 bg-purple-50 rounded-2xl flex items-center justify-center group-hover:bg-purple-100 transition-colors">
+                                    <Zap size={28} className="text-purple-600" />
+                                </div>
+                            </motion.div>
+                            <span className="inline-block px-3 py-1 bg-purple-50 text-purple-600 text-xs font-bold rounded-full mb-3 border border-purple-100">Step 3</span>
+                            <h3 className="text-xl font-bold text-slate-900 mb-2">Start Learning</h3>
+                            <p className="text-sm text-slate-500 font-medium max-w-xs mx-auto">Access your dashboard, upload notes, track assignments, and stay on top of everything.</p>
+                        </motion.div>
                     </div>
                 </div>
             </section>
