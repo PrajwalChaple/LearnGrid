@@ -68,10 +68,10 @@ export function About() {
                                     <h3 className="text-2xl font-bold text-slate-900 mb-1">Prajwal Chaple</h3>
                                     <p className="text-sm font-semibold text-blue-600 uppercase tracking-wider mb-5">Founder & Developer</p>
                                     <p className="text-base font-medium text-slate-600 leading-relaxed mb-4">
-                                        Passionate developer and student focused on building smart, accessible tools that make academic life easier. LearnGrid was born from a belief that every student deserves a clean, powerful dashboard to organize their studies.
+                                        I'm a student and developer driven by a simple goal: building practical software that solves real problems. Frustrated by cluttered and complicated academic tools, I built LearnGrid to give every student a clean, distraction-free workspace.
                                     </p>
                                     <p className="text-base font-medium text-slate-600 leading-relaxed mb-8">
-                                        When not coding, you'll find him exploring new technologies, contributing to open source, and mentoring fellow students in tech.
+                                        Beyond writing code, I spend my time exploring emerging web technologies, building open-source projects, and helping fellow students navigate their own tech journeys.
                                     </p>
 
                                     {/* Social icons */}
