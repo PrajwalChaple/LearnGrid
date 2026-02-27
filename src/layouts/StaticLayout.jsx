@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import { PageTransition } from '../components/PageTransition';
-import { GraduationCap, Menu, X, Github, Linkedin, Instagram, Mail } from 'lucide-react';
+import { Menu, X, Github, Linkedin, Instagram, Mail } from 'lucide-react';
 
 const socialLinks = [
     { icon: Linkedin, href: 'https://www.linkedin.com/in/prajwalchaple' },
@@ -18,10 +18,8 @@ export function StaticLayout() {
             {/* ─── NAVBAR ─── */}
             <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
                 <div className="max-w-6xl mx-auto px-6 flex items-center justify-between h-16">
-                    <Link to="/" className="flex items-center gap-2.5 font-bold text-lg text-gray-900 no-underline">
-                        <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white">
-                            <GraduationCap size={18} />
-                        </div>
+                    <Link to="/" className="flex items-center gap-1.5 font-bold text-lg text-gray-900 no-underline">
+                        <img src={`${import.meta.env.BASE_URL}bookmark-25.svg`} alt="Logo" style={{ width: '24px', height: '24px' }} />
                         <span>LearnGrid</span>
                     </Link>
 
@@ -67,8 +65,8 @@ export function StaticLayout() {
                 <div className="max-w-6xl mx-auto px-6">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-12">
                         <div className="col-span-2 md:col-span-1">
-                            <div className="flex items-center gap-2 text-white font-bold text-lg mb-3">
-                                <GraduationCap size={20} />
+                            <div className="flex items-center gap-1.5 text-white font-bold text-lg mb-3">
+                                <img src={`${import.meta.env.BASE_URL}bookmark-25.svg`} alt="Logo" style={{ width: '24px', height: '24px', filter: 'brightness(0) invert(1)' }} />
                                 <span>LearnGrid</span>
                             </div>
                             <p className="text-sm leading-relaxed mb-5">Empowering students with tools for success. Built for the modern learner.</p>

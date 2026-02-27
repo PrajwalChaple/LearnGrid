@@ -62,7 +62,6 @@ export const loginWithGoogle = async () => {
     try {
         const provider = new GoogleAuthProvider();
         provider.addScope('https://www.googleapis.com/auth/calendar.events');
-        provider.addScope('https://www.googleapis.com/auth/drive.file');
         provider.setCustomParameters({ prompt: 'consent' }); // Force permission prompt
 
         const result = await signInWithPopup(auth, provider);

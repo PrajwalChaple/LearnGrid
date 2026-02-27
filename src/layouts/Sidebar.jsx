@@ -34,7 +34,7 @@ export function Sidebar({ isOpen, onClose }) {
       <div className="sidebar-header">
         <div className="logo">
           <div className="logo-icon">
-            <span>L</span>
+            <img src={`${import.meta.env.BASE_URL}bookmark-25.svg`} alt="Logo" style={{ width: '22px', height: '22px' }} />
           </div>
           <span className="logo-text">LearnGrid</span>
         </div>
@@ -109,21 +109,15 @@ export function Sidebar({ isOpen, onClose }) {
       .logo {
         display: flex;
         align-items: center;
-        gap: 0.75rem;
+        gap: 0.4rem;
         }
 
       .logo-icon {
-        width: 32px;
-        height: 32px;
-        background: #2563eb;
-        border-radius: 8px;
+        width: 24px;
+        height: 24px;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: white;
-        font-weight: 800;
-        font-size: 1.2rem;
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
         }
 
       .logo-text {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { User, Mail, Lock, ArrowRight, ArrowLeft, GraduationCap, CheckCircle } from 'lucide-react';
+import { User, Mail, Lock, ArrowRight, ArrowLeft, CheckCircle } from 'lucide-react';
 
 export function Register() {
   const navigate = useNavigate();
@@ -85,7 +85,7 @@ export function Register() {
           </Link>
           <div className="mt-12">
             <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-6">
-              <GraduationCap size={28} className="text-white" />
+              <img src={`${import.meta.env.BASE_URL}bookmark-25.svg`} alt="Logo" style={{ width: '28px', height: '28px', filter: 'brightness(0) invert(1)' }} />
             </div>
             <h2 className="text-4xl font-bold mb-4">Start your learning journey today.</h2>
             <p className="text-indigo-200 text-lg max-w-md">Create your free account and get immediate access to all tools.</p>

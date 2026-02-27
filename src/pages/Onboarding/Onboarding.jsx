@@ -91,7 +91,7 @@ export function Onboarding() {
                 {/* Header */}
                 <div className="text-center mb-8">
                     <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm mb-4">
-                        <GraduationCap size={36} className="text-white" />
+                        <img src={`${import.meta.env.BASE_URL}bookmark-25.svg`} alt="Logo" style={{ width: '36px', height: '36px', filter: 'brightness(0) invert(1)' }} />
                     </div>
                     <h1 className="text-3xl font-bold text-white mb-2">Complete Your Profile</h1>
                     <p className="text-indigo-200 text-lg">Tell us about your institution to get started</p>

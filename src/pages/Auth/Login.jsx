@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Mail, Lock, LogIn, GraduationCap, ArrowLeft, ArrowRight, Star } from 'lucide-react';
+import { Mail, Lock, LogIn, ArrowLeft, ArrowRight, Star } from 'lucide-react';
 
 export function Login() {
   const navigate = useNavigate();
@@ -112,7 +112,7 @@ export function Login() {
           </Link>
           <div className="mt-12">
             <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-6">
-              <GraduationCap size={28} className="text-white" />
+              <img src={`${import.meta.env.BASE_URL}bookmark-25.svg`} alt="Logo" style={{ width: '28px', height: '28px', filter: 'brightness(0) invert(1)' }} />
             </div>
             <h2 className="text-4xl font-bold mb-4">Welcome back to the future of learning.</h2>
             <p className="text-indigo-200 text-lg max-w-md">Join thousands of students who are achieving their academic goals with LearnGrid's intelligent dashboard.</p>

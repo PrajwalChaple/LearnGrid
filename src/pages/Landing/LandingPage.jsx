@@ -54,10 +54,8 @@ export const LandingPage = () => {
             {/* ─── NAVBAR ─── */}
             <nav className="fixed w-full top-0 z-50 bg-[#f8fafc]/80 backdrop-blur-xl border-b border-slate-200/50">
                 <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-20">
-                    <Link to="/" className="flex items-center gap-3 no-underline group">
-                        <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform duration-300">
-                            <GraduationCap size={22} strokeWidth={2.5} />
-                        </div>
+                    <Link to="/" className="flex items-center gap-1.5 no-underline group">
+                        <img src={`${import.meta.env.BASE_URL}bookmark-25.svg`} alt="Logo" className="group-hover:scale-105 transition-transform duration-300" style={{ width: '28px', height: '28px' }} />
                         <span className="text-xl font-bold tracking-tight text-slate-900">
                             LearnGrid
                         </span>
@@ -546,10 +544,8 @@ export const LandingPage = () => {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 relative z-10 w-full h-full">
                             <div className="flex flex-col justify-center">
-                                <div className="flex items-center gap-2 mb-6 text-slate-900">
-                                    <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center text-white">
-                                        <GraduationCap size={16} strokeWidth={2.5} />
-                                    </div>
+                                <div className="flex items-center gap-1.5 mb-6 text-slate-900">
+                                    <img src={`${import.meta.env.BASE_URL}bookmark-25.svg`} alt="Logo" style={{ width: '24px', height: '24px' }} />
                                     <span className="text-lg font-bold">LearnGrid</span>
                                 </div>
                                 <h2 className="text-4xl md:text-5xl font-medium tracking-tight text-slate-900 mb-6 leading-tight">

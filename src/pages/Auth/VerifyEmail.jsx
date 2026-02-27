@@ -60,7 +60,7 @@ export function VerifyEmail() {
                     </button>
                     <div className="mt-12">
                         <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-6">
-                            <GraduationCap size={28} className="text-white" />
+                            <img src={`${import.meta.env.BASE_URL}bookmark-25.svg`} alt="Logo" style={{ width: '28px', height: '28px', filter: 'brightness(0) invert(1)' }} />
                         </div>
                         <h2 className="text-4xl font-bold mb-4">Almost there!</h2>
                         <p className="text-indigo-200 text-lg max-w-md">Just one more step to unlock your learning dashboard.</p>
