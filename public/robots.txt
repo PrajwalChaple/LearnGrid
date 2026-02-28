@@ -1,3 +1,17 @@
 User-agent: *
 Allow: /
-Sitemap: https://thelearngrid.vercel.app/sitemap.xml
+Crawl-delay: 1
+
+# Block private/dashboard routes from indexing
+Disallow: /#/dashboard
+Disallow: /#/notes
+Disallow: /#/assignments
+Disallow: /#/announcements
+Disallow: /#/calendar
+Disallow: /#/profile
+Disallow: /#/settings
+Disallow: /#/onboarding
+Disallow: /#/verify-email
+
+# Sitemap
+Sitemap: https://www.learngrid.online/sitemap.xml

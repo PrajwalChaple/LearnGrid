@@ -59,7 +59,7 @@ export async function sendEmailBatch(recipients, noteData, senderProfile, itemTy
                 note_title: noteData.title,
                 action_text: actionTexts[itemType] || actionTexts.note,
                 item_label: itemLabels[itemType] || itemLabels.note,
-                website_link: `https://learn-grid-tool.vercel.app/#/${itemType === 'note' ? 'notes' : itemType === 'assignment' ? 'assignments' : 'announcements'}`,
+                website_link: `https://www.learngrid.online/#/${itemType === 'note' ? 'notes' : itemType === 'assignment' ? 'assignments' : 'announcements'}`,
             };
 
             await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams);
