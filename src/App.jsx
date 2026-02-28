@@ -18,7 +18,7 @@ import { Settings } from './pages/Settings/Settings';
 import { Features } from './pages/Static/Features';
 
 import { Integrations } from './pages/Static/Integrations';
-import { Blog } from './pages/Static/Blog';
+
 import { Help } from './pages/Static/Help';
 import { Community } from './pages/Static/Community';
 import { PrivacyPolicy } from './pages/Static/PrivacyPolicy';
@@ -50,7 +50,7 @@ function AppContent() {
           <Route path="/features" element={<Features />} />
 
           <Route path="/integrations" element={<Integrations />} />
-          <Route path="/blog" element={<Blog />} />
+
           <Route path="/help" element={<Help />} />
           <Route path="/community" element={<Community />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
