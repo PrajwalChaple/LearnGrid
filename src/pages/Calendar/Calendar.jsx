@@ -1,18 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { subscribeToAssignments } from '../../lib/firestore';
+import { subscribeToAssignments, subscribeToAnnouncements } from '../../lib/firestore';
 
 export function Calendar() {
-  const { userProfile } = useAuth();
+  const { user, userProfile } = useAuth();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [assignments, setAssignments] = useState([]);
+  const [announcements, setAnnouncements] = useState([]);
 
   // Real-time listener for assignments from Firestore
   useEffect(() => {
     if (!userProfile) return;
     const unsubscribe = subscribeToAssignments(userProfile, (data) => {
       setAssignments(data);
+    });
+    return () => unsubscribe();
+  }, [userProfile]);
+
+  // Real-time listener for announcements
+  useEffect(() => {
+    if (!userProfile) return;
+    const unsubscribe = subscribeToAnnouncements(userProfile, (data) => {
+      setAnnouncements(data);
     });
     return () => unsubscribe();
   }, [userProfile]);
@@ -51,11 +61,27 @@ export function Calendar() {
   const nextMonth = () => setCurrentDate(new Date(year, month + 1, 1));
   const goToday = () => setCurrentDate(new Date());
 
-  // Map assignments to calendar events
-  const eventDays = assignments.map(a => {
-    const d = new Date(a.deadline);
-    return { day: d.getDate(), month: d.getMonth(), year: d.getFullYear(), title: a.title, status: a.status };
-  }).filter(e => e.month === month && e.year === year);
+  // Get current user's status for an assignment (copied logic from Assignments.jsx)
+  const getMyStatus = (assignment) => {
+    if (assignment.userStatuses && assignment.userStatuses[user?.uid]) {
+      return assignment.userStatuses[user?.uid];
+    }
+    // Fallback: if creator, use top-level status; otherwise default Pending
+    if (user && assignment.userId === user.uid) return assignment.status || 'Pending';
+    return 'Pending';
+  };
+
+  // Map assignments and announcements to calendar events
+  const eventDays = [
+    ...assignments.map(a => {
+      const d = new Date(a.deadline);
+      return { day: d.getDate(), month: d.getMonth(), year: d.getFullYear(), title: a.title, status: getMyStatus(a), type: 'assignment' };
+    }),
+    ...announcements.map(a => {
+      const d = a.date ? new Date(a.date) : new Date(a.createdAt);
+      return { day: d.getDate(), month: d.getMonth(), year: d.getFullYear(), title: a.title, status: 'announcement', type: 'announcement' };
+    })
+  ].filter(e => e.month === month && e.year === year);
 
   return (
     <div className="calendar-page">
@@ -80,7 +106,7 @@ export function Calendar() {
             <div key={index} className={`calendar-cell ${date.prev || date.next ? 'muted' : ''} ${date.today ? 'today' : ''}`}>
               <span className={`date-number ${date.today ? 'today-num' : ''}`}>{date.day}</span>
               {events.map((ev, ei) => (
-                <div key={ei} className={`event-chip ${ev.status === 'Completed' ? 'completed' : 'pending'}`} title={ev.title}>
+                <div key={ei} className={`event-chip ${ev.status === 'Completed' ? 'completed' : ev.status === 'announcement' ? 'announcement' : 'pending'}`} title={ev.title}>
                   {ev.title.substring(0, 12)}{ev.title.length > 12 ? '...' : ''}
                 </div>
               ))}
@@ -97,6 +123,10 @@ export function Calendar() {
         <div className="legend-item">
           <div className="legend-dot completed-dot"></div>
           <span>Completed</span>
+        </div>
+        <div className="legend-item">
+          <div className="legend-dot announcement-dot"></div>
+          <span>Announcement</span>
         </div>
       </div>
 
@@ -231,6 +261,7 @@ export function Calendar() {
 
         .event-chip.pending { background: #fff7ed; color: #c2410c; }
         .event-chip.completed { background: #ecfdf5; color: #047857; }
+        .event-chip.announcement { background: #f3e8ff; color: #7e22ce; }
 
         .legend {
           display: flex;
@@ -252,6 +283,7 @@ export function Calendar() {
         .legend-dot { width: 10px; height: 10px; border-radius: 3px; }
         .pending-dot { background: #f97316; }
         .completed-dot { background: #10b981; }
+        .announcement-dot { background: #a855f7; }
       `}</style>
     </div>
   );

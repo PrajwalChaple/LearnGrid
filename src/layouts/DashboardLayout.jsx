@@ -4,6 +4,7 @@ import { PageTransition } from '../components/PageTransition';
 import { Sidebar } from './Sidebar';
 import { Navbar } from './Navbar';
 import { useAuth } from '../context/AuthContext';
+import { GlobalCalendarSync } from '../components/GlobalCalendarSync';
 
 export function DashboardLayout() {
   const { user, isOnboarded } = useAuth();
@@ -27,6 +28,7 @@ export function DashboardLayout() {
 
   return (
     <div className="layout">
+      <GlobalCalendarSync />
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
       <div className="main-content">

@@ -51,11 +51,15 @@ export function Announcements() {
   };
 
   // Called by NotificationModal on Confirm — does the actual Firestore save
-  const handleUploadAnnouncement = async () => {
+  const handleUploadAnnouncement = async (audienceParams) => {
     if (!pendingItemData) return null;
     try {
-      const newId = await addAnnouncement(pendingItemData);
-      return { ...pendingItemData, id: newId, title: pendingItemData.title };
+      const finalData = {
+        ...pendingItemData,
+        ...audienceParams, // Overwrite with targeted class/audience!
+      };
+      const newId = await addAnnouncement(finalData);
+      return { ...finalData, id: newId, title: finalData.title };
     } catch (err) {
       console.error('Error adding announcement:', err);
       alert('Failed to post announcement.');

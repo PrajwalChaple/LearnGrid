@@ -13,7 +13,64 @@ export function Profile() {
   const photoURL = userProfile?.photoURL || user?.photoURL || null;
 
   const [avatarUploading, setAvatarUploading] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editForm, setEditForm] = useState(null);
+  const [editSaving, setEditSaving] = useState(false);
+  const [editError, setEditError] = useState('');
   const fileInputRef = React.useRef(null);
+
+  const handleEditClick = () => {
+    const edits = userProfile?.editCount || 0;
+    if (edits >= 2) {
+      alert("You have reached the maximum limit of 2 profile edits. Please contact the administrator/support for further changes.");
+      return;
+    }
+    setEditForm({
+      name: userProfile?.name || user?.displayName || '',
+      institutionName: userProfile?.institutionName || '',
+      standard: userProfile?.standard || '',
+      department: userProfile?.department || '',
+      year: userProfile?.year || '',
+      section: userProfile?.section || '',
+      rollNumber: userProfile?.rollNumber || ''
+    });
+    setEditError('');
+    setShowEditModal(true);
+  };
+
+  const handleEditSave = async (e) => {
+    e.preventDefault();
+    if (!user?.uid) return;
+    setEditSaving(true);
+    setEditError('');
+    try {
+      const updatedData = {
+        name: editForm.name.trim(),
+        institutionName: editForm.institutionName.toUpperCase().trim(),
+        rollNumber: editForm.rollNumber.toUpperCase().trim(),
+        editCount: (userProfile?.editCount || 0) + 1
+      };
+      if (userProfile?.roleType === 'school') {
+        updatedData.standard = editForm.standard;
+        updatedData.section = editForm.section.toUpperCase().trim();
+      } else {
+        updatedData.department = editForm.department.toUpperCase().trim();
+        updatedData.year = editForm.year;
+        updatedData.section = editForm.section.toUpperCase().trim();
+      }
+      await saveUserProfile(user.uid, updatedData);
+      if (updatedData.name !== user?.displayName) {
+        await updateAuthProfile({ displayName: updatedData.name });
+      }
+      await refreshProfile();
+      setShowEditModal(false);
+    } catch (err) {
+      console.error('Profile edit error:', err);
+      setEditError('Failed to save profile details. Please try again.');
+    } finally {
+      setEditSaving(false);
+    }
+  };
 
   const handleAvatarClick = () => fileInputRef.current?.click();
   const handleAvatarChange = async (e) => {
@@ -77,7 +134,12 @@ export function Profile() {
 
       <div className="profile-content-grid">
         <div className="card info-card animate-fade-in">
-          <h2>Personal Information</h2>
+          <div className="edit-header-wrap">
+            <h2>Personal Information</h2>
+            <button type="button" className="edit-header-btn" onClick={handleEditClick}>
+              <Pencil size={16} /> Edit Details
+            </button>
+          </div>
           <div className="info-list">
             <div className="info-item">
               <div className="icon-box"><User size={20} /></div>
@@ -109,6 +171,15 @@ export function Profile() {
                     <p>{userProfile.department} — {userProfile.year} Year</p>
                   </div>
                 </div>
+                {userProfile?.section && (
+                  <div className="info-item">
+                    <div className="icon-box"><GraduationCap size={20} /></div>
+                    <div>
+                      <label>Section</label>
+                      <p>{userProfile.section}</p>
+                    </div>
+                  </div>
+                )}
               </>
             )}
             {userProfile?.roleType === 'school' && (
@@ -123,6 +194,80 @@ export function Profile() {
           </div>
         </div>
       </div>
+
+      {showEditModal && editForm && (
+        <div className="modal-overlay" onClick={() => !editSaving && setShowEditModal(false)}>
+          <div className="modal-card" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Edit Profile Details</h3>
+              <p className="subtitle">You can edit your details a maximum of 2 times. ({(userProfile?.editCount || 0)}/2 used)</p>
+            </div>
+            <form onSubmit={handleEditSave} className="edit-form">
+              {editError && <div className="error-banner">{editError}</div>}
+
+              <div className="form-group">
+                <label>Full Name</label>
+                <input type="text" value={editForm.name} onChange={e => setEditForm({ ...editForm, name: e.target.value })} required className="input" />
+              </div>
+
+              <div className="form-group">
+                <label>Institution Name</label>
+                <input type="text" value={editForm.institutionName} onChange={e => setEditForm({ ...editForm, institutionName: e.target.value })} required className="input uppercase" />
+              </div>
+
+              {userProfile?.roleType === 'school' ? (
+                <div className="grid-2">
+                  <div className="form-group">
+                    <label>Standard</label>
+                    <select value={editForm.standard} onChange={e => setEditForm({ ...editForm, standard: e.target.value })} required className="input bg-white">
+                      <option value="">Select</option>
+                      {['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th', '9th', '10th', '11th', '12th'].map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label>Section</label>
+                    <input type="text" value={editForm.section} onChange={e => setEditForm({ ...editForm, section: e.target.value })} required className="input uppercase" />
+                  </div>
+                </div>
+              ) : (
+                <div className="grid-2">
+                  <div className="form-group">
+                    <label>Department</label>
+                    <input type="text" value={editForm.department} onChange={e => setEditForm({ ...editForm, department: e.target.value })} required className="input uppercase" />
+                  </div>
+                  <div className="form-group">
+                    <label>Year</label>
+                    <select value={editForm.year} onChange={e => setEditForm({ ...editForm, year: e.target.value })} required className="input bg-white">
+                      <option value="">Select</option>
+                      {['1st', '2nd', '3rd', '4th'].map(y => <option key={y} value={y}>{y} Year</option>)}
+                    </select>
+                  </div>
+                </div>
+              )}
+
+              <div className="grid-2">
+                {userProfile?.roleType === 'college' && (
+                  <div className="form-group">
+                    <label>Section</label>
+                    <input type="text" value={editForm.section} onChange={e => setEditForm({ ...editForm, section: e.target.value })} required className="input uppercase" />
+                  </div>
+                )}
+                <div className="form-group" style={userProfile?.roleType === 'school' ? { gridColumn: '1 / -1' } : {}}>
+                  <label>Class Roll Number</label>
+                  <input type="text" value={editForm.rollNumber} onChange={e => setEditForm({ ...editForm, rollNumber: e.target.value })} required className="input uppercase" />
+                </div>
+              </div>
+
+              <div className="modal-actions">
+                <button type="button" className="btn-secondary" onClick={() => setShowEditModal(false)} disabled={editSaving}>Cancel</button>
+                <button type="submit" className="btn-primary" disabled={editSaving}>
+                  {editSaving ? <Loader2 size={16} className="spin" /> : 'Save Changes'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       <style jsx="true">{`
         .profile-page { max-width: 1000px; margin: 0 auto; }
@@ -268,11 +413,39 @@ export function Profile() {
 
         .card h2 {
           font-size: 1.1rem;
-          margin: 0 0 1.5rem 0;
           color: var(--color-text-main);
-          border-bottom: 1px solid var(--color-border);
-          padding-bottom: 1rem;
           font-weight: 700;
+        }
+
+        .edit-header-wrap {
+          display: flex;
+          align-items: center;
+          width: 100%;
+          border-bottom: 1px solid var(--color-border);
+          margin: 0 0 1.5rem 0;
+          padding-bottom: 1rem;
+        }
+        
+        .edit-header-btn {
+          margin-left: auto;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.5rem 1rem;
+          background: var(--color-surface);
+          border: 1px solid var(--color-border);
+          border-radius: var(--radius-md);
+          color: var(--color-text-main);
+          font-weight: 500;
+          font-size: 0.9rem;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+
+        .edit-header-btn:hover {
+          border-color: var(--color-primary);
+          color: var(--color-primary);
+          background: var(--color-primary-bg);
         }
 
         .info-list { display: flex; flex-direction: column; gap: 1.5rem; }
@@ -300,6 +473,30 @@ export function Profile() {
         }
 
         .info-item p { color: var(--color-text-main); font-weight: 600; }
+
+        .modal-overlay {
+          position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px);
+          display: flex; align-items: center; justify-content: center; z-index: 100; padding: 1rem;
+        }
+        .modal-card {
+          background: var(--color-surface); border-radius: var(--radius-xl); padding: 1.5rem 2rem;
+          max-width: 500px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.2); border: 1px solid var(--color-border);
+        }
+        .modal-header h3 { margin: 0 0 0.25rem 0; font-size: 1.25rem; color: var(--color-text-main); }
+        .modal-header .subtitle { margin: 0 0 1.5rem 0; font-size: 0.85rem; color: var(--color-text-muted); }
+        .error-banner { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; padding: 0.75rem 1rem; border-radius: var(--radius-md); margin-bottom: 1rem; font-size: 0.9rem; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--color-text-muted); margin-bottom: 0.4rem; }
+        .form-group .input { width: 100%; padding: 0.65rem 1rem; border: 1px solid var(--color-border); border-radius: var(--radius-md); font-size: 0.95rem; background: var(--color-surface); color: var(--color-text-main); transition: all 0.2s; }
+        .form-group .input:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px var(--color-primary-bg); }
+        .form-group .uppercase { text-transform: uppercase; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .modal-actions { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--color-border); }
+        .btn-secondary { padding: 0.6rem 1.2rem; border-radius: var(--radius-md); border: 1px solid var(--color-border); background: var(--color-surface); color: var(--color-text-main); font-weight: 600; cursor: pointer; font-size: 0.9rem; }
+        .btn-secondary:hover:not(:disabled) { background: var(--color-primary-bg); border-color: var(--color-primary); color: var(--color-primary); }
+        .btn-primary { padding: 0.6rem 1.2rem; border-radius: var(--radius-md); border: none; background: var(--gradient-primary); color: white; font-weight: 600; cursor: pointer; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 0.5rem; }
+        .btn-primary:hover:not(:disabled) { opacity: 0.95; }
+        .btn-primary:disabled, .btn-secondary:disabled { opacity: 0.7; cursor: not-allowed; }
       `}</style>
     </div>
   );

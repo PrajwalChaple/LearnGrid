@@ -3,7 +3,6 @@ import { useAuth } from '../../context/AuthContext';
 import { CheckCircle, Clock, FileQuestion, Plus, X, User, Upload, FileText, Eye } from 'lucide-react';
 import { subscribeToAssignments, addAssignment, deleteAssignmentDoc, updateAssignment } from '../../lib/firestore';
 import { NotificationModal } from '../../components/NotificationModal';
-import { addEventToCalendar, getCalendarToken, saveEventToSyncMap, removeCalendarEvent } from '../../lib/googleCalendar';
 import { uploadAssignmentPDFToCloudinary } from '../../lib/cloudinary';
 
 export function Assignments() {
@@ -48,7 +47,7 @@ export function Assignments() {
   const handleAdd = async (e) => {
     e.preventDefault();
     const file = fileInputRef.current?.files?.[0];
-    
+
     // Only prepare the data — do NOT save to Firestore yet
     const assignmentData = {
       ...formData,
@@ -75,7 +74,7 @@ export function Assignments() {
   };
 
   // Called by NotificationModal on Confirm — does the actual Firestore save + Calendar sync + PDF upload
-  const handleUploadAssignment = async () => {
+  const handleUploadAssignment = async (audienceParams) => {
     if (!pendingItemData) return null;
     setUploading(true);
     try {
@@ -109,41 +108,14 @@ export function Assignments() {
       const { _file, ...finalData } = pendingItemData;
       const assignmentData = {
         ...finalData,
+        ...audienceParams, // Overwrite with targeted class/audience!
         ...(fileUrl && { fileUrl, downloadUrl, cloudinaryId, fileName }),
       };
 
       const newId = await addAssignment(assignmentData);
-      // Sync to Google Calendar when connected
-      const token = getCalendarToken();
-      // #region agent log
-      fetch('http://127.0.0.1:7431/ingest/8d894928-30cc-40ea-96dd-adf1ce5bf673', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Debug-Session-Id': 'd424bd',
-        },
-        body: JSON.stringify({
-          sessionId: 'd424bd',
-          runId: 'pre-fix',
-          hypothesisId: 'H1-H4',
-          location: 'Assignments.jsx:handleUploadAssignment',
-          message: 'handleUploadAssignment calendar sync check',
-          data: {
-            hasToken: !!token,
-            userId: user?.uid,
-            assignmentId: newId,
-          },
-          timestamp: Date.now(),
-        }),
-      }).catch(() => {});
-      // #endregion agent log
-      if (token) {
-        const calResult = await addEventToCalendar(token, { ...assignmentData, id: newId });
-        if (calResult.success && calResult.eventId) {
-          saveEventToSyncMap(user.uid, newId, calResult.eventId);
-          console.log('[Assignments] Synced to Google Calendar:', calResult.eventId);
-        }
-      }
+
+      // GlobalCalendarSync handles Calendar integration automatically now
+
       return { ...assignmentData, id: newId, title: assignmentData.title };
     } catch (err) {
       console.error('Error adding assignment:', err);
@@ -186,21 +158,7 @@ export function Assignments() {
         [`userGrades.${user.uid}`]: newGrade,
       });
 
-      // Sync with Google Calendar based on new status
-      if (newStatus === 'Completed') {
-        // Completed → Remove from Calendar
-        await removeCalendarEvent(user.uid, id);
-      } else {
-        // Back to Pending → Re-add to Calendar
-        const token = getCalendarToken();
-        if (token) {
-          const calResult = await addEventToCalendar(token, item);
-          if (calResult.success && calResult.eventId) {
-            saveEventToSyncMap(user.uid, id, calResult.eventId);
-            console.log('[Assignments] Re-added to Google Calendar:', calResult.eventId);
-          }
-        }
-      }
+      // GlobalCalendarSync handles Calendar sync based on the updated state
     } catch (err) {
       console.error('Error updating assignment:', err);
     }
@@ -213,8 +171,7 @@ export function Assignments() {
       return;
     }
     try {
-      // Remove from Google Calendar first
-      await removeCalendarEvent(user.uid, id);
+      // GlobalCalendarSync removes events when the Assignment is no longer active
       await deleteAssignmentDoc(id);
     } catch (err) {
       console.error('Error deleting assignment:', err);

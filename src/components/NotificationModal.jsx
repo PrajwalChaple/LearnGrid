@@ -269,18 +269,19 @@ export function NotificationModal({ isOpen, onClose, noteData, userProfile, onCo
         if (!isAudienceComplete) return;
         setLoading(true);
         try {
-            // 1. Upload/save if needed
-            let savedData = noteData;
-            if (onUpload) {
-                savedData = await onUpload();
-                if (!savedData) { setLoading(false); return; }
-            }
-
-            // 2. Fetch recipients
+            // 1. Fetch recipients
             const params = buildAudienceParams();
             const currentUid = user?.uid || '';
             const recipients = await getDynamicRecipients(params, currentUid);
             const totalRecipients = recipients.length;
+
+            // 2. Upload/save if needed
+            let savedData = noteData;
+            if (onUpload) {
+                // Pass audience parameters down so it can overwrite the uploader's class with the targeted audience
+                savedData = await onUpload(params);
+                if (!savedData) { setLoading(false); return; }
+            }
 
             // Filter by preferences
             const wantsTypeAlert = (r) => {

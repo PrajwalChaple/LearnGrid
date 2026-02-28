@@ -78,9 +78,11 @@ export const loginWithGoogle = async () => {
 
                 if (data.scope && data.scope.includes('calendar')) {
                     sessionStorage.setItem('gcal_token', accessToken);
+                    if (typeof window !== 'undefined') window.dispatchEvent(new Event('calendarConnectionChanged'));
                 } else {
                     console.warn('[Auth] Calendar scope denied by user.');
                     sessionStorage.removeItem('gcal_token');
+                    if (typeof window !== 'undefined') window.dispatchEvent(new Event('calendarConnectionChanged'));
                 }
             } catch (err) {
                 console.error('[Auth] Token verification failed:', err);
@@ -166,7 +168,10 @@ export const unlinkGoogle = async () => {
     }
     try {
         await unlink(auth.currentUser, 'google.com');
-        if (typeof sessionStorage !== 'undefined') sessionStorage.removeItem('gcal_token');
+        if (typeof sessionStorage !== 'undefined') {
+            sessionStorage.removeItem('gcal_token');
+            if (typeof window !== 'undefined') window.dispatchEvent(new Event('calendarConnectionChanged'));
+        }
         return { success: true, error: null };
     } catch (error) {
         return { success: false, error };
@@ -174,22 +179,20 @@ export const unlinkGoogle = async () => {
 };
 
 /** Permanently delete the current user's Firebase Auth account. Reauth required. */
-export const deleteUserAccount = async (passwordOrNull) => {
+export const deleteUserAccount = async () => {
     const user = auth.currentUser;
     if (!user) return { success: false, error: { message: 'Not signed in' } };
     try {
-        // Re-authenticate based on provider
-        if (hasEmailProvider(user) && user.email) {
-            if (!passwordOrNull) return { success: false, error: { message: 'Password required to delete account' } };
-            const reauth = await reauthenticateWithEmail(user.email, passwordOrNull);
-            if (!reauth.success) return reauth;
-        } else if (isGoogleLinked(user)) {
-            // Google users need re-auth via popup
+        // Handle Google users requiring popup reauth
+        if (isGoogleLinked(user)) {
             const provider = new GoogleAuthProvider();
             await reauthenticateWithPopup(user, provider);
         }
         await deleteUser(user);
-        if (typeof sessionStorage !== 'undefined') sessionStorage.removeItem('gcal_token');
+        if (typeof sessionStorage !== 'undefined') {
+            sessionStorage.removeItem('gcal_token');
+            if (typeof window !== 'undefined') window.dispatchEvent(new Event('calendarConnectionChanged'));
+        }
         return { success: true, error: null };
     } catch (error) {
         return { success: false, error };

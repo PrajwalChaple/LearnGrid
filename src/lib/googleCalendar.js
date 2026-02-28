@@ -48,7 +48,7 @@ export function isCalendarConnected() {
             },
             timestamp: Date.now(),
         }),
-    }).catch(() => {});
+    }).catch(() => { });
     // #endregion agent log
     return !!token;
 }
@@ -65,7 +65,8 @@ export function getCalendarToken() {
  */
 export function disconnectCalendar(userId) {
     sessionStorage.removeItem('gcal_token');
-    if (userId) try { localStorage.removeItem(`gcal_synced_assignments_${userId}`); } catch (_) {}
+    if (userId) try { localStorage.removeItem(`gcal_synced_assignments_${userId}`); } catch (_) { }
+    if (typeof window !== 'undefined') window.dispatchEvent(new Event('calendarConnectionChanged'));
 }
 
 /**
@@ -128,7 +129,7 @@ export async function syncCalendar(user, assignments, announcements) {
             },
             timestamp: Date.now(),
         }),
-    }).catch(() => {});
+    }).catch(() => { });
     // #endregion agent log
     if (!accessToken || !user) return; // Not connected
 
@@ -221,7 +222,7 @@ export async function addEventToCalendar(accessToken, item) {
                 },
                 timestamp: Date.now(),
             }),
-        }).catch(() => {});
+        }).catch(() => { });
         // #endregion agent log
 
         if (!response.ok) {
@@ -255,7 +256,7 @@ export async function addEventToCalendar(accessToken, item) {
                 },
                 timestamp: Date.now(),
             }),
-        }).catch(() => {});
+        }).catch(() => { });
         // #endregion agent log
         return { success: false, error: err.message };
     }
@@ -293,7 +294,7 @@ export async function deleteEventFromCalendar(accessToken, eventId) {
                 },
                 timestamp: Date.now(),
             }),
-        }).catch(() => {});
+        }).catch(() => { });
         // #endregion agent log
         return { success: true };
     } catch (err) {
@@ -315,7 +316,7 @@ export async function deleteEventFromCalendar(accessToken, eventId) {
                 },
                 timestamp: Date.now(),
             }),
-        }).catch(() => {});
+        }).catch(() => { });
         // #endregion agent log
         return { success: false, error: err.message };
     }

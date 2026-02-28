@@ -118,7 +118,7 @@ export function Notes() {
   };
 
   // Called by NotificationModal on Confirm — does Cloudinary upload + Firestore save
-  const handleUploadNote = async () => {
+  const handleUploadNote = async (audienceParams) => {
     if (!pendingNoteData) return null;
     setUploading(true);
     try {
@@ -133,6 +133,7 @@ export function Notes() {
       const { _file, ...noteMetadata } = pendingNoteData; // Remove raw file from data
       const finalData = {
         ...noteMetadata,
+        ...audienceParams, // Overwrite with targeted class/audience!
         fileUrl: url,
         downloadUrl: downloadUrl || url,
         cloudinaryId: publicId,
@@ -253,11 +254,11 @@ export function Notes() {
               type="file"
               accept="application/pdf"
               ref={fileInputRef}
-                onChange={(e) => {
-                  const file = e.target.files?.[0] || null;
-                  isOpeningFileDialog.current = false;
-                  setSelectedFile(file);
-                }}
+              onChange={(e) => {
+                const file = e.target.files?.[0] || null;
+                isOpeningFileDialog.current = false;
+                setSelectedFile(file);
+              }}
               required
               style={{ display: 'none' }}
             />

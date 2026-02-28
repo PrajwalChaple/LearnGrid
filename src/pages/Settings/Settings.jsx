@@ -44,7 +44,6 @@ export function Settings() {
     const [showNewPass, setShowNewPass] = useState(false);
     const [showConfirmPass, setShowConfirmPass] = useState(false);
     const [forgotSending, setForgotSending] = useState(false);
-    const [deletePassword, setDeletePassword] = useState('');
     const [deleteDataConfirm, setDeleteDataConfirm] = useState('');
     const [deleteAccountConfirm, setDeleteAccountConfirm] = useState('');
     const [authError, setAuthError] = useState('');
@@ -147,10 +146,6 @@ export function Settings() {
     const handleDeleteAccount = async (e) => {
         e.preventDefault();
         setAuthError('');
-        if (hasEmailProvider(user) && !deletePassword.trim()) {
-            setAuthError('Enter your password to confirm account deletion.');
-            return;
-        }
         setLoading(true);
         try {
             // Step 1: Delete all user data (notes, assignments, announcements, notifications)
@@ -158,7 +153,7 @@ export function Settings() {
             // Step 2: Delete user profile from Firestore
             await deleteUserProfile(user.uid);
             // Step 3: Delete Firebase Auth account (triggers re-auth popup for Google users)
-            const result = await deleteUserAccount(hasEmailProvider(user) ? deletePassword : null);
+            const result = await deleteUserAccount();
             if (result.success) {
                 // Clear session and redirect to landing page
                 sessionStorage.clear();
@@ -501,25 +496,26 @@ export function Settings() {
 
             {/* Delete account modal */}
             {deleteModal && (
-                <div className="modal-overlay" onClick={() => { if (!loading) { setDeleteModal(false); setDeleteAccountConfirm(''); setDeletePassword(''); } }}>
+                <div className="modal-overlay" onClick={() => { if (!loading) { setDeleteModal(false); setDeleteAccountConfirm(''); } }}>
                     <div className="modal-card danger" onClick={(e) => e.stopPropagation()}>
                         <h3>Delete account permanently?</h3>
                         <p className="modal-warning">This will remove your account and all data. You cannot undo this.</p>
-                        {hasEmailProvider(user) && (
-                            <input type="password" value={deletePassword} onChange={(e) => setDeletePassword(e.target.value)} className="input" />
-                        )}
-                        <p className="confirm-instruction">Type <strong>DELETE ACCOUNT</strong> to confirm:</p>
-                        <input
-                            type="text"
-                            value={deleteAccountConfirm}
-                            onChange={(e) => setDeleteAccountConfirm(e.target.value.toUpperCase())}
-                            className="input confirm-input"
-                            style={{ textTransform: 'uppercase' }}
-                            autoComplete="off"
-                        />
+
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Type <strong className="text-red-600">DELETE ACCOUNT</strong> to confirm</label>
+                            <input
+                                type="text"
+                                value={deleteAccountConfirm}
+                                onChange={(e) => setDeleteAccountConfirm(e.target.value.toUpperCase())}
+                                className="input confirm-input"
+                                style={{ textTransform: 'uppercase' }}
+                                autoComplete="off"
+                                placeholder="DELETE ACCOUNT"
+                            />
+                        </div>
                         <div className="modal-actions">
-                            <button type="button" className="btn-secondary" onClick={() => { setDeleteModal(false); setDeleteAccountConfirm(''); setDeletePassword(''); }} disabled={loading}>Cancel</button>
-                            <button type="button" className="btn-danger" onClick={handleDeleteAccount} disabled={loading || deleteAccountConfirm !== 'DELETE ACCOUNT' || (hasEmailProvider(user) && !deletePassword.trim())}>
+                            <button type="button" className="btn-secondary" onClick={() => { setDeleteModal(false); setDeleteAccountConfirm(''); }} disabled={loading}>Cancel</button>
+                            <button type="button" className="btn-danger" onClick={handleDeleteAccount} disabled={loading || deleteAccountConfirm !== 'DELETE ACCOUNT'}>
                                 {loading ? <Loader2 size={18} className="spin" /> : 'Delete my account'}
                             </button>
                         </div>
