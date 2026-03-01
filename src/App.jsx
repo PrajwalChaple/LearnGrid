@@ -1,7 +1,7 @@
 import React, { Suspense, lazy } from 'react';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
-import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 // Layouts — eagerly loaded (small, shared across many routes)
 import { DashboardLayout } from './layouts/DashboardLayout';
@@ -147,9 +147,9 @@ function App() {
   return (
     <AuthProvider>
       <ThemeProvider>
-        <HashRouter>
+        <BrowserRouter>
           <AppContent />
-        </HashRouter>
+        </BrowserRouter>
       </ThemeProvider>
     </AuthProvider>
   );
