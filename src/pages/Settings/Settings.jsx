@@ -10,7 +10,8 @@ import {
     deleteUserAccount,
     isGoogleLinked,
     hasEmailProvider,
-    unlinkGoogle
+    unlinkGoogle,
+    logoutUser
 } from '../../auth';
 import { disconnectCalendar, isCalendarConnected } from '../../lib/googleCalendar';
 import { loginWithGoogle } from '../../auth';
@@ -162,6 +163,7 @@ export function Settings() {
             // Even if this fails (e.g. requires-recent-login for email users), we proceed to log them out
             // because their app data is already wiped.
             await deleteUserAccount();
+            await logoutUser();
 
             // Step 4: Always clear session and redirect to landing page
             sessionStorage.clear();

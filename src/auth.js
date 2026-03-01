@@ -182,11 +182,6 @@ export const deleteUserAccount = async () => {
     const user = auth.currentUser;
     if (!user) return { success: false, error: { message: 'Not signed in' } };
     try {
-        // Handle Google users requiring popup reauth
-        if (isGoogleLinked(user)) {
-            const provider = new GoogleAuthProvider();
-            await reauthenticateWithPopup(user, provider);
-        }
         await deleteUser(user);
         if (typeof sessionStorage !== 'undefined') {
             sessionStorage.removeItem('gcal_token');
