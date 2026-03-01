@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { callGeminiWithRotation, OPENAI_API_KEY } from '../config/apiKeys';
 import { useWindowSize } from 'react-use';
 import { useIsMobileDevice } from '../hooks/useIsMobileDevice';
+import { useAuth } from '../context/AuthContext';
 
 export function AiBuddy({ pendingTasks, assignmentsData = [], currentUserId = null, userName = '' }) {
     const splineRef = useRef(null);
@@ -13,6 +14,9 @@ export function AiBuddy({ pendingTasks, assignmentsData = [], currentUserId = nu
 
     const [messagesQueue, setMessagesQueue] = useState([]);
     const [messageIndex, setMessageIndex] = useState(0);
+
+    const { userProfile } = useAuth();
+    const aiLanguage = userProfile?.settings?.preferences?.aiLanguage || 'en';
 
     // We try to read previous count from localStorage so it persists across page navigation if AiBuddy unmounts
     const prevTasksRef = useRef(() => {
@@ -32,12 +36,13 @@ export function AiBuddy({ pendingTasks, assignmentsData = [], currentUserId = nu
     }
 
     // ============================================================
-    // 📝 BUILT-IN HINGLISH MESSAGES (NO API CALL NEEDED)
+    // 📝 BUILT-IN MESSAGES (NO API CALL NEEDED)
     // ============================================================
     // These are used for celebrations, empty dashboards, and generic states.
     // API is ONLY called when there's specific assignment context.
+    // Language-aware: picks English or Hinglish based on user preference.
 
-    const builtInMessages = {
+    const hinglishMessages = {
         celebrationAllClear: [
             `Wah ${userName || 'bhai'} aag laga di! Sab clear kar diya tune! 🎉`,
             `Party time ${userName || 'yaar'}! Ekdum zero pending tasks! 🎊`,
@@ -81,6 +86,54 @@ export function AiBuddy({ pendingTasks, assignmentsData = [], currentUserId = nu
             `${userName || 'Bhai'} Netflix band kar, ${pendingTasks} assignments bache hain! 📵`,
         ]
     };
+
+    const englishMessages = {
+        celebrationAllClear: [
+            `Amazing work${userName ? ', ' + userName : ''}! All tasks cleared. You deserve a break! 🎉`,
+            `Outstanding${userName ? ', ' + userName : ''}! Zero pending tasks. Well done! 🏆`,
+            `All caught up${userName ? ', ' + userName : ''}! Your dashboard is sparkling clean! ✨`,
+            `Incredible effort${userName ? ', ' + userName : ''}! Every single task is complete! 🔥`,
+            `${userName || 'Hey'}, you crushed it! Nothing left on your plate! 💯`,
+            `Perfect score${userName ? ', ' + userName : ''}! All tasks done. Time to relax! 😎`,
+            `${userName || 'Great job'}! Clean slate. You're on top of everything! 🌟`,
+            `Mission accomplished${userName ? ', ' + userName : ''}! All tasks are wrapped up! 🎊`,
+        ],
+        celebrationOneTask: [
+            `Nice one${userName ? ', ' + userName : ''}! One task done. ${pendingTasks} more to go! 🚀`,
+            `Good progress! Another task completed. ${pendingTasks} remaining. Keep it up! 💪`,
+            `Well done${userName ? ', ' + userName : ''}! One less thing to worry about. ${pendingTasks} left! 👏`,
+            `That's the way${userName ? ', ' + userName : ''}! Task complete. Only ${pendingTasks} more! 🔥`,
+            `Keep the momentum${userName ? ', ' + userName : ''}! ${pendingTasks} tasks left to finish! 🚀`,
+            `Another one bites the dust! ${pendingTasks} tasks remaining. You got this! 💥`,
+            `Steady progress${userName ? ', ' + userName : ''}! One done, ${pendingTasks} to go! 🎯`,
+            `Excellent${userName ? ', ' + userName : ''}! Keep going at this pace! 💪`,
+        ],
+        zeroTasks: [
+            `You're all caught up${userName ? ', ' + userName : ''}! No tasks pending right now. 😎`,
+            `Clean dashboard${userName ? ', ' + userName : ''}! No tasks to worry about. 🎉`,
+            `All clear! Take some time to relax and recharge. 📺`,
+            `No pending tasks${userName ? ', ' + userName : ''}! Enjoy the free time! 🏖️`,
+            `Dashboard is clean${userName ? ', ' + userName : ''}! Nothing pending. Enjoy! 😌`,
+            `Zero pending tasks! Great discipline${userName ? ', ' + userName : ''}! 👑`,
+            `Nothing pending${userName ? ', ' + userName : ''}! You're ahead of the game! ✅`,
+            `All done${userName ? ', ' + userName : ''}! No assignments or tasks waiting! 🦅`,
+        ],
+        genericPending: [
+            `${userName ? userName + ', you' : 'You'} have ${pendingTasks} pending tasks. Take a look when you can! 📋`,
+            `${pendingTasks} tasks are waiting${userName ? ', ' + userName : ''}. A little focus goes a long way! 📖`,
+            `Heads up${userName ? ', ' + userName : ''}! ${pendingTasks} tasks are still pending. ⚠️`,
+            `${userName ? userName + ', ' : ''}${pendingTasks} tasks pending. Try to get them done soon! 🕰️`,
+            `${pendingTasks} tasks to complete${userName ? ', ' + userName : ''}. Let's get started! 💪`,
+            `Stay focused${userName ? ', ' + userName : ''}! ${pendingTasks} tasks are waiting for you. 🎯`,
+            `Don't forget${userName ? ', ' + userName : ''}! ${pendingTasks} tasks need your attention. ⏰`,
+            `${pendingTasks} tasks won't complete themselves${userName ? ', ' + userName : ''}! Time to work! 🚀`,
+            `${userName ? userName + ', ' : ''}${pendingTasks} assignments are pending. Stay on track! 📚`,
+            `Time to focus${userName ? ', ' + userName : ''}! ${pendingTasks} tasks are due. 📝`,
+        ]
+    };
+
+    // Pick the correct message set based on language preference
+    const builtInMessages = aiLanguage === 'hin' ? hinglishMessages : englishMessages;
 
     // Helper to pick random subset from an array (for variety without API)
     const pickRandom = (arr, count = 5) => {
@@ -135,7 +188,7 @@ export function AiBuddy({ pendingTasks, assignmentsData = [], currentUserId = nu
 
         // Check cache first to avoid unnecessary API calls
         const safeContext = encodeURIComponent(contextStr || 'none').substring(0, 30);
-        const cacheKey = `ag_ai_msgs_${currentUserId}_${tasksCount}_${safeContext}`;
+        const cacheKey = `ag_ai_msgs_${currentUserId}_${tasksCount}_${aiLanguage}_${safeContext}`;
         const cacheString = localStorage.getItem(cacheKey);
         if (cacheString) {
             try {
@@ -146,19 +199,92 @@ export function AiBuddy({ pendingTasks, assignmentsData = [], currentUserId = nu
             } catch (e) { /* Ignore and re-fetch */ }
         }
 
-        // Build the prompt (only reaches here on cache miss with real context)
-        const prompt = `You are a close friend and study buddy (AI Mascot) inside an academic dashboard. 
+        // ============================================================
+        // 🪄 SMART TEMPLATE MATCHER (95% API REDUCTION)
+        // ============================================================
+        // We parse the context string to extract the title and assigner,
+        // then inject them into our built-in context templates.
+        try {
+            // Expected contextStr format from our builder below:
+            // - Title: "Maths HW", Assigned By: "Teacher", Due: "..."
+            // We use regex to find the first title and assigner.
+            const titleMatch = contextStr.match(/- Title: "([^"]+)"/);
+            const assignerMatch = contextStr.match(/Assigned By: "([^"]+)"/);
+
+            if (titleMatch && titleMatch[1]) {
+                const title = titleMatch[1];
+                let assigner = assignerMatch ? assignerMatch[1] : 'someone';
+                if (assigner === 'Self (User uploaded this)') assigner = 'you'; // Make it natural
+
+                // Fetch template set based on language preference
+                let templates = aiLanguage === 'hin' ?
+                    [
+                        `Abey ${userName || 'yaar'}, tune jo '${title}' upload kiya tha wo abhi tak pending hai! ⏰`,
+                        `${assigner === 'you' ? 'Tune' : assigner + ' ne'} '${title}' diya tha, nipat le fatfat! 🚀`,
+                        `${userName ? userName + ', ' : ''}'${title}' pending pada hai. Aise kaise chalega? 🎯`,
+                        `Oye ${userName || 'yaar'}, '${title}' tera wait kar raha hai, chal shuru karte hain! 💪`,
+                        `Dekh tera '${title}' pending hai, baadme tension hogi, abhi karke khatam kar de! 📋`,
+                        `Arey padhaku, '${title}' ko ignore kyu kar raha hai? Finish kar use! 📝`,
+                        `${userName || 'Boss'}, '${title}' complete kar, phir maze hi maze! ✨`
+                    ] :
+                    [
+                        `Hey ${userName || 'friend'}, '${title}' is still pending! Time to finish it! ⏰`,
+                        `${userName ? userName + ', ' : ''}you have '${title}' pending from ${assigner}. Better get it done! 📚`,
+                        `Don't forget about '${title}'. It's waiting for you! 🎯`,
+                        `Your task '${title}' assigned by ${assigner} needs attention soon! ⚠️`,
+                        `Stay on track! Try to complete '${title}' today. 💪`,
+                        `${userName || 'Hey'}, let's knock out '${title}'! 🚀`,
+                        `'${title}' is on your checklist. Time to make some progress! 📝`,
+                        `Just a reminder about '${title}'. Don't let it pile up! 📋`
+                    ];
+
+                // Shuffle and pick 5 unique messages
+                const picked = pickRandom(templates, 5);
+
+                // Auto-save to cache to keep consistency
+                localStorage.setItem(cacheKey, JSON.stringify(picked));
+                return picked; // 🔥 BOOM: No API call made!
+            }
+        } catch (e) {
+            console.error("Error applying context templates, falling back to API", e);
+        }
+
+        // ============================================================
+        // 🚨 ABSOLUTE LAST RESORT: API CALL (Only if context format changed)
+        // ============================================================
+
+        // Build the prompt based on language preference
+        let prompt;
+        if (aiLanguage === 'hin') {
+            // HINGLISH: Full friendly, WhatsApp-style, desi buddy
+            prompt = `You are a close friend and study buddy (AI Mascot) inside an academic dashboard. 
 The student's name is ${nameStr || 'Dost'}. They have ${tasksCount} pending tasks.
 ${contextStr ? `Here is context on their pending tasks:\n${contextStr}\n` : ''}
 Generate 5 short sentences in casual 'Hinglish' (Hindi spoken in English letters). Keep them under 20 words each.
 CRITICAL INSTRUCTIONS:
-1. DO NOT WRITE IN PROPER ENGLISH. ALWAYS USE HINGLISH EXCLUSIVELY (like WhatsApp chat).
+1. DO NOT WRITE IN PROPER ENGLISH. ALWAYS USE HINGLISH EXCLUSIVELY (like WhatsApp chat with a desi friend).
 2. DO NOT REPEAT phrases. Make each of the 5 sentences completely different in tone and style. 
 3. Include the student's name (${nameStr || 'Dost'}) randomly in some of the sentences.
-4. If tasks > 0: Motivate them or make funny remarks. YOU MUST use the specific context provided! 
+4. If tasks > 0: Motivate them or make funny roasts. YOU MUST use the specific context provided! 
    - If 'Assigned By' is 'Self (User uploaded this)', tell them: "Abey ${nameStr || 'yaar'}, tune jo '[Title]' upload kiya tha wo abhi tak pending hai, jaldi nikal usko!"
    - If 'Assigned By' is someone else: "Bhai ${nameStr || ''}, [Name] ne '[Title]' bheja tha, due date kal hai, nipat le fatfat!"
 Return EXACTLY a pure JSON array of 5 strings. No markdown, no blockquotes, just the JSON array like ["msg1", "msg2"]`;
+        } else {
+            // ENGLISH: Simple, professional, clean and clear
+            prompt = `You are a helpful and professional study assistant (AI Buddy) inside an academic dashboard. 
+The student's name is ${nameStr || 'there'}. They have ${tasksCount} pending tasks.
+${contextStr ? `Here is context on their pending tasks:\n${contextStr}\n` : ''}
+Generate 5 short, clear sentences in simple professional English. Keep them under 20 words each.
+CRITICAL INSTRUCTIONS:
+1. WRITE IN CLEAR, SIMPLE, PROFESSIONAL ENGLISH ONLY. No slang, no Hindi, no Hinglish.
+2. Be encouraging and supportive but keep it professional and concise.
+3. DO NOT REPEAT phrases. Make each sentence unique in tone.
+4. Include the student's name (${nameStr || 'there'}) in some sentences naturally.
+5. If tasks > 0: Reference the specific assignments provided in the context.
+   - If 'Assigned By' is 'Self (User uploaded this)': "${nameStr || 'Hey'}, your task '[Title]' is still pending. Consider completing it soon."
+   - If 'Assigned By' is someone else: "${nameStr || ''}, [Name] assigned '[Title]' — it's due soon. Stay on track."
+Return EXACTLY a pure JSON array of 5 strings. No markdown, no blockquotes, just the JSON array like ["msg1", "msg2"]`;
+        }
 
         try {
             // 1. Try Gemini API with automatic key rotation (tries all keys)
@@ -225,8 +351,8 @@ Return EXACTLY a pure JSON array of 5 strings. No markdown, no blockquotes, just
 
         setEmotion(newEmotion);
 
-        // Show loading state while waiting for Gemini
-        setMessage("Let me check your tasks... 🤔");
+        // Show loading state while waiting for messages
+        setMessage(aiLanguage === 'hin' ? "Let me check your tasks... 🤔" : "Checking your tasks... 🤔");
 
         // Trigger Spline animation state if loaded
         if (isLoaded && splineRef.current) {
@@ -270,7 +396,7 @@ Return EXACTLY a pure JSON array of 5 strings. No markdown, no blockquotes, just
             });
         }
 
-    }, [pendingTasks, isLoaded, assignmentsData, currentUserId]);
+    }, [pendingTasks, isLoaded, assignmentsData, currentUserId, aiLanguage]);
 
     // Cycle messages every 20 seconds
     useEffect(() => {
@@ -296,7 +422,7 @@ Return EXACTLY a pure JSON array of 5 strings. No markdown, no blockquotes, just
             const justClearedAll = pendingTasks === 0;
 
             // Fetch special instant celebration message
-            setMessage("Ohoooo... ruk bata raha hu! 🎉");
+            setMessage(aiLanguage === 'hin' ? "Ohoooo... ruk bata raha hu! 🎉" : "Hold on... great news coming! 🎉");
             fetchGeminiMessages(pendingTasks, '', userName, true, justClearedAll).then(genMsgs => {
                 if (genMsgs && genMsgs[0]) {
                     setMessagesQueue(genMsgs); // Overwrite queue with the 1 celebration msg

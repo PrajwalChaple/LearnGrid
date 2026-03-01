@@ -22,12 +22,16 @@ const DEFAULT_SETTINGS = {
         announcementAlerts: true,
         channel: 'both', // 'email' | 'app' | 'both'
     },
+    preferences: {
+        aiLanguage: 'en', // 'en' | 'hin'
+    }
 };
 
 function mergeSettings(profileSettings) {
     const base = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
     if (!profileSettings || typeof profileSettings !== 'object') return base;
     if (profileSettings.notifications) Object.assign(base.notifications, profileSettings.notifications);
+    if (profileSettings.preferences) Object.assign(base.preferences, profileSettings.preferences);
     return base;
 }
 
@@ -375,7 +379,28 @@ export function Settings() {
                 </div>
             </section>
 
-            {/* 4. Support & Legal */}
+            {/* 4. Preferences */}
+            <section className="settings-section animate-fade-in">
+                <h2><FileText size={20} /> Preferences</h2>
+                <div className="settings-list">
+                    <div className="setting-item">
+                        <div className="setting-info">
+                            <h3>AI Buddy Language</h3>
+                            <p>Choose the language the AI Buddy talks in.</p>
+                        </div>
+                        <select
+                            className="setting-select"
+                            value={settings.preferences?.aiLanguage || 'en'}
+                            onChange={(e) => updateSetting('preferences.aiLanguage', e.target.value)}
+                        >
+                            <option value="en">English</option>
+                            <option value="hin">Hinglish</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            {/* 5. Support & Legal */}
             <section className="settings-section animate-fade-in">
                 <h2><HelpCircle size={20} /> Support & Legal</h2>
                 <div className="settings-list">
