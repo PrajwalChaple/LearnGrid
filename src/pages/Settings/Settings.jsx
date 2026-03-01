@@ -154,21 +154,24 @@ export function Settings() {
         try {
             // Step 1: Delete all user data (notes, assignments, announcements, notifications)
             await deleteAllUserData(user.uid);
+
             // Step 2: Delete user profile from Firestore
             await deleteUserProfile(user.uid);
-            // Step 3: Delete Firebase Auth account (triggers re-auth popup for Google users)
-            const result = await deleteUserAccount();
-            if (result.success) {
-                // Clear session and redirect to landing page
-                sessionStorage.clear();
-                window.location.replace('/');
-                return;
-            }
-            setAuthError(getFriendlyMessage(result.error) || 'Could not delete account.');
+
+            // Step 3: Try to delete Firebase Auth account (triggers re-auth popup for Google users)
+            // Even if this fails (e.g. requires-recent-login for email users), we proceed to log them out
+            // because their app data is already wiped.
+            await deleteUserAccount();
+
+            // Step 4: Always clear session and redirect to landing page
+            sessionStorage.clear();
+            window.location.replace('/');
         } catch (err) {
-            setAuthError(getFriendlyMessage(err) || 'Failed to delete account.');
-        } finally {
+            // If something catastrophically fails before data wipe
+            setDeleteModal(false);
+            setAuthError(getFriendlyMessage(err) || 'Failed to delete account data.');
             setLoading(false);
+            setDeleteAccountConfirm('');
         }
     };
 
