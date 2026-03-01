@@ -6,7 +6,7 @@ import { BookOpen, AlertCircle, Calendar, MessageSquare, ArrowRight, TrendingUp,
 import { subscribeToNotes, subscribeToAssignments, subscribeToAnnouncements } from '../../lib/firestore';
 import { NotificationHistory } from '../../components/NotificationHistory';
 import { NetworkList } from './components/NetworkList';
-
+import { AiBuddy } from '../../components/AiBuddy';
 
 const defaultStats = [
   { label: 'Total Notes', value: '0', icon: BookOpen, color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-100' },
@@ -90,31 +90,48 @@ export function DashboardHome() {
   return (
     <div className={`flex flex-col ${compactMode ? 'gap-4' : 'gap-8'}`}>
       {/* Welcome Banner */}
-      <div className="relative overflow-hidden rounded-3xl bg-indigo-600 text-white p-8 md:p-12 shadow-2xl shadow-indigo-200">
-        <div className="relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/20 text-sm font-medium mb-4">
-            <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
-            Academic Dashboard
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">{greeting}, {user?.displayName?.split(' ')[0] || userProfile?.name?.split(' ')[0] || 'Student'}!</h1>
-          <p className="text-indigo-100 text-lg max-w-xl leading-relaxed">
-            You have <span className="font-bold text-white">{statsData[2].value} pending tasks</span> for this week. Keep up the momentum!
-          </p>
+      <div className="relative overflow-visible md:overflow-hidden rounded-3xl bg-indigo-600 text-white shadow-2xl shadow-indigo-200">
 
-          <div className="flex gap-4 mt-8">
-            <button onClick={() => navigate('/assignments')} className="px-6 py-3 bg-white text-indigo-600 rounded-xl font-bold shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all flex items-center gap-2">
-              View Tasks <ArrowRight size={18} />
-            </button>
-            <button onClick={() => navigate('/calendar')} className="px-6 py-3 bg-indigo-500/50 backdrop-blur-md text-white border border-white/20 rounded-xl font-bold hover:bg-indigo-500/70 transition-all">
-              Check Calendar
-            </button>
+        {/* Banner Content Container */}
+        <div className="flex flex-col md:flex-row min-h-[340px]">
+
+          {/* Left Text Content */}
+          <div className="relative z-10 w-full md:w-2/3 p-8 md:p-12 order-2 md:order-1 flex flex-col justify-center">
+            <div className="inline-flex max-w-max items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/20 text-sm font-medium mb-4">
+              <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+              Academic Dashboard
+            </div>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">{greeting}, {user?.displayName?.split(' ')[0] || userProfile?.name?.split(' ')[0] || 'Student'}!</h1>
+            <p className="text-indigo-100 text-lg max-w-xl leading-relaxed">
+              You have <span className="font-bold text-white">{statsData[2].value} pending tasks</span> for this week. Keep up the momentum!
+            </p>
+
+            <div className="flex flex-wrap gap-4 mt-8 relative z-30">
+              <button onClick={() => navigate('/assignments')} className="px-6 py-3 bg-white text-indigo-600 rounded-xl font-bold shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all flex items-center gap-2">
+                View Tasks <ArrowRight size={18} />
+              </button>
+              <button onClick={() => navigate('/calendar')} className="px-6 py-3 bg-indigo-500/50 backdrop-blur-md text-white border border-white/20 rounded-xl font-bold hover:bg-indigo-500/70 transition-all">
+                Check Calendar
+              </button>
+            </div>
           </div>
+
+          {/* Right AI Buddy 3D View (Floating Absolute) */}
+          <div className="absolute right-0 bottom-0 md:-top-16 md:-right-4 w-[120%] md:w-[60%] h-[350px] md:h-[500px] z-20 pointer-events-none flex items-center justify-center opacity-90 hover:opacity-100 transition-opacity">
+            <AiBuddy
+              pendingTasks={parseInt(statsData[2].value || '0')}
+              assignmentsData={assignmentsRef.current}
+              currentUserId={user?.uid}
+              userName={userProfile?.name || user?.displayName || 'Dost'}
+            />
+          </div>
+
         </div>
 
-        {/* Abstract shapes */}
-        <div className="absolute top-0 right-0 -mt-20 -mr-20 w-96 h-96 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-full blur-3xl opacity-50"></div>
-        <div className="absolute bottom-0 left-0 -mb-20 -ml-20 w-72 h-72 bg-indigo-400 rounded-full blur-3xl opacity-30"></div>
-        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150"></div>
+        {/* Abstract shapes inside banner */}
+        <div className="absolute top-0 left-1/2 -mt-20 -mr-20 w-96 h-96 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-full blur-3xl opacity-50 z-0"></div>
+        <div className="absolute bottom-0 left-0 -mb-20 -ml-20 w-72 h-72 bg-indigo-400 rounded-full blur-3xl opacity-30 z-0 pointer-events-none"></div>
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150 z-0 pointer-events-none"></div>
       </div>
 
       {/* Stats Grid */}

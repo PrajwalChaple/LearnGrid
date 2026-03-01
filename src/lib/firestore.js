@@ -2,7 +2,7 @@ import { db } from '../firebase';
 import {
     doc, getDoc, setDoc, updateDoc,
     collection, addDoc, getDocs, deleteDoc,
-    query, where, orderBy, serverTimestamp, onSnapshot
+    query, where, orderBy, serverTimestamp, onSnapshot, arrayUnion
 } from 'firebase/firestore';
 
 // ─── User Profile ───────────────────────────────────────────────
@@ -70,8 +70,13 @@ async function getItems(collectionName, profile) {
     return items;
 }
 
-async function deleteItem(collectionName, id) {
-    await deleteDoc(doc(db, collectionName, id));
+async function hideItem(collectionName, id, userId) {
+    if (!userId) return;
+    // We update the user's personal profile document, avoiding permission issues on shared items.
+    const userDocRef = doc(db, 'users', userId);
+    await updateDoc(userDocRef, {
+        [`hidden_${collectionName}`]: arrayUnion(id)
+    });
 }
 
 // ─── Real-time listeners ────────────────────────────────────────
@@ -87,7 +92,14 @@ function subscribeToCollection(collectionName, profile, callback) {
         section: profile.section,
     });
     return onSnapshot(q, (snapshot) => {
-        const items = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        let items = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+
+        // Filter out items that are soft-deleted for this user
+        if (profile) {
+            const hiddenKeys = profile[`hidden_${collectionName}`] || [];
+            items = items.filter(i => !hiddenKeys.includes(i.id));
+        }
+
         // Sort client-side by createdAt descending
         items.sort((a, b) => {
             const ta = a.createdAt?.toMillis?.() || 0;
@@ -119,19 +131,19 @@ export function subscribeToAnnouncements(profile, callback) {
 
 export function addNote(data) { return addItem('notes', data); }
 export function getNotes(profile) { return getItems('notes', profile); }
-export function deleteNoteDoc(id) { return deleteItem('notes', id); }
+export function hideNoteDoc(id, userId) { return hideItem('notes', id, userId); }
 
 // ─── Assignments ────────────────────────────────────────────────
 
 export function addAssignment(data) { return addItem('assignments', data); }
 export function getAssignments(profile) { return getItems('assignments', profile); }
-export function deleteAssignmentDoc(id) { return deleteItem('assignments', id); }
+export function hideAssignmentDoc(id, userId) { return hideItem('assignments', id, userId); }
 
 // ─── Announcements ─────────────────────────────────────────────
 
 export function addAnnouncement(data) { return addItem('announcements', data); }
 export function getAnnouncements(profile) { return getItems('announcements', profile); }
-export function deleteAnnouncementDoc(id) { return deleteItem('announcements', id); }
+export function hideAnnouncementDoc(id, userId) { return hideItem('announcements', id, userId); }
 
 // ─── Update assignment status ───────────────────────────────────
 

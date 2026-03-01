@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { FileText, Calendar, Eye, Trash2, Upload, User, Loader2, Plus, X, Search } from 'lucide-react';
-import { subscribeToNotes, addNote, deleteNoteDoc } from '../../lib/firestore';
+import { subscribeToNotes, addNote, hideNoteDoc } from '../../lib/firestore';
 import { uploadToCloudinary } from '../../lib/cloudinary';
 import { NotificationModal } from '../../components/NotificationModal';
 
 export function Notes() {
-  const { user, userProfile } = useAuth();
+  const { user, userProfile, refreshProfile } = useAuth();
 
   const [notes, setNotes] = useState([]);
   const [filteredNotes, setFilteredNotes] = useState([]);
@@ -153,15 +153,12 @@ export function Notes() {
   };
 
   const deleteNote = async (id) => {
-    const note = notes.find(n => n.id === id);
-    if (note && !isOwner(note)) {
-      alert('Only the uploader can delete this note.');
-      return;
-    }
     try {
-      await deleteNoteDoc(id);
+      // Soft-delete to hide just from the current user
+      await hideNoteDoc(id, user.uid);
+      await refreshProfile();
     } catch (err) {
-      console.error('[Notes] Error deleting note:', err);
+      console.error('[Notes] Error hiding note:', err);
       alert('Failed to delete note.');
     }
   };
@@ -296,16 +293,15 @@ export function Notes() {
                     <FileText size={14} />
                     PDF
                   </div>
-                  {isOwner(note) ? (
-                    <button className="delete-btn" onClick={() => deleteNote(note.id)} title="Delete">
-                      <Trash2 size={16} />
-                    </button>
-                  ) : (
+                  {!isOwner(note) && (
                     <span className="owner-badge" title={`Uploaded by ${note.userName || 'Unknown'}`}>
                       <User size={12} />
                       {note.userName?.split(' ')[0] || 'Other'}
                     </span>
                   )}
+                  <button className="delete-btn" onClick={() => deleteNote(note.id)} title="Delete">
+                    <Trash2 size={16} />
+                  </button>
                 </div>
 
                 <h3 className="note-title">{note.title}</h3>

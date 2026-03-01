@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { Megaphone, Calendar, Plus, Trash2, User } from 'lucide-react';
-import { subscribeToAnnouncements, addAnnouncement, deleteAnnouncementDoc } from '../../lib/firestore';
+import { subscribeToAnnouncements, addAnnouncement, hideAnnouncementDoc } from '../../lib/firestore';
 import { NotificationModal } from '../../components/NotificationModal';
 
 export function Announcements() {
-  const { user, userProfile } = useAuth();
+  const { user, userProfile, refreshProfile } = useAuth();
 
   const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -68,13 +68,10 @@ export function Announcements() {
   };
 
   const deleteAnnouncementItem = async (id) => {
-    const item = announcements.find(a => a.id === id);
-    if (item && !isOwner(item)) {
-      alert('Only the creator can delete this announcement.');
-      return;
-    }
     try {
-      await deleteAnnouncementDoc(id);
+      // Soft-delete: hides just from this specific user's view
+      await hideAnnouncementDoc(id, user.uid);
+      await refreshProfile();
     } catch (err) {
       console.error('Error deleting announcement:', err);
       alert('Failed to delete announcement.');
@@ -163,11 +160,9 @@ export function Announcements() {
                         <Calendar size={14} />
                         {item.date}
                       </span>
-                      {isOwner(item) && (
-                        <button className="delete-btn" onClick={() => deleteAnnouncementItem(item.id)}>
-                          <Trash2 size={16} />
-                        </button>
-                      )}
+                      <button className="delete-btn" onClick={() => deleteAnnouncementItem(item.id)}>
+                        <Trash2 size={16} />
+                      </button>
                     </div>
                   </div>
                   <h2>{item.title}</h2>

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { CheckCircle, Clock, FileQuestion, Plus, X, User, Upload, FileText, Eye } from 'lucide-react';
-import { subscribeToAssignments, addAssignment, deleteAssignmentDoc, updateAssignment } from '../../lib/firestore';
+import { subscribeToAssignments, addAssignment, hideAssignmentDoc, updateAssignment } from '../../lib/firestore';
 import { NotificationModal } from '../../components/NotificationModal';
 import { uploadAssignmentPDFToCloudinary } from '../../lib/cloudinary';
 
 export function Assignments() {
-  const { user, userProfile } = useAuth();
+  const { user, userProfile, refreshProfile } = useAuth();
 
   const [assignments, setAssignments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -165,16 +165,12 @@ export function Assignments() {
   };
 
   const deleteAssignmentItem = async (id) => {
-    const item = assignments.find(a => a.id === id);
-    if (item && !isOwner(item)) {
-      alert('Only the creator can delete this assignment.');
-      return;
-    }
     try {
-      // GlobalCalendarSync removes events when the Assignment is no longer active
-      await deleteAssignmentDoc(id);
+      // Soft delete: hides from current user's view only
+      await hideAssignmentDoc(id, user.uid);
+      await refreshProfile(); // Refresh context so it hides immediately
     } catch (err) {
-      console.error('Error deleting assignment:', err);
+      console.error('Error hiding assignment:', err);
       alert('Failed to delete assignment.');
     }
   };
@@ -354,9 +350,7 @@ export function Assignments() {
                       <User size={12} />
                       {isOwner(assignment) ? 'You' : (assignment.userName?.split(' ')[0] || 'Other')}
                     </span>
-                    {isOwner(assignment) && (
-                      <button className="delete-btn" onClick={() => deleteAssignmentItem(assignment.id)} style={{ marginLeft: '8px' }}>Delete</button>
-                    )}
+                    <button className="delete-btn" onClick={() => deleteAssignmentItem(assignment.id)} style={{ marginLeft: '8px' }}>Delete</button>
                   </td>
                 </tr>
               ))
