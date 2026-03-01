@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
-import { PageTransition } from '../components/PageTransition';
 import { Sidebar } from './Sidebar';
 import { Navbar } from './Navbar';
 import { useAuth } from '../context/AuthContext';
@@ -8,7 +7,7 @@ import { GlobalCalendarSync } from '../components/GlobalCalendarSync';
 
 export function DashboardLayout() {
   const { user, isOnboarded } = useAuth();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
 
   // Redirect to login if not authenticated
   if (!user) {
@@ -36,7 +35,7 @@ export function DashboardLayout() {
 
         <main className="content-area">
           <div className="content-container animate-fade-in">
-            <PageTransition><Outlet /></PageTransition>
+            <Outlet />
           </div>
         </main>
       </div>

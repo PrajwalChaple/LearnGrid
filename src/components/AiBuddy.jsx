@@ -3,6 +3,7 @@ import Spline from '@splinetool/react-spline';
 import { motion, AnimatePresence } from 'framer-motion';
 import { callGeminiWithRotation, OPENAI_API_KEY } from '../config/apiKeys';
 import { useWindowSize } from 'react-use';
+import { useIsMobileDevice } from '../hooks/useIsMobileDevice';
 
 export function AiBuddy({ pendingTasks, assignmentsData = [], currentUserId = null, userName = '' }) {
     const splineRef = useRef(null);
@@ -22,9 +23,11 @@ export function AiBuddy({ pendingTasks, assignmentsData = [], currentUserId = nu
     const [lastKnown, setLastKnown] = useState(prevTasksRef.current);
 
     const { width, height } = useWindowSize();
+    const isMobileDevice = useIsMobileDevice();
 
-    // 🌟 COST & SPACE SAVER: Completely disable AiBuddy on Mobile Screens (< 768px)
-    if (width !== 0 && width < 768) {
+    // 🌟 COST & SPACE SAVER: Completely disable AiBuddy on actual Mobile/Tablet Devices
+    // This strict check (user-agent + touch points) prevents users from bypassing via "Desktop Site" mode
+    if (isMobileDevice) {
         return null;
     }
 

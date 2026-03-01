@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { Link } from 'react-router-dom';
 import {
     CheckCircle2,
@@ -29,12 +29,22 @@ import {
     Database,
     BookOpen,
     ClipboardList,
-    Eye
+    Eye,
+    Sparkles,
+    Bot,
+    Heart,
+    MessageCircle
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
+// Lazy load the heavy Spline 3D library — doesn't block page paint
+const Spline = lazy(() => import('@splinetool/react-spline'));
+
+import { useIsMobileDevice } from '../../hooks/useIsMobileDevice';
+
 export const LandingPage = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const isMobileDevice = useIsMobileDevice();
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
     // Integrations setup with tooltips
@@ -444,6 +454,142 @@ export const LandingPage = () => {
                 </div>
             </section>
 
+            {/* ─── AI BUDDY SHOWCASE ─── */}
+            {!isMobileDevice && (
+                <section className="relative py-28 overflow-hidden bg-gradient-to-b from-[#f8fafc] via-[#eef2ff] to-[#f8fafc] border-t border-indigo-100/40">
+                    {/* Subtle dot pattern */}
+                    <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #6366f1 1px, transparent 0)', backgroundSize: '32px 32px' }}></div>
+                    {/* Glowing orb */}
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-200/20 rounded-full blur-[120px] pointer-events-none"></div>
+
+                    <div className="max-w-6xl mx-auto px-6 relative z-10">
+                        <motion.div
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, amount: 0.3 }}
+                            transition={{ duration: 0.6 }}
+                            className="text-center mb-16"
+                        >
+                            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-indigo-50 text-indigo-700 text-sm font-medium rounded-full mb-6 border border-indigo-100">
+                                <Sparkles size={14} /> AI-Powered
+                            </div>
+                            <h2 className="text-4xl md:text-5xl font-medium tracking-tight text-slate-900 mb-4">
+                                Meet your AI study buddy
+                            </h2>
+                            <p className="text-lg text-slate-500 font-medium max-w-2xl mx-auto">
+                                A 3D AI companion that lives on your dashboard — talks in both English and Hinglish, tracks your tasks, celebrates your wins, and keeps you motivated.
+                            </p>
+                        </motion.div>
+
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+                            {/* Left: Feature Highlights */}
+                            <motion.div
+                                initial={{ opacity: 0, x: -30 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                viewport={{ once: true, amount: 0.2 }}
+                                transition={{ duration: 0.6, delay: 0.1 }}
+                                className="space-y-5"
+                            >
+                                {/* Feature 1 */}
+                                <div className="group bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-lg hover:border-indigo-100 transition-all duration-300">
+                                    <div className="flex items-start gap-4">
+                                        <div className="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center flex-shrink-0 group-hover:bg-indigo-100 transition-colors">
+                                            <MessageCircle size={22} className="text-indigo-600" />
+                                        </div>
+                                        <div>
+                                            <h4 className="text-lg font-bold text-slate-900 mb-1">Friendly Conversations</h4>
+                                            <p className="text-sm text-slate-500 font-medium">Talks like your college friend. Natural, supportive, and conversational, not robotic.</p>
+                                            <div className="mt-3 inline-block bg-indigo-50 text-indigo-700 text-xs font-semibold px-3 py-1.5 rounded-lg border border-indigo-100">
+                                                "You have 3 assignments pending, let's get them done!"
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Feature 2 */}
+                                <div className="group bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-lg hover:border-emerald-100 transition-all duration-300">
+                                    <div className="flex items-start gap-4">
+                                        <div className="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center flex-shrink-0 group-hover:bg-emerald-100 transition-colors">
+                                            <BrainCircuit size={22} className="text-emerald-600" />
+                                        </div>
+                                        <div>
+                                            <h4 className="text-lg font-bold text-slate-900 mb-1">Context-Aware</h4>
+                                            <p className="text-sm text-slate-500 font-medium">Knows your pending assignments, who assigned them, and when they're due — gives you task-specific nudges.</p>
+                                            <div className="mt-3 inline-block bg-emerald-50 text-emerald-700 text-xs font-semibold px-3 py-1.5 rounded-lg border border-emerald-100">
+                                                "Your DBMS Lab Record is due tomorrow, don't forget!"
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Feature 3 */}
+                                <div className="group bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-lg hover:border-amber-100 transition-all duration-300">
+                                    <div className="flex items-start gap-4">
+                                        <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center flex-shrink-0 group-hover:bg-amber-100 transition-colors">
+                                            <Heart size={22} className="text-amber-600" />
+                                        </div>
+                                        <div>
+                                            <h4 className="text-lg font-bold text-slate-900 mb-1">Mood Reactions</h4>
+                                            <p className="text-sm text-slate-500 font-medium">Happy when tasks are done, sad when deadlines are piling up. The 3D character reacts to your progress in real-time.</p>
+                                            <div className="mt-3 flex gap-2">
+                                                <span className="bg-green-50 text-green-700 text-xs font-semibold px-3 py-1.5 rounded-lg border border-green-100">Happy</span>
+                                                <span className="bg-blue-50 text-blue-700 text-xs font-semibold px-3 py-1.5 rounded-lg border border-blue-100">Focused</span>
+                                                <span className="bg-red-50 text-red-700 text-xs font-semibold px-3 py-1.5 rounded-lg border border-red-100">Worried</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </motion.div>
+
+                            {/* Right: 3D Model Preview */}
+                            <motion.div
+                                initial={{ opacity: 0, x: 30 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                viewport={{ once: true, amount: 0.2 }}
+                                transition={{ duration: 0.6, delay: 0.2 }}
+                                className="relative flex items-center justify-center"
+                            >
+                                {/* Glow behind the model */}
+                                <div className="absolute inset-0 bg-gradient-to-br from-indigo-100/40 via-purple-100/20 to-blue-100/30 rounded-[2rem] blur-xl"></div>
+
+                                {/* 3D Model Container */}
+                                <div className="relative w-full bg-white/60 backdrop-blur-sm rounded-[2rem] border border-slate-200/60 shadow-xl overflow-hidden" style={{ minHeight: '480px' }}>
+                                    {/* Real Spline 3D Model */}
+                                    <div className="w-full min-h-[480px] flex items-center justify-center relative pointer-events-none" style={{ overflow: 'hidden' }}>
+                                        <Suspense fallback={
+                                            <div style={{ width: '100%', height: '480px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #eef2ff 0%, #ffffff 50%, #f5f3ff 100%)' }}>
+                                                <div style={{ width: '32px', height: '32px', border: '3px solid #e0e7ff', borderTop: '3px solid #6366f1', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+                                            </div>
+                                        }>
+                                            <div style={{ transform: 'scale(1.25) translateX(10px) translateY(15px)', width: '100%', height: '480px' }}>
+                                                <Spline
+                                                    scene="https://prod.spline.design/35aLT1F6pB6JrjyK/scene.splinecode"
+                                                    className="w-full h-full !bg-transparent object-cover"
+                                                />
+                                            </div>
+                                        </Suspense>
+                                    </div>
+
+                                    {/* Floating Speech Bubble */}
+                                    <motion.div
+                                        animate={{ y: [0, -8, 0] }}
+                                        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                                        className="absolute top-8 right-6 max-w-[180px] z-10"
+                                    >
+                                        <div className="relative bg-white text-indigo-900 text-xs font-semibold p-3 rounded-2xl shadow-lg border border-indigo-100/50">
+                                            Hey there! Ready to ace your studies today?
+                                            <div className="absolute -bottom-1.5 left-6 w-3 h-3 bg-white border-b border-l border-indigo-100/50 transform -rotate-45"></div>
+                                        </div>
+                                    </motion.div>
+
+
+                                </div>
+                            </motion.div>
+                        </div>
+                    </div>
+                </section>
+            )}
+
             {/* ─── HOW IT WORKS ─── */}
             <section className="py-28 bg-[#f8fafc] relative overflow-hidden border-t border-slate-200/60">
                 <div className="max-w-5xl mx-auto px-6 relative z-10">
@@ -535,7 +681,6 @@ export const LandingPage = () => {
                 </div>
             </section>
 
-            {/* ─── FOOTER CTA & LINKS ─── */}
             <footer className="bg-white pt-24 pb-12 relative overflow-hidden border-t border-slate-100">
                 <div className="max-w-6xl mx-auto px-6">
                     <div className="bg-[#f8fafc] rounded-[2rem] p-10 md:p-16 relative overflow-hidden border border-slate-100">
