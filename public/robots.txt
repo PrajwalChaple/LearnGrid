@@ -2,15 +2,15 @@ User-agent: *
 Allow: /
 
 # Block private/dashboard routes from indexing
-Disallow: /#/dashboard
-Disallow: /#/notes
-Disallow: /#/assignments
-Disallow: /#/announcements
-Disallow: /#/calendar
-Disallow: /#/profile
-Disallow: /#/settings
-Disallow: /#/onboarding
-Disallow: /#/verify-email
+Disallow: /dashboard
+Disallow: /notes
+Disallow: /assignments
+Disallow: /announcements
+Disallow: /calendar
+Disallow: /profile
+Disallow: /settings
+Disallow: /onboarding
+Disallow: /verify-email
 
 # Sitemap
 Sitemap: https://www.learngrid.online/sitemap.xml

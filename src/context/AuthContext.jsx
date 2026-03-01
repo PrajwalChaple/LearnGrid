@@ -114,14 +114,9 @@ export function AuthProvider({ children }) {
         await logoutUser();
         setUser(null);
         setUserProfile(null);
-        // Redirect to login; use replace+push so back from login goes to landing in 1 step (not 2)
+        // Redirect to login page
         if (typeof window !== 'undefined') {
-            const base = window.location.pathname + window.location.search;
-            const landingUrl = base + '#/';
-            const loginUrl = base + '#/login';
-            window.history.replaceState(null, '', landingUrl);
-            window.history.pushState(null, '', loginUrl);
-            window.dispatchEvent(new HashChangeEvent('hashchange'));
+            window.location.href = '/login';
         }
     };
 

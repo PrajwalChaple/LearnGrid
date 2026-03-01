@@ -27,13 +27,11 @@ export function Login() {
     }
   }, [user, navigate]);
 
-  // When opened directly (#/login bookmark), ensure landing is before login so 1 back = landing
+  // When opened directly (/login bookmark), ensure landing is before login so 1 back = landing
   useEffect(() => {
-    const base = window.location.pathname + window.location.search;
-    if (window.history.length === 1 && window.location.hash === '#/login') {
-      window.history.replaceState(null, '', base + '#/');
-      window.history.pushState(null, '', base + '#/login');
-      window.dispatchEvent(new HashChangeEvent('hashchange'));
+    if (window.history.length === 1 && window.location.pathname === '/login') {
+      window.history.replaceState(null, '', '/');
+      window.history.pushState(null, '', '/login');
     }
   }, []);
 

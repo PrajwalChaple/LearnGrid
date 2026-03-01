@@ -21,8 +21,7 @@ import {
 
 const actionCodeSettings = {
     // Redirect to onboarding page after verification
-    url: `${window.location.origin}/#/onboarding`,
-    handleCodeInApp: true,
+    url: `${window.location.origin}/onboarding`,
 };
 
 export const registerWithEmail = async ({ email, password, name }) => {

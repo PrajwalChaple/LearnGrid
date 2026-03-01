@@ -8,5 +8,5 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
-  base: process.env.VERCEL ? '/' : '/LearnGrid/', // eslint-disable-line no-undef
+  base: '/',
 })

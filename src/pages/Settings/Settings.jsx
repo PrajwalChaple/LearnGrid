@@ -161,7 +161,7 @@ export function Settings() {
             if (result.success) {
                 // Clear session and redirect to landing page
                 sessionStorage.clear();
-                window.location.replace('/#/');
+                window.location.replace('/');
                 return;
             }
             setAuthError(getFriendlyMessage(result.error) || 'Could not delete account.');
@@ -410,7 +410,7 @@ export function Settings() {
                             <h3>Help & FAQs</h3>
                             <p>Guides and how to use LearnGrid</p>
                         </div>
-                        <a href="#/help" target="_blank" rel="noopener noreferrer" className="link-arrow">Open</a>
+                        <a href="/help" target="_blank" rel="noopener noreferrer" className="link-arrow">Open</a>
                     </div>
                     <div className="setting-item link-row">
                         <div className="setting-icon"><FileText size={20} /></div>
@@ -419,8 +419,8 @@ export function Settings() {
                             <p>Legal documents</p>
                         </div>
                         <div className="link-group">
-                            <a href="#/privacy-policy" target="_blank" rel="noopener noreferrer" className="link-arrow">Privacy</a>
-                            <a href="#/terms-of-service" target="_blank" rel="noopener noreferrer" className="link-arrow">Terms</a>
+                            <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" className="link-arrow">Privacy</a>
+                            <a href="/terms-of-service" target="_blank" rel="noopener noreferrer" className="link-arrow">Terms</a>
                         </div>
                     </div>
                     <div className="setting-item link-row">
@@ -429,7 +429,7 @@ export function Settings() {
                             <h3>About LearnGrid</h3>
                             <p>Version & credits</p>
                         </div>
-                        <a href="#/about" target="_blank" rel="noopener noreferrer" className="link-arrow">About</a>
+                        <a href="/about" target="_blank" rel="noopener noreferrer" className="link-arrow">About</a>
                     </div>
                 </div>
             </section>
