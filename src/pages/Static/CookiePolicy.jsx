@@ -139,7 +139,7 @@ export function CookiePolicy() {
                             <h2 className="text-2xl font-bold mb-4 text-slate-800">8. Contact Us</h2>
                             <p className="text-base text-slate-600 leading-relaxed font-medium mb-3">If you have questions about our use of cookies, please contact us:</p>
                             <div className="bg-[#f8fafc] border border-slate-100 rounded-2xl p-5 shadow-sm">
-                                <p className="text-sm text-slate-600 font-medium"><strong>Email:</strong> privacy@learngrid.online</p>
+                                <p className="text-sm text-slate-600 font-medium"><strong>Email:</strong> learngrid.official@gmail.com</p>
                                 <p className="text-sm text-slate-600 font-medium mt-1"><strong>Website:</strong> <a href="https://www.learngrid.online" className="text-blue-600 hover:underline">www.learngrid.online</a></p>
                                 <p className="text-sm text-slate-600 font-medium mt-1"><strong>Developer:</strong> Prajwal Chaple</p>
                             </div>

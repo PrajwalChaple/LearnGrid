@@ -143,7 +143,7 @@ export function PrivacyPolicy() {
                         {/* 9. Children's Privacy */}
                         <div>
                             <h2 className="text-2xl font-bold mb-4 text-slate-800">9. Children's Privacy</h2>
-                            <p className="text-base text-slate-600 leading-relaxed font-medium">LearnGrid is designed for students of all ages, including school students. We do not knowingly collect personal information from children under 13 without parental consent. If you are a parent or guardian and believe your child has provided personal information without your consent, please contact us at <span className="text-blue-600">privacy@learngrid.online</span> and we will take steps to remove that information.</p>
+                            <p className="text-base text-slate-600 leading-relaxed font-medium">LearnGrid is designed for students of all ages, including school students. We do not knowingly collect personal information from children under 13 without parental consent. If you are a parent or guardian and believe your child has provided personal information without your consent, please contact us at <span className="text-blue-600">learngrid.official@gmail.com</span> and we will take steps to remove that information.</p>
                         </div>
 
                         {/* 10. International Users */}
@@ -163,7 +163,7 @@ export function PrivacyPolicy() {
                             <h2 className="text-2xl font-bold mb-4 text-slate-800">12. Contact Us</h2>
                             <p className="text-base text-slate-600 leading-relaxed font-medium mb-3">If you have questions, concerns, or requests regarding this Privacy Policy or your personal data, please contact us:</p>
                             <div className="bg-[#f8fafc] border border-slate-100 rounded-2xl p-5 shadow-sm">
-                                <p className="text-sm text-slate-600 font-medium"><strong>Email:</strong> privacy@learngrid.online</p>
+                                <p className="text-sm text-slate-600 font-medium"><strong>Email:</strong> learngrid.official@gmail.com</p>
                                 <p className="text-sm text-slate-600 font-medium mt-1"><strong>Website:</strong> <a href="https://www.learngrid.online" className="text-blue-600 hover:underline">www.learngrid.online</a></p>
                                 <p className="text-sm text-slate-600 font-medium mt-1"><strong>Developer:</strong> Prajwal Chaple</p>
                             </div>
