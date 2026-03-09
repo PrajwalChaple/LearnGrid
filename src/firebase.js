@@ -4,12 +4,12 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDiocvm13Xg8pVGkVaQ9Isnnn7KhPiVkxQ",
-    authDomain: "learngrid-34206.firebaseapp.com",
-    projectId: "learngrid-34206",
-    storageBucket: "learngrid-34206.firebasestorage.app",
-    messagingSenderId: "453858104058",
-    appId: "1:453858104058:web:61f6cfb6ef7ce87b3d6f43"
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
 const app = initializeApp(firebaseConfig);

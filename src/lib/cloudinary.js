@@ -8,12 +8,12 @@
  * IMPORTANT: In Cloudinary Security Settings, enable "PDF and ZIP files delivery"
  */
 
-const CLOUD_NAME = 'dkppiv7lx';
-const UPLOAD_PRESET = 'learngrid_notes';
+const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 /** Create in Cloudinary: Settings → Upload → Add upload preset → Unsigned, name: learngrid_profilepicture */
-const UPLOAD_PRESET_PROFILE = 'learngrid_profilepicture';
+const UPLOAD_PRESET_PROFILE = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET_PROFILE;
 /** Assignments PDFs — Create in Cloudinary: Settings → Upload → Add upload preset → Unsigned, name: learngrid_assignments. Optional: set "Folder" to learngrid/assignments (or learngrind/assignments if that's your root). */
-const UPLOAD_PRESET_ASSIGNMENTS = 'learngrid_assignments';
+const UPLOAD_PRESET_ASSIGNMENTS = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET_ASSIGNMENTS;
 
 /**
  * Uploads a file to Cloudinary using unsigned upload.

@@ -1,9 +1,9 @@
 import emailjs from '@emailjs/browser';
 
-// REPLACE THESE WITH YOUR ACTUAL EMAILJS KEYS
-const SERVICE_ID = "service_zmw1i5u";
-const TEMPLATE_ID = "template_66vccuh";
-const PUBLIC_KEY = "uVo11pLn69oC3RUI7";
+// API keys loaded from environment variables (.env)
+const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
 /**
  * Sends individual emails to each recipient.

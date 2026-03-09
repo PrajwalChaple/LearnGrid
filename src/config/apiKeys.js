@@ -1,31 +1,23 @@
 // ============================================================
 // 🔑 CENTRALIZED API KEYS CONFIGURATION
 // ============================================================
-// All API keys in one place for easy management.
-// To add/remove keys, simply edit the arrays below.
+// All API keys are loaded from environment variables (.env file).
+// To add/remove keys, edit the .env file and update this array.
 // The system will automatically rotate through available keys.
 // ============================================================
 
 /**
  * Gemini API Keys - Round-robin rotation with automatic failover.
  * If one key hits rate limit, the next key is tried automatically.
- * Add or remove keys from this array as needed.
+ * Keys are loaded from .env (VITE_GEMINI_KEY_1, VITE_GEMINI_KEY_2, etc.)
  */
 export const GEMINI_API_KEYS = [
-    'AIzaSyD8xTm2yiH57fj23PIchQtBcx5MyWRgL0k',  // Key 1 (Original)
-    'AIzaSyCzjYiCJox-rVs_PoWgeuvz1RVcuWFGzzo',  // Key 2
-    'AIzaSyBhAoyoiZIlCZGR8TZUvgls6ACM09m5fJw',  // Key 3
-    'AIzaSyCdlCa9_KTcCSvAbJRn2z11lHG5Vrmr5Ns',  // Key 4
-    'AIzaSyCv8aSAOY1_EmGlWW6cZhDecQY4YEyf8SI',  // Key 5
-    'AIzaSyBrUGl0Kad3cFHuy6z98yHafRAe2PyO2_c',  // Key 6
-    'AIzaSyD_V3Pzr_DrbrCxgkAUwGfKstoKYNC6vO8',  // Key 7
-    'AIzaSyDIL64MSsWFrJTaNOglGYVUdFcyPYMZVY8',  // Key 8
-];
-
-/**
- * OpenAI API Key - Used as absolute last fallback if ALL Gemini keys fail.
- */
-export const OPENAI_API_KEY = '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';
+    import.meta.env.VITE_GEMINI_KEY_1,
+    import.meta.env.VITE_GEMINI_KEY_2,
+    import.meta.env.VITE_GEMINI_KEY_3,
+    import.meta.env.VITE_GEMINI_KEY_4,
+    import.meta.env.VITE_GEMINI_KEY_5,
+].filter(Boolean); // Remove any undefined keys
 
 /**
  * Gemini Model to use for text generation.

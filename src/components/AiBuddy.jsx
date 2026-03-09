@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import Spline from '@splinetool/react-spline';
 import { motion, AnimatePresence } from 'framer-motion';
-import { callGeminiWithRotation, OPENAI_API_KEY } from '../config/apiKeys';
+import { callGeminiWithRotation } from '../config/apiKeys';
 import { useWindowSize } from 'react-use';
 import { useIsMobileDevice } from '../hooks/useIsMobileDevice';
 import { useAuth } from '../context/AuthContext';
@@ -302,37 +302,9 @@ Return EXACTLY a pure JSON array of 5 strings. No markdown, no blockquotes, just
             throw new Error('All Gemini keys failed or invalid response');
 
         } catch (error) {
-            console.warn("All Gemini keys failed, attempting OpenAI Fallback...", error.message);
+            console.warn("All Gemini keys failed, using built-in messages.", error.message);
 
-            try {
-                // 2. OpenAI Fallback (last resort API call)
-                const openAiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${OPENAI_API_KEY}`
-                    },
-                    body: JSON.stringify({
-                        model: "gpt-4o-mini",
-                        messages: [{ role: "user", content: prompt }],
-                        temperature: 0.9,
-                    })
-                });
-
-                const openAiData = await openAiResponse.json();
-                if (!openAiData.choices || !openAiData.choices[0]) throw new Error('Invalid OpenAI Response');
-                const oaText = openAiData.choices[0].message.content;
-                const oaParsed = extractJSON(oaText);
-
-                if (oaParsed) {
-                    localStorage.setItem(cacheKey, JSON.stringify(oaParsed));
-                    return oaParsed;
-                }
-            } catch (oaError) {
-                console.error("OpenAI Fallback also failed:", oaError.message);
-            }
-
-            // 3. Absolute Fallback → Built-in messages (user never sees an error)
+            // Fallback → Built-in messages (user never sees an error)
             return pickRandom(builtInMessages.genericPending, 5);
         }
     };
