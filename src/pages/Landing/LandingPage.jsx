@@ -33,7 +33,9 @@ import {
     Sparkles,
     Bot,
     Heart,
-    MessageCircle
+    MessageCircle,
+    Linkedin,
+    Instagram
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -729,9 +731,38 @@ export const LandingPage = () => {
                                     <li><Link to="/register" className="text-sm font-medium text-slate-500 hover:text-blue-600 flex items-center gap-2 no-underline"><ArrowRight size={12} /> Get Started</Link></li>
                                 </ul>
                             </div>
+
+                            {/* Social Media Icons */}
+                            <div className="flex items-center gap-3 mt-8 md:mt-0 md:col-span-2 justify-center md:justify-start">
+                                <a href="https://www.linkedin.com/in/prajwalchaple" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-xl bg-white border border-slate-100 shadow-sm flex items-center justify-center text-slate-400 hover:text-blue-600 hover:border-blue-200 hover:shadow-md transition-all duration-300 no-underline">
+                                    <Linkedin size={18} />
+                                </a>
+                                <a href="https://github.com/PrajwalChaple" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-xl bg-white border border-slate-100 shadow-sm flex items-center justify-center text-slate-400 hover:text-slate-900 hover:border-slate-300 hover:shadow-md transition-all duration-300 no-underline">
+                                    <Github size={18} />
+                                </a>
+                                <a href="https://www.instagram.com/prajwal__14_" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-xl bg-white border border-slate-100 shadow-sm flex items-center justify-center text-slate-400 hover:text-pink-600 hover:border-pink-200 hover:shadow-md transition-all duration-300 no-underline">
+                                    <Instagram size={18} />
+                                </a>
+                                <a href="https://mail.google.com/mail/?view=cm&to=prajwalchaple14@gmail.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-xl bg-white border border-slate-100 shadow-sm flex items-center justify-center text-slate-400 hover:text-red-500 hover:border-red-200 hover:shadow-md transition-all duration-300 no-underline">
+                                    <Mail size={18} />
+                                </a>
+                            </div>
                         </div>
 
-                        <div className="mt-16 pt-8 border-t border-slate-200/50 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs font-medium text-slate-400">
+                        {/* AI Transparency Disclosure */}
+                        <div className="mt-12 pt-8 border-t border-slate-200/50">
+                            <div className="flex items-start gap-3 bg-white rounded-xl p-4 border border-slate-100">
+                                <div className="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <BrainCircuit size={16} className="text-indigo-600" />
+                                </div>
+                                <div>
+                                    <h4 className="text-xs font-bold text-slate-700 mb-1">AI Transparency</h4>
+                                    <p className="text-xs text-slate-400 leading-relaxed">LearnGrid uses <span className="font-semibold text-slate-600">Google Gemini</span> AI to power its AI Study Buddy feature, helping students with study assistance and academic queries.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="mt-8 pt-8 border-t border-slate-200/50 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs font-medium text-slate-400">
                             <p>© {new Date().getFullYear()} LearnGrid. All rights reserved.</p>
                             <p>Designed & Developed by <span className="font-bold text-slate-500">Prajwal Chaple</span></p>
                             <div className="flex gap-6">

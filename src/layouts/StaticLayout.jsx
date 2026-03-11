@@ -63,7 +63,7 @@ export function StaticLayout() {
             {/* ─── FOOTER ─── */}
             <footer className="bg-gray-900 text-gray-400 py-16">
                 <div className="max-w-6xl mx-auto px-6">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-12">
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-10 mb-12">
                         <div className="col-span-2 md:col-span-1">
                             <div className="flex items-center gap-1.5 text-white font-bold text-lg mb-3">
                                 <img src={`${import.meta.env.BASE_URL}bookmark-25.svg`} alt="Logo" style={{ width: '24px', height: '24px', filter: 'brightness(0) invert(1)' }} />
@@ -101,6 +101,12 @@ export function StaticLayout() {
                                 <Link to="/privacy-policy" className="text-sm text-gray-400 hover:text-white transition-colors no-underline">Privacy Policy</Link>
                                 <Link to="/terms-of-service" className="text-sm text-gray-400 hover:text-white transition-colors no-underline">Terms of Service</Link>
                                 <Link to="/cookie-policy" className="text-sm text-gray-400 hover:text-white transition-colors no-underline">Cookie Policy</Link>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 className="text-white text-sm font-bold mb-4">AI Transparency</h4>
+                            <div className="flex flex-col gap-2.5">
+                                <p className="text-sm text-gray-400 leading-relaxed">LearnGrid uses <span className="text-white font-medium">Google Gemini</span> AI to power its AI Study Buddy feature, helping students with study assistance and academic queries.</p>
                             </div>
                         </div>
                     </div>
