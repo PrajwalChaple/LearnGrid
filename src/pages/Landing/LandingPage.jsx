@@ -764,7 +764,7 @@ export const LandingPage = () => {
 
                         <div className="mt-8 pt-8 border-t border-slate-200/50 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs font-medium text-slate-400">
                             <p>© {new Date().getFullYear()} LearnGrid. All rights reserved.</p>
-                            <p>Designed & Developed by <span className="font-bold text-slate-500">Prajwal</span></p>
+                            <p>Designed & Developed by <span className="font-bold text-slate-500">Prajwal Chaple</span></p>
                             <div className="flex gap-6">
                                 <Link to="/privacy-policy" className="hover:text-slate-800 no-underline">Privacy Policy</Link>
                                 <Link to="/terms-of-service" className="hover:text-slate-800 no-underline">Terms of Service</Link>

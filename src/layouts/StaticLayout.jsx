@@ -113,7 +113,7 @@ export function StaticLayout() {
                     <div className="border-t border-gray-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
                         <p className="text-xs text-gray-500">© {new Date().getFullYear()} LearnGrid. All rights reserved.</p>
                         <p className="text-xs text-gray-600">Designed & Developed by{' '}
-                            <span className="text-gray-400">Prajwal</span>
+                            <span className="text-gray-400">Prajwal Chaple</span>
                         </p>
                     </div>
                 </div>
