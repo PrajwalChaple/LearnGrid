@@ -9,7 +9,8 @@ import {
   Calendar,
   User,
   Settings,
-  LogOut
+  LogOut,
+  Sparkles
 } from 'lucide-react';
 
 const navItems = [
@@ -18,6 +19,7 @@ const navItems = [
   { icon: ClipboardList, label: 'Assignments', path: '/assignments' },
   { icon: Megaphone, label: 'Announcements', path: '/announcements' },
   { icon: Calendar, label: 'Calendar', path: '/calendar' },
+  { icon: Sparkles, label: 'AIBuddy', path: '/ai-buddy' },
   { icon: User, label: 'Profile', path: '/profile' },
   { icon: Settings, label: 'Settings', path: '/settings' },
 ];
@@ -43,7 +45,7 @@ export function Sidebar({ isOpen, onClose }) {
       <nav className="sidebar-nav">
 
         <span className="nav-section-label">GENERAL</span>
-        {navItems.slice(0, 5).map((item) => (
+        {navItems.slice(0, 6).map((item) => (
           <NavLink
             key={item.path}
             to={item.path}
@@ -60,7 +62,7 @@ export function Sidebar({ isOpen, onClose }) {
         ))}
 
         <span className="nav-section-label" style={{ marginTop: '1rem' }}>ACCOUNT</span>
-        {navItems.slice(5).map((item) => (
+        {navItems.slice(6).map((item) => (
           <NavLink
             key={item.path}
             to={item.path}

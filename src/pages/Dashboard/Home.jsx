@@ -123,6 +123,8 @@ export function DashboardHome() {
               assignmentsData={assignmentsRef.current}
               currentUserId={user?.uid}
               userName={userProfile?.name || user?.displayName || 'Dost'}
+              announcementsCount={parseInt(statsData[3].value || '0')}
+              notesCount={parseInt(statsData[0].value || '0')}
             />
           </div>
 

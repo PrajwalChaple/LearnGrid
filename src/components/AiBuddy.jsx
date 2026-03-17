@@ -6,7 +6,7 @@ import { useWindowSize } from 'react-use';
 import { useIsMobileDevice } from '../hooks/useIsMobileDevice';
 import { useAuth } from '../context/AuthContext';
 
-export function AiBuddy({ pendingTasks, assignmentsData = [], currentUserId = null, userName = '' }) {
+export function AiBuddy({ pendingTasks, assignmentsData = [], currentUserId = null, userName = '', announcementsCount = 0, notesCount = 0 }) {
     const splineRef = useRef(null);
     const [isLoaded, setIsLoaded] = useState(false);
     const [message, setMessage] = useState('');
@@ -73,6 +73,24 @@ export function AiBuddy({ pendingTasks, assignmentsData = [], currentUserId = nu
             `${userName || 'Yaar'} tujhe koi kuch nahi bol sakta aaj, sab done! ✅`,
             `Free bird ${userName || 'bhai'}! Koi kaam nahi! Enjoy the moment! 🦅`,
         ],
+        zeroTasksWithAnnouncements: [
+            `${userName || 'Bhai'}, tasks toh zero hain but ${announcementsCount} announcement${announcementsCount > 1 ? 's' : ''} aaye hain, dekh le! 📢`,
+            `Kaam toh nahi hai ${userName || 'yaar'}, par ${announcementsCount} naye announcements hain — check kar le! 🔔`,
+            `Tasks clear hain ${userName || 'bhai'}! Par ek nazar announcements pe daal de, ${announcementsCount} aaye hain! 📋`,
+            `Pending tasks zero hai, nice! Par announcements section check kar ${userName || 'yaar'}, kuch naya aaya hai! 📣`,
+            `${userName || 'Bhai'} assignment nahi hai koi, par ${announcementsCount} announcement${announcementsCount > 1 ? 's' : ''} padh le, important ho sakte hain! 🔥`,
+            `All clear tasks mein! Par announcements mein kuch naya hai, miss mat karna ${userName || 'yaar'}! 📢`,
+        ],
+        zeroTasksWithNotes: [
+            `Tasks zero, par ${notesCount} notes hain tere paas ${userName || 'yaar'}, revise kar le! 📝`,
+            `${userName || 'Bhai'} kaam toh nahi hai par ${notesCount} notes pade hain, revision time! 📚`,
+            `Free hai toh notes revise kar le ${userName || 'yaar'}, ${notesCount} hain tere paas! 🧠`,
+        ],
+        zeroTasksWithBoth: [
+            `${userName || 'Bhai'}, tasks zero hain but ${announcementsCount} announcement${announcementsCount > 1 ? 's' : ''} aur ${notesCount} notes hain — check kar! 🔔📚`,
+            `Kaam clear hai ${userName || 'yaar'}! Par announcements (${announcementsCount}) aur notes (${notesCount}) dekhna mat bhoolna! 📢`,
+            `All tasks done! Par ${announcementsCount} announcement${announcementsCount > 1 ? 's' : ''} padh aur ${notesCount} notes revise kar ${userName || 'bhai'}! 💡`,
+        ],
         genericPending: [
             `Bhai ${userName || ''}, tere paas abhi ${pendingTasks} kaam bache hue hain, dekh le zara! 📋`,
             `Lagta hai tera padhai ka mood nahi hai aaj? Chal thoda waqt nikal ke kaam nipta le. 📖`,
@@ -117,6 +135,24 @@ export function AiBuddy({ pendingTasks, assignmentsData = [], currentUserId = nu
             `Zero pending tasks! Great discipline${userName ? ', ' + userName : ''}! 👑`,
             `Nothing pending${userName ? ', ' + userName : ''}! You're ahead of the game! ✅`,
             `All done${userName ? ', ' + userName : ''}! No assignments or tasks waiting! 🦅`,
+        ],
+        zeroTasksWithAnnouncements: [
+            `No pending tasks${userName ? ', ' + userName : ''}! But you have ${announcementsCount} new announcement${announcementsCount > 1 ? 's' : ''} — check it out! 📢`,
+            `Tasks are clear${userName ? ', ' + userName : ''}! Don't miss ${announcementsCount} announcement${announcementsCount > 1 ? 's' : ''} though! 🔔`,
+            `All tasks done! But ${announcementsCount} announcement${announcementsCount > 1 ? 's' : ''} ${announcementsCount > 1 ? 'are' : 'is'} waiting for you${userName ? ', ' + userName : ''}! 📋`,
+            `No assignments pending${userName ? ', ' + userName : ''}! Go check the ${announcementsCount} new announcement${announcementsCount > 1 ? 's' : ''}! 📣`,
+            `${userName ? userName + ', you' : 'You'} have no tasks but ${announcementsCount} announcement${announcementsCount > 1 ? 's' : ''} — might be important! 🔥`,
+            `All caught up on tasks! Take a moment to read ${announcementsCount} announcement${announcementsCount > 1 ? 's' : ''}${userName ? ', ' + userName : ''}! 📢`,
+        ],
+        zeroTasksWithNotes: [
+            `No tasks pending${userName ? ', ' + userName : ''}! Good time to review your ${notesCount} notes! 📝`,
+            `${userName ? userName + ', tasks' : 'Tasks'} are clear! You have ${notesCount} notes — great time to revise! 📚`,
+            `All free${userName ? ', ' + userName : ''}! Maybe review some of your ${notesCount} notes? 🧠`,
+        ],
+        zeroTasksWithBoth: [
+            `No tasks${userName ? ', ' + userName : ''}! But check ${announcementsCount} announcement${announcementsCount > 1 ? 's' : ''} and review ${notesCount} notes! 🔔📚`,
+            `Tasks clear${userName ? ', ' + userName : ''}! You have ${announcementsCount} announcement${announcementsCount > 1 ? 's' : ''} and ${notesCount} notes to look at! 📢`,
+            `All done with tasks! Don't miss ${announcementsCount} announcement${announcementsCount > 1 ? 's' : ''}, and keep ${notesCount} notes fresh${userName ? ', ' + userName : ''}! 💡`,
         ],
         genericPending: [
             `${userName ? userName + ', you' : 'You'} have ${pendingTasks} pending tasks. Take a look when you can! 📋`,
@@ -170,8 +206,21 @@ export function AiBuddy({ pendingTasks, assignmentsData = [], currentUserId = nu
             return pickRandom(builtInMessages.celebrationOneTask, 3);
         }
 
-        // 2. Zero tasks with no context → Always use built-in messages
+        // 2. Zero tasks → Use smart messages based on announcements/notes
         if (tasksCount === 0) {
+            // If there are both announcements and notes, mention both
+            if (announcementsCount > 0 && notesCount > 0) {
+                return pickRandom(builtInMessages.zeroTasksWithBoth, 3);
+            }
+            // If there are announcements, highlight them
+            if (announcementsCount > 0) {
+                return pickRandom(builtInMessages.zeroTasksWithAnnouncements, 5);
+            }
+            // If there are notes but no announcements, suggest revision
+            if (notesCount > 0) {
+                return pickRandom(builtInMessages.zeroTasksWithNotes, 3);
+            }
+            // Truly nothing — all clear
             return pickRandom(builtInMessages.zeroTasks, 5);
         }
 
@@ -368,7 +417,7 @@ Return EXACTLY a pure JSON array of 5 strings. No markdown, no blockquotes, just
             });
         }
 
-    }, [pendingTasks, isLoaded, assignmentsData, currentUserId, aiLanguage]);
+    }, [pendingTasks, isLoaded, assignmentsData, currentUserId, aiLanguage, announcementsCount, notesCount]);
 
     // Cycle messages every 20 seconds
     useEffect(() => {

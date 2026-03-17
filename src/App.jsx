@@ -24,6 +24,7 @@ const Announcements = lazy(() => import('./pages/Announcements/Announcements').t
 const Calendar = lazy(() => import('./pages/Calendar/Calendar').then(m => ({ default: m.Calendar })));
 const Profile = lazy(() => import('./pages/Profile/Profile').then(m => ({ default: m.Profile })));
 const Settings = lazy(() => import('./pages/Settings/Settings').then(m => ({ default: m.Settings })));
+const AIBuddyPage = lazy(() => import('./pages/AIBuddy/AIBuddy').then(m => ({ default: m.AIBuddy })));
 
 // Static pages
 const Features = lazy(() => import('./pages/Static/Features').then(m => ({ default: m.Features })));
@@ -133,6 +134,7 @@ function AppContent() {
             <Route path="/calendar" element={<Suspense fallback={<MiniLoader />}><Calendar /></Suspense>} />
             <Route path="/profile" element={<Suspense fallback={<MiniLoader />}><Profile /></Suspense>} />
             <Route path="/settings" element={<Suspense fallback={<MiniLoader />}><Settings /></Suspense>} />
+            <Route path="/ai-buddy" element={<Suspense fallback={<MiniLoader />}><AIBuddyPage /></Suspense>} />
           </Route>
 
           {/* Redirect unknown routes to landing page */}
