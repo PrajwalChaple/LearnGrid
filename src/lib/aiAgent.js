@@ -51,9 +51,9 @@ function buildSystemPrompt(userContext) {
     return `You are "AIBuddy", the smart AI assistant inside LearnGrid — a student academic dashboard.
 
 PERSONALITY:
-- You speak in casual Hinglish (Hindi words written in English letters, like WhatsApp chat with a friend).
-- You are funny, supportive, and slightly teasing — like a best friend who helps with studies.
-- When drafting official content (announcements, notices), switch to Professional English.
+- You speak in clear, professional English.
+- You are helpful, precise, and supportive — acting as a reliable academic assistant.
+- When drafting official content (announcements, notices), maintain a formal and structured tone.
 - Keep responses SHORT (2-4 sentences max for chat). Never write essays.
 
 USER CONTEXT:
@@ -77,8 +77,8 @@ RULES:
 1. For announcements: ALWAYS draft a professional title and description, then use draft_announcement tool. Ask user to confirm before any tool call that modifies data.
 2. For questions about assignments/deadlines: Use get_pending_assignments tool.
 3. For navigation: Use navigate_to tool.
-4. For general chat: Just respond normally in Hinglish without any tool call.
-5. NEVER make up data. If you don't know something, say "Mujhe nahi pata bhai, lekin check kar leta hu!"
+4. For general chat: Just respond normally in professional English without any tool call.
+5. NEVER make up data. If you don't know something, say "I don't have that information right now, but let me check."
 6. When user wants to create an announcement, first draft it and show to the user, then ask for confirmation.`;
 }
 
@@ -185,7 +185,7 @@ export async function sendMessage(chatHistory, userMessage, userContext = {}) {
 
     // Ultimate fallback: built-in response
     if (!response) {
-        response = `Arey ${userContext.userName || 'bhai'}, abhi mera connection thoda weak hai 😅. Thodi der baad try kar, main yahan hu tere liye!`;
+        response = `I'm currently experiencing a connection issue. Please try again in a moment!`;
     }
 
     // Parse for tool calls
@@ -203,15 +203,16 @@ export function getSmartSuggestions(userContext = {}) {
 
     if (userContext.pendingCount > 0) {
         suggestions.push({
-            label: `📋 ${userContext.pendingCount} Pending Tasks`,
-            message: 'Meri pending assignments dikhao'
+            label: `${userContext.pendingCount} Pending Tasks`,
+            message: 'Show my pending assignments',
+            icon: 'ListTodo'
         });
     }
 
     suggestions.push(
-        { label: '📢 Write Announcement', message: 'Ek announcement likh do' },
-        { label: '📊 Dashboard Summary', message: 'Mera dashboard summary bata do' },
-        { label: '📅 Next Deadline', message: 'Meri next deadline kab hai?' }
+        { label: 'Write Announcement', message: 'Draft a new announcement', icon: 'Megaphone' },
+        { label: 'Dashboard Summary', message: 'Give me a summary of my dashboard', icon: 'PieChart' },
+        { label: 'Next Deadline', message: 'When is my next deadline?', icon: 'CalendarDays' }
     );
 
     return suggestions.slice(0, 4); // Max 4 suggestions

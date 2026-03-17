@@ -5,179 +5,307 @@ import { callGeminiWithRotation } from '../config/apiKeys';
 import { useWindowSize } from 'react-use';
 import { useIsMobileDevice } from '../hooks/useIsMobileDevice';
 import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
-export function AiBuddy({ pendingTasks, assignmentsData = [], currentUserId = null, userName = '', announcementsCount = 0, notesCount = 0 }) {
+export function AiBuddy({ pendingTasks, assignmentsData = [], currentUserId = null, userName = '', announcementsCount = 0, notesCount = 0, notesData = [], overdueCount = 0 }) {
     const splineRef = useRef(null);
     const [isLoaded, setIsLoaded] = useState(false);
     const [message, setMessage] = useState('');
-    const [emotion, setEmotion] = useState('Happy'); // Default/Initial emotion
+    const [emotion, setEmotion] = useState('Happy');
 
     const [messagesQueue, setMessagesQueue] = useState([]);
     const [messageIndex, setMessageIndex] = useState(0);
+    // Action button state (for pomodoro, notes, etc.)
+    const [actionButton, setActionButton] = useState(null);
 
     const { userProfile } = useAuth();
+    const navigate = useNavigate();
     const aiLanguage = userProfile?.settings?.preferences?.aiLanguage || 'en';
 
-    // We try to read previous count from localStorage so it persists across page navigation if AiBuddy unmounts
     const prevTasksRef = useRef(() => {
         const stored = localStorage.getItem(`ag_pending_tasks_${currentUserId}`);
         return stored !== null ? parseInt(stored, 10) : pendingTasks;
     });
-    // For immediate tracking in this render cycle
     const [lastKnown, setLastKnown] = useState(prevTasksRef.current);
 
     const { width, height } = useWindowSize();
     const isMobileDevice = useIsMobileDevice();
 
-    // 🌟 COST & SPACE SAVER: Completely disable AiBuddy on actual Mobile/Tablet Devices
-    // This strict check (user-agent + touch points) prevents users from bypassing via "Desktop Site" mode
     if (isMobileDevice) {
         return null;
     }
 
     // ============================================================
-    // 📝 BUILT-IN MESSAGES (NO API CALL NEEDED)
+    // 🌙 TIME AWARENESS — Detect time of day (NO API CALL)
     // ============================================================
-    // These are used for celebrations, empty dashboards, and generic states.
-    // API is ONLY called when there's specific assignment context.
-    // Language-aware: picks English or Hinglish based on user preference.
+    const currentHour = new Date().getHours();
+    const getTimeOfDay = () => {
+        if (currentHour >= 0 && currentHour < 5) return 'nightOwl';
+        if (currentHour >= 5 && currentHour < 8) return 'earlyMorning';
+        if (currentHour >= 8 && currentHour < 12) return 'morning';
+        if (currentHour >= 12 && currentHour < 17) return 'afternoon';
+        if (currentHour >= 17 && currentHour < 21) return 'evening';
+        return 'lateNight'; // 9pm-12am
+    };
+    const timeOfDay = getTimeOfDay();
+    const isNightOwl = timeOfDay === 'nightOwl';
+    const isLateNight = timeOfDay === 'lateNight';
+
+    // ============================================================
+    // 🔥 ROAST/TOAST — Behavior detection (NO API CALL)
+    // ============================================================
+    const getBehaviorMode = () => {
+        if (overdueCount >= 3) return 'fullRoast';
+        if (overdueCount >= 1) return 'mildRoast';
+        if (pendingTasks === 0) return 'toast';
+        return 'normal';
+    };
+    const behaviorMode = getBehaviorMode();
+
+    // ============================================================
+    // 🧠 NOTE QUIZ — Pick random note for quiz (NO API CALL)
+    // ============================================================
+    const getRandomNote = () => {
+        if (!notesData || notesData.length === 0) return null;
+        const idx = Math.floor(Math.random() * Math.min(notesData.length, 5));
+        return notesData[idx];
+    };
+
+    // ============================================================
+    // 📝 BUILT-IN MESSAGES — All categories (NO API CALL)
+    // ============================================================
+    const firstName = userName?.split(' ')[0] || '';
 
     const hinglishMessages = {
+        // ─── Existing categories ─────────────────────────────
         celebrationAllClear: [
-            `Wah ${userName || 'bhai'} aag laga di! Sab clear kar diya tune! 🎉`,
-            `Party time ${userName || 'yaar'}! Ekdum zero pending tasks! 🎊`,
-            `Man of the match ${userName || 'bhai'}! Saare tasks khatam kar diye tune! 🔥`,
-            `${userName || 'Bhai'} tu toh legend nikla! Sab tasks clear! Chal party! 🥳`,
-            `Kya baat hai ${userName || 'yaar'}! Ek bhi task nahi bacha! Full respect! 💯`,
-            `Oye hoye ${userName || 'bhai'}! Zero pending! Aaj toh treat de! 🍕`,
-            `${userName || 'Bhai'} topper hai tu! Sabse pehle kaam khatam kiya! 🏆`,
-            `Wah ji wah ${userName || 'yaar'}! Clean dashboard! Ab maze kar! 🎊`,
+            `Wah ${firstName || 'bhai'} aag laga di! Sab clear kar diya tune! 🎉`,
+            `Party time ${firstName || 'yaar'}! Ekdum zero pending tasks! 🎊`,
+            `Man of the match ${firstName || 'bhai'}! Saare tasks khatam! 🔥`,
+            `${firstName || 'Bhai'} tu toh legend nikla! Sab tasks clear! 🥳`,
+            `Kya baat hai ${firstName || 'yaar'}! Ek bhi task nahi bacha! 💯`,
+            `Oye hoye ${firstName || 'bhai'}! Zero pending! Treat de! 🍕`,
+            `${firstName || 'Bhai'} topper hai tu! Sabse pehle kaam kiya! 🏆`,
+            `Wah ji wah ${firstName || 'yaar'}! Clean dashboard! Maze kar! 🎊`,
         ],
         celebrationOneTask: [
-            `Wah ${userName || 'bhai'}, ek task khatam! Aise hi baaki ${pendingTasks} bhi nipta le! 🚀`,
-            `Ek number kaam! Ek task aur gaya, baaki ${pendingTasks} pe lag ja ab! 💪`,
-            `Badhiya yaar! Ek burden kam hua, baaki ${pendingTasks} bhi jaldi khatam kar! 👏`,
-            `Shabash ${userName || 'bhai'}! Ek aur task done! Bas ${pendingTasks} aur baaki! 🔥`,
-            `Chal ${userName || 'yaar'}, momentum mat tod! ${pendingTasks} aur hain sirf! 🚀`,
-            `Ek aur patakha phoda ${userName || 'bhai'}! Ab ${pendingTasks} aur baaki! 💥`,
-            `${userName || 'Bhai'} dheere dheere sab hoga! Ek done, ${pendingTasks} toh go! 🎯`,
-            `Bohot khoob ${userName || 'yaar'}! Aise hi ek ek karke nipata de! 💪`,
+            `Wah ${firstName || 'bhai'}, ek task khatam! Baaki ${pendingTasks} nipta le! 🚀`,
+            `Ek number kaam! Ek task gaya, baaki ${pendingTasks} pe lag ja! 💪`,
+            `Badhiya! Ek burden kam, baaki ${pendingTasks} bhi jaldi kar! 👏`,
+            `Shabash ${firstName || 'bhai'}! Ek aur done! Bas ${pendingTasks} baaki! 🔥`,
+            `Chal ${firstName || 'yaar'}, momentum mat tod! ${pendingTasks} aur hain! 🚀`,
         ],
         zeroTasks: [
-            `Tera toh saara kaam clear hai ${userName || 'bhai'}, aaram kar ab! 😎`,
-            `Wah ${userName || 'yaar'}, zero tasks pe aake kaisa lag raha hai? Party kab hai? 🎉`,
-            `Sab khatam! Ab jaake kuch series-veries dekh le thodi der. 📺`,
-            `${userName || 'Bhai'} chill mode ON! Koi task nahi hai abhi! 🏖️`,
-            `Boss ${userName || 'yaar'}, dashboard ekdum saaf hai tera! Relax kar! 😌`,
-            `Kya baat hai! Zero pending! Tu toh discipline ka raja hai ${userName || 'bhai'}! 👑`,
-            `${userName || 'Yaar'} tujhe koi kuch nahi bol sakta aaj, sab done! ✅`,
-            `Free bird ${userName || 'bhai'}! Koi kaam nahi! Enjoy the moment! 🦅`,
+            `Tera toh saara kaam clear hai ${firstName || 'bhai'}, aaram kar! 😎`,
+            `Wah ${firstName || 'yaar'}, zero tasks! Party kab hai? 🎉`,
+            `Sab khatam! Ab series-veries dekh le thodi der. 📺`,
+            `${firstName || 'Bhai'} chill mode ON! Koi task nahi! 🏖️`,
+            `Boss ${firstName || 'yaar'}, dashboard saaf hai! Relax kar! 😌`,
+            `Zero pending! Tu toh discipline ka raja hai! 👑`,
         ],
         zeroTasksWithAnnouncements: [
-            `${userName || 'Bhai'}, tasks toh zero hain but ${announcementsCount} announcement${announcementsCount > 1 ? 's' : ''} aaye hain, dekh le! 📢`,
-            `Kaam toh nahi hai ${userName || 'yaar'}, par ${announcementsCount} naye announcements hain — check kar le! 🔔`,
-            `Tasks clear hain ${userName || 'bhai'}! Par ek nazar announcements pe daal de, ${announcementsCount} aaye hain! 📋`,
-            `Pending tasks zero hai, nice! Par announcements section check kar ${userName || 'yaar'}, kuch naya aaya hai! 📣`,
-            `${userName || 'Bhai'} assignment nahi hai koi, par ${announcementsCount} announcement${announcementsCount > 1 ? 's' : ''} padh le, important ho sakte hain! 🔥`,
-            `All clear tasks mein! Par announcements mein kuch naya hai, miss mat karna ${userName || 'yaar'}! 📢`,
+            `${firstName || 'Bhai'}, tasks zero hain but ${announcementsCount} announcement aaye hain, dekh le! 📢`,
+            `Kaam nahi hai ${firstName || 'yaar'}, par ${announcementsCount} naye announcements hain — check kar! 🔔`,
+            `Tasks clear! Par announcements check kar ${firstName || 'yaar'}, kuch naya aaya hai! 📣`,
+            `Assignment nahi hai, par announcements padh le ${firstName || 'bhai'}, important ho sakte hain! 🔥`,
         ],
         zeroTasksWithNotes: [
-            `Tasks zero, par ${notesCount} notes hain tere paas ${userName || 'yaar'}, revise kar le! 📝`,
-            `${userName || 'Bhai'} kaam toh nahi hai par ${notesCount} notes pade hain, revision time! 📚`,
-            `Free hai toh notes revise kar le ${userName || 'yaar'}, ${notesCount} hain tere paas! 🧠`,
+            `Tasks zero, par ${notesCount} notes hain tere paas ${firstName || 'yaar'}, revise kar le! 📝`,
+            `${firstName || 'Bhai'} kaam nahi hai par notes pade hain, revision time! 📚`,
+            `Free hai toh notes revise kar le, ${notesCount} hain tere paas! 🧠`,
         ],
         zeroTasksWithBoth: [
-            `${userName || 'Bhai'}, tasks zero hain but ${announcementsCount} announcement${announcementsCount > 1 ? 's' : ''} aur ${notesCount} notes hain — check kar! 🔔📚`,
-            `Kaam clear hai ${userName || 'yaar'}! Par announcements (${announcementsCount}) aur notes (${notesCount}) dekhna mat bhoolna! 📢`,
-            `All tasks done! Par ${announcementsCount} announcement${announcementsCount > 1 ? 's' : ''} padh aur ${notesCount} notes revise kar ${userName || 'bhai'}! 💡`,
+            `${firstName || 'Bhai'}, tasks zero hain but announcements aur notes hain — check kar! 🔔📚`,
+            `Kaam clear hai! Par announcements aur notes dekhna mat bhoolna! 📢`,
         ],
         genericPending: [
-            `Bhai ${userName || ''}, tere paas abhi ${pendingTasks} kaam bache hue hain, dekh le zara! 📋`,
-            `Lagta hai tera padhai ka mood nahi hai aaj? Chal thoda waqt nikal ke kaam nipta le. 📖`,
-            `Dhyan de ${userName || 'yaar'}, ${pendingTasks} task pending hain, baadme load aayega! ⚠️`,
-            `${userName || 'Bhai'}, ${pendingTasks} tasks pending hain, procrastinate mat kar! 🕰️`,
-            `Arey ${userName || 'yaar'} ${pendingTasks} kaam pade hain, chal shuru karte hain! 💪`,
-            `${userName || 'Bhai'} thoda focus kar, ${pendingTasks} tasks baaki hain abhi! 🎯`,
-            `Kab karega ${userName || 'yaar'} ye ${pendingTasks} kaam? Deadline miss mat karna! ⏰`,
-            `${userName || 'Bhai'} utho aur lage raho, ${pendingTasks} tasks apne aap nahi honge! 🚀`,
-            `Padhai likhai chal nahi rahi ${userName || 'yaar'}? ${pendingTasks} pending hain! 📚`,
-            `${userName || 'Bhai'} Netflix band kar, ${pendingTasks} assignments bache hain! 📵`,
-        ]
+            `Bhai ${firstName || ''}, ${pendingTasks} kaam bache hain, dekh le! 📋`,
+            `Dhyan de ${firstName || 'yaar'}, ${pendingTasks} task pending hain! ⚠️`,
+            `${firstName || 'Bhai'}, ${pendingTasks} tasks pending, procrastinate mat kar! 🕰️`,
+            `${firstName || 'Yaar'} ${pendingTasks} kaam pade hain, chal shuru karte hain! 💪`,
+            `${firstName || 'Bhai'} focus kar, ${pendingTasks} tasks baaki hain! 🎯`,
+            `Kab karega ${firstName || 'yaar'} ye ${pendingTasks} kaam? Deadline miss mat karna! ⏰`,
+            `${firstName || 'Bhai'} utho aur lage raho, ${pendingTasks} tasks apne aap nahi honge! 🚀`,
+        ],
+
+        // ─── 🌙 TIME-BASED MESSAGES ─────────────────────────
+        nightOwl: [
+            `${firstName || 'Bhai'} raat ke ${currentHour > 0 ? currentHour : 12} baj gaye! Soja ab! 🦉`,
+            `Oye ${firstName || 'yaar'}, itni raat ko jaag raha hai? Kal class hai teri! 😴`,
+            `Bhai ${firstName || ''}, neend puri nahi hogi toh kal dimag nahi chalega! So ja! 🛏️`,
+            `Raat ke ${currentHour > 0 ? currentHour : 12} baje padhai? ${firstName || 'Bhai'} health pe dhyan de! 🌙`,
+            `${firstName || 'Yaar'} so ja, main kal subah tujhe sab yaad dilwa dunga! 💤`,
+            `Night owl mode ON? ${firstName || 'Bhai'} ye roz mat karna, unhealthy hai! ⚠️`,
+        ],
+        lateNight: [
+            `Raat ho gayi ${firstName || 'bhai'}, jaldi kaam khatam kar aur so ja! 🌙`,
+            `${firstName || 'Yaar'} 9 baj gaye, ab zyada mat jag — kal fresh rehna! 😴`,
+            `Late night session ${firstName || 'bhai'}? Bas thodi der aur, phir sona! 🌃`,
+        ],
+        earlyMorning: [
+            `Early bird ${firstName || 'bhai'}! Subah subah padhai, kya baat hai! 🌅`,
+            `${firstName || 'Yaar'} itni subah? Respect! Aaj productive din hoga! 💪`,
+            `Good morning ${firstName || 'bhai'}! Fresh mind = best study time! ☀️`,
+        ],
+        afternoon: [
+            `Post-lunch slump ${firstName || 'yaar'}? Ek coffee le aur focus kar! ☕`,
+            `Dopahar ho gayi ${firstName || 'bhai'}, kaam nipta le ab! 🔥`,
+            `${firstName || 'Yaar'} lunch ke baad padhai mushkil hai par tu kar sakta hai! 💪`,
+        ],
+        evening: [
+            `Evening study session ${firstName || 'bhai'}! Smart time to focus! 🎯`,
+            `Sham ho gayi ${firstName || 'yaar'}, kal ke liye kaam aaj hi nipta le! 📋`,
+            `${firstName || 'Bhai'} evening mein padho, raat ko soko — best routine! 🌆`,
+        ],
+
+        // ─── 🔥 ROAST MESSAGES ──────────────────────────────
+        roastMild: [
+            `${firstName || 'Bhai'}, ${overdueCount} assignment${overdueCount > 1 ? 's' : ''} overdue ho chuki hai. Kya scene hai? 😤`,
+            `Arey ${firstName || 'yaar'}, deadline nikal gayi! ${overdueCount} kaam late hain! Kab karega? 📛`,
+            `${firstName || 'Bhai'} teacher tujhse puch legi toh kya bolega? ${overdueCount} overdue hain! 🥶`,
+            `Bhai deadline ke baad kaam karne ka kya faayda? Jaldi kar! ${overdueCount} overdue! ⏰`,
+            `${firstName || 'Yaar'} ${overdueCount} assignment overdue... mazaak chal raha hai kya? 🤨`,
+        ],
+        roastFull: [
+            `${firstName || 'Bhai'} ${overdueCount} assignments overdue! Kya kar raha hai zindagi mein? 🔥`,
+            `Arey ${firstName || 'yaar'}, ${overdueCount} deadlines miss ki! Phone rakh aur kaam shuru kar! 📵`,
+            `${firstName || 'Bhai'} itna procrastinate karta hai tu? ${overdueCount} overdue pade hain! 😡`,
+            `Legend hai tu ${firstName || 'yaar'}! ${overdueCount} assignments overdue karke bhi chill hai! 💀`,
+            `${firstName || 'Bhai'} tera result aayega tab royega — ${overdueCount} overdue hain abhi! 😤`,
+            `Bro tera ${overdueCount} assignment overdue hai, Netflix band kar aur kaam kar! 📵🔥`,
+        ],
+        toastProud: [
+            `Kya baat hai ${firstName || 'bhai'}! Sab time pe complete! Teacher ka favourite hai tu! 🌟`,
+            `${firstName || 'Yaar'} tu toh example set kar raha hai class mein! All on time! 🏆`,
+            `Respect ${firstName || 'bhai'}! Zero overdue, zero stress! Aise hi chalta reh! 💯`,
+            `${firstName || 'Bhai'} discipline ka king hai tu! Sab kaam time pe kiya! 👑`,
+            `Full marks for consistency ${firstName || 'yaar'}! Keep it up! ⭐`,
+        ],
+
+        // ─── 🧠 NOTE QUIZ MESSAGES ─────────────────────────
+        noteQuiz: (noteTitle) => [
+            `${firstName || 'Yaar'}, tune '${noteTitle}' ke notes save kiye the — yaad hai kya usme? 🤔`,
+            `Quick revision ${firstName || 'bhai'}: '${noteTitle}' padha tha? Ek baar check kar le! 📖`,
+            `Pop quiz ${firstName || 'yaar'}! '${noteTitle}' ke baare mein kuch yaad hai? 🧠`,
+            `${firstName || 'Bhai'} '${noteTitle}' revise kar le, exam mein kaam aayega! 📝`,
+        ],
+
+        // ─── 📊 PEER PRESSURE MESSAGES ──────────────────────
+        peerPressure: [
+            `${firstName || 'Bhai'}, teri class ke bache submit kar rahe hain! Tu kab karega? 👀`,
+            `Arey ${firstName || 'yaar'}, sab aage nikal rahe hain! Piche mat reh ja! 🏃`,
+            `${firstName || 'Bhai'} tera competition submit kar chuka hai, tu bhi lag ja! 🔥`,
+            `Class mein sab kaam kar rahe hain ${firstName || 'yaar'}, tu bhi shuru kar! 💪`,
+        ],
+
+        // ─── 🍅 STUDY SESSION MESSAGES ──────────────────────
+        studySession: [
+            `${firstName || 'Bhai'}, ${pendingTasks} tasks hain! Pomodoro start karun? 25 min focus! 🍅`,
+            `Bhai tension mat le, ek ek karke niptayenge! Study session shuru karun? 🎯`,
+            `${firstName || 'Yaar'} agar 25 min focus de toh ek task khatam ho sakta hai! 🍅`,
+        ],
     };
 
     const englishMessages = {
         celebrationAllClear: [
-            `Amazing work${userName ? ', ' + userName : ''}! All tasks cleared. You deserve a break! 🎉`,
-            `Outstanding${userName ? ', ' + userName : ''}! Zero pending tasks. Well done! 🏆`,
-            `All caught up${userName ? ', ' + userName : ''}! Your dashboard is sparkling clean! ✨`,
-            `Incredible effort${userName ? ', ' + userName : ''}! Every single task is complete! 🔥`,
-            `${userName || 'Hey'}, you crushed it! Nothing left on your plate! 💯`,
-            `Perfect score${userName ? ', ' + userName : ''}! All tasks done. Time to relax! 😎`,
-            `${userName || 'Great job'}! Clean slate. You're on top of everything! 🌟`,
-            `Mission accomplished${userName ? ', ' + userName : ''}! All tasks are wrapped up! 🎊`,
+            `Amazing work${firstName ? ', ' + firstName : ''}! All tasks cleared! 🎉`,
+            `Outstanding${firstName ? ', ' + firstName : ''}! Zero pending tasks! 🏆`,
+            `All caught up${firstName ? ', ' + firstName : ''}! Dashboard is clean! ✨`,
+            `${firstName || 'Hey'}, you crushed it! Nothing left! 💯`,
+            `Perfect${firstName ? ', ' + firstName : ''}! All tasks done. Relax! 😎`,
         ],
         celebrationOneTask: [
-            `Nice one${userName ? ', ' + userName : ''}! One task done. ${pendingTasks} more to go! 🚀`,
-            `Good progress! Another task completed. ${pendingTasks} remaining. Keep it up! 💪`,
-            `Well done${userName ? ', ' + userName : ''}! One less thing to worry about. ${pendingTasks} left! 👏`,
-            `That's the way${userName ? ', ' + userName : ''}! Task complete. Only ${pendingTasks} more! 🔥`,
-            `Keep the momentum${userName ? ', ' + userName : ''}! ${pendingTasks} tasks left to finish! 🚀`,
-            `Another one bites the dust! ${pendingTasks} tasks remaining. You got this! 💥`,
-            `Steady progress${userName ? ', ' + userName : ''}! One done, ${pendingTasks} to go! 🎯`,
-            `Excellent${userName ? ', ' + userName : ''}! Keep going at this pace! 💪`,
+            `Nice one${firstName ? ', ' + firstName : ''}! One task done. ${pendingTasks} to go! 🚀`,
+            `Good progress! ${pendingTasks} remaining. Keep it up! 💪`,
+            `Well done${firstName ? ', ' + firstName : ''}! ${pendingTasks} left! 👏`,
         ],
         zeroTasks: [
-            `You're all caught up${userName ? ', ' + userName : ''}! No tasks pending right now. 😎`,
-            `Clean dashboard${userName ? ', ' + userName : ''}! No tasks to worry about. 🎉`,
-            `All clear! Take some time to relax and recharge. 📺`,
-            `No pending tasks${userName ? ', ' + userName : ''}! Enjoy the free time! 🏖️`,
-            `Dashboard is clean${userName ? ', ' + userName : ''}! Nothing pending. Enjoy! 😌`,
-            `Zero pending tasks! Great discipline${userName ? ', ' + userName : ''}! 👑`,
-            `Nothing pending${userName ? ', ' + userName : ''}! You're ahead of the game! ✅`,
-            `All done${userName ? ', ' + userName : ''}! No assignments or tasks waiting! 🦅`,
+            `All caught up${firstName ? ', ' + firstName : ''}! No tasks pending. 😎`,
+            `Clean dashboard${firstName ? ', ' + firstName : ''}! Nothing to worry about. 🎉`,
+            `All clear! Take some time to relax. 📺`,
+            `No pending tasks${firstName ? ', ' + firstName : ''}! Enjoy! 🏖️`,
+            `Zero pending! Great discipline${firstName ? ', ' + firstName : ''}! 👑`,
         ],
         zeroTasksWithAnnouncements: [
-            `No pending tasks${userName ? ', ' + userName : ''}! But you have ${announcementsCount} new announcement${announcementsCount > 1 ? 's' : ''} — check it out! 📢`,
-            `Tasks are clear${userName ? ', ' + userName : ''}! Don't miss ${announcementsCount} announcement${announcementsCount > 1 ? 's' : ''} though! 🔔`,
-            `All tasks done! But ${announcementsCount} announcement${announcementsCount > 1 ? 's' : ''} ${announcementsCount > 1 ? 'are' : 'is'} waiting for you${userName ? ', ' + userName : ''}! 📋`,
-            `No assignments pending${userName ? ', ' + userName : ''}! Go check the ${announcementsCount} new announcement${announcementsCount > 1 ? 's' : ''}! 📣`,
-            `${userName ? userName + ', you' : 'You'} have no tasks but ${announcementsCount} announcement${announcementsCount > 1 ? 's' : ''} — might be important! 🔥`,
-            `All caught up on tasks! Take a moment to read ${announcementsCount} announcement${announcementsCount > 1 ? 's' : ''}${userName ? ', ' + userName : ''}! 📢`,
+            `No tasks${firstName ? ', ' + firstName : ''}! But ${announcementsCount} announcement${announcementsCount > 1 ? 's' : ''} to check! 📢`,
+            `Tasks clear${firstName ? ', ' + firstName : ''}! Don't miss ${announcementsCount} announcement${announcementsCount > 1 ? 's' : ''}! 🔔`,
         ],
         zeroTasksWithNotes: [
-            `No tasks pending${userName ? ', ' + userName : ''}! Good time to review your ${notesCount} notes! 📝`,
-            `${userName ? userName + ', tasks' : 'Tasks'} are clear! You have ${notesCount} notes — great time to revise! 📚`,
-            `All free${userName ? ', ' + userName : ''}! Maybe review some of your ${notesCount} notes? 🧠`,
+            `No tasks pending${firstName ? ', ' + firstName : ''}! Review your ${notesCount} notes! 📝`,
+            `All free${firstName ? ', ' + firstName : ''}! Great time to revise notes! 📚`,
         ],
         zeroTasksWithBoth: [
-            `No tasks${userName ? ', ' + userName : ''}! But check ${announcementsCount} announcement${announcementsCount > 1 ? 's' : ''} and review ${notesCount} notes! 🔔📚`,
-            `Tasks clear${userName ? ', ' + userName : ''}! You have ${announcementsCount} announcement${announcementsCount > 1 ? 's' : ''} and ${notesCount} notes to look at! 📢`,
-            `All done with tasks! Don't miss ${announcementsCount} announcement${announcementsCount > 1 ? 's' : ''}, and keep ${notesCount} notes fresh${userName ? ', ' + userName : ''}! 💡`,
+            `No tasks${firstName ? ', ' + firstName : ''}! Check ${announcementsCount} announcement${announcementsCount > 1 ? 's' : ''} and review notes! 🔔📚`,
         ],
         genericPending: [
-            `${userName ? userName + ', you' : 'You'} have ${pendingTasks} pending tasks. Take a look when you can! 📋`,
-            `${pendingTasks} tasks are waiting${userName ? ', ' + userName : ''}. A little focus goes a long way! 📖`,
-            `Heads up${userName ? ', ' + userName : ''}! ${pendingTasks} tasks are still pending. ⚠️`,
-            `${userName ? userName + ', ' : ''}${pendingTasks} tasks pending. Try to get them done soon! 🕰️`,
-            `${pendingTasks} tasks to complete${userName ? ', ' + userName : ''}. Let's get started! 💪`,
-            `Stay focused${userName ? ', ' + userName : ''}! ${pendingTasks} tasks are waiting for you. 🎯`,
-            `Don't forget${userName ? ', ' + userName : ''}! ${pendingTasks} tasks need your attention. ⏰`,
-            `${pendingTasks} tasks won't complete themselves${userName ? ', ' + userName : ''}! Time to work! 🚀`,
-            `${userName ? userName + ', ' : ''}${pendingTasks} assignments are pending. Stay on track! 📚`,
-            `Time to focus${userName ? ', ' + userName : ''}! ${pendingTasks} tasks are due. 📝`,
-        ]
+            `${firstName ? firstName + ', you' : 'You'} have ${pendingTasks} pending tasks! 📋`,
+            `${pendingTasks} tasks waiting${firstName ? ', ' + firstName : ''}! 📖`,
+            `Heads up${firstName ? ', ' + firstName : ''}! ${pendingTasks} tasks pending. ⚠️`,
+            `${pendingTasks} tasks to complete${firstName ? ', ' + firstName : ''}! 💪`,
+            `Stay focused${firstName ? ', ' + firstName : ''}! ${pendingTasks} tasks waiting. 🎯`,
+        ],
+        nightOwl: [
+            `${firstName ? firstName + ', it' : 'It'}'s ${currentHour > 0 ? currentHour : 12} AM! Go to sleep! 🦉`,
+            `Late night study${firstName ? ', ' + firstName : ''}? Please get some rest! 😴`,
+            `${firstName ? firstName + ', sleep' : 'Sleep'} is important! I'll remind you tomorrow! 💤`,
+            `It's past midnight${firstName ? ', ' + firstName : ''}. Your health matters more! 🌙`,
+        ],
+        lateNight: [
+            `Getting late${firstName ? ', ' + firstName : ''}! Finish up and rest! 🌙`,
+            `Late night session${firstName ? ', ' + firstName : ''}? Don't forget to sleep! 😴`,
+        ],
+        earlyMorning: [
+            `Early bird${firstName ? ', ' + firstName : ''}! Great start to the day! 🌅`,
+            `Good morning${firstName ? ', ' + firstName : ''}! Fresh mind, best study time! ☀️`,
+        ],
+        afternoon: [
+            `Post-lunch slump${firstName ? ', ' + firstName : ''}? Grab a coffee and focus! ☕`,
+            `Afternoon study${firstName ? ', ' + firstName : ''}! Stay focused! 🔥`,
+        ],
+        evening: [
+            `Evening study${firstName ? ', ' + firstName : ''}! Smart choice! 🎯`,
+            `Good evening${firstName ? ', ' + firstName : ''}! Finish today's work now! 📋`,
+        ],
+        roastMild: [
+            `${firstName ? firstName + ', ' : ''}${overdueCount} assignment${overdueCount > 1 ? 's are' : ' is'} overdue! Time to catch up! 😤`,
+            `Heads up${firstName ? ', ' + firstName : ''}! ${overdueCount} past deadline. Don't delay more! 📛`,
+            `${overdueCount} overdue task${overdueCount > 1 ? 's' : ''}${firstName ? ', ' + firstName : ''}! Better get on it! ⏰`,
+        ],
+        roastFull: [
+            `${firstName ? firstName + ', ' : ''}${overdueCount} assignments overdue! This is critical! 🔥`,
+            `${overdueCount} deadlines missed${firstName ? ', ' + firstName : ''}! Stop procrastinating! 📵`,
+            `Seriously${firstName ? ', ' + firstName : ''}? ${overdueCount} overdue! Your grades are at risk! 😡`,
+            `${overdueCount} assignments past deadline${firstName ? ', ' + firstName : ''}. Act now! ⚠️`,
+        ],
+        toastProud: [
+            `Excellent discipline${firstName ? ', ' + firstName : ''}! Everything on time! 🌟`,
+            `${firstName ? firstName + ', you' : 'You'}'re setting the standard! All on time! 🏆`,
+            `Zero overdue! Great consistency${firstName ? ', ' + firstName : ''}! 💯`,
+            `Impressive${firstName ? ', ' + firstName : ''}! All assignments submitted on time! 👑`,
+        ],
+        noteQuiz: (noteTitle) => [
+            `${firstName ? firstName + ', you' : 'You'} saved notes on '${noteTitle}'. Time to review! 🤔`,
+            `Quick check${firstName ? ', ' + firstName : ''}: Do you remember '${noteTitle}'? 📖`,
+            `Pop quiz! What do you remember about '${noteTitle}'? 🧠`,
+        ],
+        peerPressure: [
+            `${firstName ? firstName + ', your' : 'Your'} classmates are submitting! Don't fall behind! 👀`,
+            `Others in your class are ahead${firstName ? ', ' + firstName : ''}! Time to catch up! 🏃`,
+            `Your peers are making progress${firstName ? ', ' + firstName : ''}! Join them! 🔥`,
+        ],
+        studySession: [
+            `${pendingTasks} tasks pending${firstName ? ', ' + firstName : ''}! Start a Pomodoro session? 🍅`,
+            `Focus for 25 minutes${firstName ? ', ' + firstName : ''}! One task at a time! 🎯`,
+        ],
     };
 
-    // Pick the correct message set based on language preference
     const builtInMessages = aiLanguage === 'hin' ? hinglishMessages : englishMessages;
 
-    // Helper to pick random subset from an array (for variety without API)
     const pickRandom = (arr, count = 5) => {
         const shuffled = [...arr].sort(() => Math.random() - 0.5);
         return shuffled.slice(0, Math.min(count, shuffled.length));
     };
 
-    // Helper to extract JSON array from AI response text
     const extractJSON = (text) => {
         try {
             let clean = text.replace(/```json/gi, '').replace(/```/g, '').trim();
@@ -194,48 +322,83 @@ export function AiBuddy({ pendingTasks, assignmentsData = [], currentUserId = nu
         return null;
     };
 
+    // ============================================================
+    // 🎯 SMART MESSAGE BUILDER — Combines all sources intelligently
+    // ============================================================
+    const buildSmartMessageQueue = (baseMsgs) => {
+        let finalQueue = [...baseMsgs];
+
+        // 1. Mix in time-based messages (1-2 messages)
+        if (isNightOwl && builtInMessages.nightOwl?.length) {
+            // Night owl gets PRIORITY — insert at the beginning
+            const nightMsgs = pickRandom(builtInMessages.nightOwl, 2);
+            finalQueue = [...nightMsgs, ...finalQueue];
+        } else if (isLateNight && builtInMessages.lateNight?.length) {
+            finalQueue.push(...pickRandom(builtInMessages.lateNight, 1));
+        } else if (builtInMessages[timeOfDay]?.length) {
+            finalQueue.push(...pickRandom(builtInMessages[timeOfDay], 1));
+        }
+
+        // 2. Mix in roast/toast messages (1-2 messages)
+        if (behaviorMode === 'fullRoast' && builtInMessages.roastFull?.length) {
+            const roasts = pickRandom(builtInMessages.roastFull, 2);
+            finalQueue = [...roasts, ...finalQueue]; // Roasts get priority
+        } else if (behaviorMode === 'mildRoast' && builtInMessages.roastMild?.length) {
+            finalQueue.push(...pickRandom(builtInMessages.roastMild, 1));
+        } else if (behaviorMode === 'toast' && pendingTasks === 0 && builtInMessages.toastProud?.length) {
+            finalQueue.push(...pickRandom(builtInMessages.toastProud, 1));
+        }
+
+        // 3. Mix in peer pressure (1 message, only when tasks > 0)
+        if (pendingTasks > 0 && builtInMessages.peerPressure?.length) {
+            finalQueue.push(...pickRandom(builtInMessages.peerPressure, 1));
+        }
+
+        // 4. Mix in note quiz (1 message, only when notes exist)
+        const randomNote = getRandomNote();
+        if (randomNote && builtInMessages.noteQuiz) {
+            const quizMsgs = builtInMessages.noteQuiz(randomNote.title || randomNote.subject || 'your notes');
+            finalQueue.push(pickRandom(quizMsgs, 1)[0]);
+        }
+
+        // 5. Mix in study session suggestion (1 message, only when 3+ tasks)
+        if (pendingTasks >= 3 && builtInMessages.studySession?.length) {
+            finalQueue.push(...pickRandom(builtInMessages.studySession, 1));
+        }
+
+        // Shuffle the final queue so it doesn't feel predictable
+        return finalQueue.sort(() => Math.random() - 0.5);
+    };
+
     const fetchGeminiMessages = async (tasksCount, contextStr, nameStr, isCelebration = false, justClearedAll = false) => {
 
-        // ============================================================
-        // 🚫 NO API CALL ZONES - Use built-in messages directly
-        // ============================================================
-
-        // 1. Celebrations → Always use built-in messages (no API needed)
+        // 1. Celebrations → Built-in messages
         if (isCelebration) {
             if (justClearedAll) return pickRandom(builtInMessages.celebrationAllClear, 3);
             return pickRandom(builtInMessages.celebrationOneTask, 3);
         }
 
-        // 2. Zero tasks → Use smart messages based on announcements/notes
+        // 2. Zero tasks → Smart messages based on announcements/notes
         if (tasksCount === 0) {
-            // If there are both announcements and notes, mention both
+            let baseMsgs;
             if (announcementsCount > 0 && notesCount > 0) {
-                return pickRandom(builtInMessages.zeroTasksWithBoth, 3);
+                baseMsgs = pickRandom(builtInMessages.zeroTasksWithBoth, 3);
+            } else if (announcementsCount > 0) {
+                baseMsgs = pickRandom(builtInMessages.zeroTasksWithAnnouncements, 3);
+            } else if (notesCount > 0) {
+                baseMsgs = pickRandom(builtInMessages.zeroTasksWithNotes, 3);
+            } else {
+                baseMsgs = pickRandom(builtInMessages.zeroTasks, 3);
             }
-            // If there are announcements, highlight them
-            if (announcementsCount > 0) {
-                return pickRandom(builtInMessages.zeroTasksWithAnnouncements, 5);
-            }
-            // If there are notes but no announcements, suggest revision
-            if (notesCount > 0) {
-                return pickRandom(builtInMessages.zeroTasksWithNotes, 3);
-            }
-            // Truly nothing — all clear
-            return pickRandom(builtInMessages.zeroTasks, 5);
+            return buildSmartMessageQueue(baseMsgs);
         }
 
-        // 3. No meaningful context (no assignment details) → Use built-in generic messages
+        // 3. No context → Generic pending messages
         if (!contextStr || contextStr.trim() === '') {
-            return pickRandom(builtInMessages.genericPending, 5);
+            return buildSmartMessageQueue(pickRandom(builtInMessages.genericPending, 3));
         }
 
-        // ============================================================
-        // ✅ API CALL ZONE - Only when there's REAL assignment context
-        // ============================================================
-        // We reach here ONLY when there are pending tasks WITH specific 
-        // details (title, assigner, deadline) worth talking about.
-
-        // Check cache first to avoid unnecessary API calls
+        // 4. Smart template matcher (no API)
         const safeContext = encodeURIComponent(contextStr || 'none').substring(0, 30);
         const cacheKey = `ag_ai_msgs_${currentUserId}_${tasksCount}_${aiLanguage}_${safeContext}`;
         const cacheString = localStorage.getItem(cacheKey);
@@ -243,126 +406,90 @@ export function AiBuddy({ pendingTasks, assignmentsData = [], currentUserId = nu
             try {
                 const parsedCache = JSON.parse(cacheString);
                 if (Array.isArray(parsedCache) && parsedCache.length > 0) {
-                    return parsedCache; // 🎯 Cache hit! No API call needed.
+                    return buildSmartMessageQueue(parsedCache);
                 }
-            } catch (e) { /* Ignore and re-fetch */ }
+            } catch (e) { }
         }
 
-        // ============================================================
-        // 🪄 SMART TEMPLATE MATCHER (95% API REDUCTION)
-        // ============================================================
-        // We parse the context string to extract the title and assigner,
-        // then inject them into our built-in context templates.
         try {
-            // Expected contextStr format from our builder below:
-            // - Title: "Maths HW", Assigned By: "Teacher", Due: "..."
-            // We use regex to find the first title and assigner.
             const titleMatch = contextStr.match(/- Title: "([^"]+)"/);
             const assignerMatch = contextStr.match(/Assigned By: "([^"]+)"/);
 
             if (titleMatch && titleMatch[1]) {
                 const title = titleMatch[1];
                 let assigner = assignerMatch ? assignerMatch[1] : 'someone';
-                if (assigner === 'Self (User uploaded this)') assigner = 'you'; // Make it natural
+                if (assigner === 'Self (User uploaded this)') assigner = 'you';
 
-                // Fetch template set based on language preference
                 let templates = aiLanguage === 'hin' ?
                     [
-                        `Abey ${userName || 'yaar'}, tune jo '${title}' upload kiya tha wo abhi tak pending hai! ⏰`,
-                        `${assigner === 'you' ? 'Tune' : assigner + ' ne'} '${title}' diya tha, nipat le fatfat! 🚀`,
-                        `${userName ? userName + ', ' : ''}'${title}' pending pada hai. Aise kaise chalega? 🎯`,
-                        `Oye ${userName || 'yaar'}, '${title}' tera wait kar raha hai, chal shuru karte hain! 💪`,
-                        `Dekh tera '${title}' pending hai, baadme tension hogi, abhi karke khatam kar de! 📋`,
-                        `Arey padhaku, '${title}' ko ignore kyu kar raha hai? Finish kar use! 📝`,
-                        `${userName || 'Boss'}, '${title}' complete kar, phir maze hi maze! ✨`
+                        `Abey ${firstName || 'yaar'}, '${title}' abhi tak pending hai! ⏰`,
+                        `${assigner === 'you' ? 'Tune' : assigner + ' ne'} '${title}' diya tha, nipat le! 🚀`,
+                        `'${title}' pending pada hai ${firstName || 'yaar'}. Kaise chalega? 🎯`,
+                        `Oye ${firstName || 'yaar'}, '${title}' tera wait kar raha hai! 💪`,
+                        `'${title}' pending hai, abhi karke khatam kar de! 📋`,
                     ] :
                     [
-                        `Hey ${userName || 'friend'}, '${title}' is still pending! Time to finish it! ⏰`,
-                        `${userName ? userName + ', ' : ''}you have '${title}' pending from ${assigner}. Better get it done! 📚`,
-                        `Don't forget about '${title}'. It's waiting for you! 🎯`,
-                        `Your task '${title}' assigned by ${assigner} needs attention soon! ⚠️`,
-                        `Stay on track! Try to complete '${title}' today. 💪`,
-                        `${userName || 'Hey'}, let's knock out '${title}'! 🚀`,
-                        `'${title}' is on your checklist. Time to make some progress! 📝`,
-                        `Just a reminder about '${title}'. Don't let it pile up! 📋`
+                        `'${title}' is still pending${firstName ? ', ' + firstName : ''}! ⏰`,
+                        `Task '${title}' from ${assigner} needs attention! 📚`,
+                        `Don't forget about '${title}'! 🎯`,
+                        `'${title}' is waiting for you! Let's finish it! 💪`,
                     ];
 
-                // Shuffle and pick 5 unique messages
-                const picked = pickRandom(templates, 5);
-
-                // Auto-save to cache to keep consistency
+                const picked = pickRandom(templates, 3);
                 localStorage.setItem(cacheKey, JSON.stringify(picked));
-                return picked; // 🔥 BOOM: No API call made!
+                return buildSmartMessageQueue(picked);
             }
         } catch (e) {
-            console.error("Error applying context templates, falling back to API", e);
+            console.error("Template error, falling back:", e);
         }
 
-        // ============================================================
-        // 🚨 ABSOLUTE LAST RESORT: API CALL (Only if context format changed)
-        // ============================================================
-
-        // Build the prompt based on language preference
+        // 5. Last resort: API call
         let prompt;
         if (aiLanguage === 'hin') {
-            // HINGLISH: Full friendly, WhatsApp-style, desi buddy
-            prompt = `You are a close friend and study buddy (AI Mascot) inside an academic dashboard. 
+            prompt = `You are a close friend and study buddy inside an academic dashboard.
 The student's name is ${nameStr || 'Dost'}. They have ${tasksCount} pending tasks.
-${contextStr ? `Here is context on their pending tasks:\n${contextStr}\n` : ''}
-Generate 5 short sentences in casual 'Hinglish' (Hindi spoken in English letters). Keep them under 20 words each.
-CRITICAL INSTRUCTIONS:
-1. DO NOT WRITE IN PROPER ENGLISH. ALWAYS USE HINGLISH EXCLUSIVELY (like WhatsApp chat with a desi friend).
-2. DO NOT REPEAT phrases. Make each of the 5 sentences completely different in tone and style. 
-3. Include the student's name (${nameStr || 'Dost'}) randomly in some of the sentences.
-4. If tasks > 0: Motivate them or make funny roasts. YOU MUST use the specific context provided! 
-   - If 'Assigned By' is 'Self (User uploaded this)', tell them: "Abey ${nameStr || 'yaar'}, tune jo '[Title]' upload kiya tha wo abhi tak pending hai, jaldi nikal usko!"
-   - If 'Assigned By' is someone else: "Bhai ${nameStr || ''}, [Name] ne '[Title]' bheja tha, due date kal hai, nipat le fatfat!"
-Return EXACTLY a pure JSON array of 5 strings. No markdown, no blockquotes, just the JSON array like ["msg1", "msg2"]`;
+${contextStr ? `Context:\n${contextStr}\n` : ''}
+Generate 5 short Hinglish sentences (under 20 words each). Be casual, motivating, and include the name.
+Return EXACTLY a JSON array: ["msg1", "msg2", ...]`;
         } else {
-            // ENGLISH: Simple, professional, clean and clear
-            prompt = `You are a helpful and professional study assistant (AI Buddy) inside an academic dashboard. 
-The student's name is ${nameStr || 'there'}. They have ${tasksCount} pending tasks.
-${contextStr ? `Here is context on their pending tasks:\n${contextStr}\n` : ''}
-Generate 5 short, clear sentences in simple professional English. Keep them under 20 words each.
-CRITICAL INSTRUCTIONS:
-1. WRITE IN CLEAR, SIMPLE, PROFESSIONAL ENGLISH ONLY. No slang, no Hindi, no Hinglish.
-2. Be encouraging and supportive but keep it professional and concise.
-3. DO NOT REPEAT phrases. Make each sentence unique in tone.
-4. Include the student's name (${nameStr || 'there'}) in some sentences naturally.
-5. If tasks > 0: Reference the specific assignments provided in the context.
-   - If 'Assigned By' is 'Self (User uploaded this)': "${nameStr || 'Hey'}, your task '[Title]' is still pending. Consider completing it soon."
-   - If 'Assigned By' is someone else: "${nameStr || ''}, [Name] assigned '[Title]' — it's due soon. Stay on track."
-Return EXACTLY a pure JSON array of 5 strings. No markdown, no blockquotes, just the JSON array like ["msg1", "msg2"]`;
+            prompt = `You are a study assistant inside an academic dashboard.
+Student: ${nameStr || 'there'}. ${tasksCount} pending tasks.
+${contextStr ? `Context:\n${contextStr}\n` : ''}
+Generate 5 short English sentences (under 20 words each). Be encouraging and professional.
+Return EXACTLY a JSON array: ["msg1", "msg2", ...]`;
         }
 
         try {
-            // 1. Try Gemini API with automatic key rotation (tries all keys)
             const data = await callGeminiWithRotation(prompt);
-
             if (data) {
                 const text = data.candidates[0].content.parts[0].text;
                 const parsed = extractJSON(text);
                 if (parsed) {
                     localStorage.setItem(cacheKey, JSON.stringify(parsed));
-                    return parsed;
+                    return buildSmartMessageQueue(parsed);
                 }
             }
-
-            throw new Error('All Gemini keys failed or invalid response');
-
+            throw new Error('API failed');
         } catch (error) {
-            console.warn("All Gemini keys failed, using built-in messages.", error.message);
-
-            // Fallback → Built-in messages (user never sees an error)
-            return pickRandom(builtInMessages.genericPending, 5);
+            console.warn("API failed, using built-in messages.", error.message);
+            return buildSmartMessageQueue(pickRandom(builtInMessages.genericPending, 3));
         }
     };
 
-    // Smart logic to determine emotion based purely on counts
+    // ============================================================
+    // 🎭 EMOTION ENGINE — Determines 3D buddy face
+    // ============================================================
     useEffect(() => {
         let newEmotion = 'Happy';
 
-        if (pendingTasks === 0) {
+        // Night owl always gets Sad face
+        if (isNightOwl) {
+            newEmotion = 'Sad';
+        } else if (behaviorMode === 'fullRoast') {
+            newEmotion = 'Sad'; // Angry/disappointed
+        } else if (behaviorMode === 'mildRoast') {
+            newEmotion = 'Focus'; // Concerned
+        } else if (pendingTasks === 0) {
             newEmotion = 'Happy';
         } else if (pendingTasks > 0 && pendingTasks <= 3) {
             newEmotion = 'Focus';
@@ -371,35 +498,38 @@ Return EXACTLY a pure JSON array of 5 strings. No markdown, no blockquotes, just
         }
 
         setEmotion(newEmotion);
+        setMessage(aiLanguage === 'hin' ? "Ruk dekh raha hu... 🤔" : "Checking your dashboard... 🤔");
 
-        // Show loading state while waiting for messages
-        setMessage(aiLanguage === 'hin' ? "Let me check your tasks... 🤔" : "Checking your tasks... 🤔");
-
-        // Trigger Spline animation state if loaded
+        // Trigger Spline emotion
         if (isLoaded && splineRef.current) {
             try {
-                if (newEmotion === 'Happy') splineRef.current.emitEvent('mouseDown', 'Happy');
-                else if (newEmotion === 'Sad') splineRef.current.emitEvent('mouseDown', 'Sad');
-                else splineRef.current.emitEvent('mouseDown', 'Focus');
-            } catch (e) {
-                console.log("Spline event trigger error:", e);
-            }
+                splineRef.current.emitEvent('mouseDown', newEmotion);
+            } catch (e) { }
         }
 
-        // Call Gemini API in background and overwrite messages if successful
+        // Determine action button
+        if (pendingTasks >= 3) {
+            setActionButton({ type: 'pomodoro', label: aiLanguage === 'hin' ? '🍅 Study Session' : '🍅 Focus Mode' });
+        } else if (notesData.length > 0 && pendingTasks === 0) {
+            setActionButton({ type: 'notes', label: aiLanguage === 'hin' ? '📚 Notes Revise' : '📚 Review Notes' });
+        } else if (announcementsCount > 0 && pendingTasks === 0) {
+            setActionButton({ type: 'announcements', label: aiLanguage === 'hin' ? '📢 Announcements' : '📢 View Announcements' });
+        } else {
+            setActionButton(null);
+        }
+
+        // Build messages
         if (isLoaded) {
-            // Build context string from passed assignmentsData
             let contextStr = '';
             if (assignmentsData && assignmentsData.length > 0 && currentUserId) {
                 const pendings = assignmentsData.filter(a => {
                     if (a.userStatuses && a.userStatuses[currentUserId]) return a.userStatuses[currentUserId] === 'Pending';
                     if (a.userId === currentUserId) return (a.status || 'Pending') === 'Pending';
                     return true;
-                }).slice(0, 3); // Take up to 3 to keep prompt short
+                }).slice(0, 3);
 
                 if (pendings.length > 0) {
                     contextStr = pendings.map(p => {
-                        // Distinguish if current user created it themselves
                         const isSelf = p.userId === currentUserId;
                         const assignerName = isSelf ? 'Self (User uploaded this)' : (p.createdBy || p.userName || 'Teacher/Peer');
                         return `- Title: "${p.title}", Assigned By: "${assignerName}", Due: "${p.deadline}"`;
@@ -407,9 +537,8 @@ Return EXACTLY a pure JSON array of 5 strings. No markdown, no blockquotes, just
                 }
             }
 
-            // Trigger Gemini API to fetch dynamic varied messages
             fetchGeminiMessages(pendingTasks, contextStr, userName).then(genMsgs => {
-                if (genMsgs) {
+                if (genMsgs && genMsgs.length > 0) {
                     setMessagesQueue(genMsgs);
                     setMessageIndex(0);
                     setMessage(genMsgs[0]);
@@ -417,9 +546,9 @@ Return EXACTLY a pure JSON array of 5 strings. No markdown, no blockquotes, just
             });
         }
 
-    }, [pendingTasks, isLoaded, assignmentsData, currentUserId, aiLanguage, announcementsCount, notesCount]);
+    }, [pendingTasks, isLoaded, assignmentsData, currentUserId, aiLanguage, announcementsCount, notesCount, overdueCount]);
 
-    // Cycle messages every 20 seconds
+    // Cycle messages every 15 seconds (faster for variety)
     useEffect(() => {
         if (messagesQueue.length <= 1) return;
         const interval = setInterval(() => {
@@ -428,49 +557,60 @@ Return EXACTLY a pure JSON array of 5 strings. No markdown, no blockquotes, just
                 setMessage(messagesQueue[next]);
                 return next;
             });
-        }, 20000);
+        }, 15000);
         return () => clearInterval(interval);
     }, [messagesQueue]);
 
-    // Track Task Completions for Celebrations across pages
+    // Track task completions for celebrations
     useEffect(() => {
         if (!isLoaded || currentUserId === null) return;
-
         let prev = lastKnown;
 
-        // If task count dropped, it means a task was completed!
         if (pendingTasks < prev && pendingTasks >= 0) {
             const justClearedAll = pendingTasks === 0;
-
-            // Fetch special instant celebration message
-            setMessage(aiLanguage === 'hin' ? "Ohoooo... ruk bata raha hu! 🎉" : "Hold on... great news coming! 🎉");
+            setMessage(aiLanguage === 'hin' ? "Ohoooo... 🎉" : "Great news! 🎉");
             fetchGeminiMessages(pendingTasks, '', userName, true, justClearedAll).then(genMsgs => {
                 if (genMsgs && genMsgs[0]) {
-                    setMessagesQueue(genMsgs); // Overwrite queue with the 1 celebration msg
+                    setMessagesQueue(genMsgs);
                     setMessageIndex(0);
                     setMessage(genMsgs[0]);
                 }
             });
-
-            // Re-trigger face expression
             if (splineRef.current) splineRef.current.emitEvent('mouseDown', 'Happy');
         }
 
-        // Update both local ref and localStorage so next time user hits dashboard it remembers 
-        // that they had e.g. 5 tasks instead of triggering celebration incorrectly.
         setLastKnown(pendingTasks);
         localStorage.setItem(`ag_pending_tasks_${currentUserId}`, pendingTasks.toString());
-
     }, [pendingTasks, isLoaded, currentUserId, userName]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    // ─── Action Button Handler ──────────────────────────────
+    const handleActionClick = () => {
+        if (!actionButton) return;
+
+        switch (actionButton.type) {
+            case 'pomodoro':
+                window.dispatchEvent(new Event('start-pomodoro'));
+                break;
+            case 'notes':
+                navigate('/notes');
+                break;
+            case 'announcements':
+                navigate('/announcements');
+                break;
+        }
+    };
 
     const onLoad = (splineApp) => {
         splineRef.current = splineApp;
         setIsLoaded(true);
     };
 
+    // ═══════════════════════════════════════════════════════════
+    // RENDER
+    // ═══════════════════════════════════════════════════════════
     return (
         <div className="relative w-full h-full pointer-events-none flex items-center justify-center -right-4 md:-right-8">
-            {/* 3D Canvas - Disabled pointer events to prevent rotation/interaction */}
+            {/* 3D Canvas */}
             <div className="absolute inset-0 z-0 pointer-events-none flex items-center justify-center scale-75 md:scale-[0.80] origin-bottom md:origin-center">
                 <Spline
                     scene="https://prod.spline.design/35aLT1F6pB6JrjyK/scene.splinecode"
@@ -479,7 +619,7 @@ Return EXACTLY a pure JSON array of 5 strings. No markdown, no blockquotes, just
                 />
             </div>
 
-            {/* Speech Bubble */}
+            {/* Speech Bubble + Action Button */}
             <AnimatePresence>
                 {isLoaded && (
                     <motion.div
@@ -498,23 +638,57 @@ Return EXACTLY a pure JSON array of 5 strings. No markdown, no blockquotes, just
                         }}
                         className="absolute top-[10%] md:top-[25%] right-[5%] md:right-[15%] max-w-[160px] md:max-w-[200px] z-10 pointer-events-auto"
                     >
-                        <div className="relative bg-white text-indigo-900 text-xs md:text-sm font-medium p-3 md:p-4 rounded-2xl shadow-xl border border-indigo-100/50 backdrop-blur-sm bg-white/90">
+                        {/* Main speech bubble */}
+                        <div className={`relative text-xs md:text-sm font-medium p-3 md:p-4 rounded-2xl shadow-xl backdrop-blur-sm ${
+                            isNightOwl ? 'bg-purple-900/90 text-purple-100 border border-purple-500/30' :
+                            behaviorMode === 'fullRoast' ? 'bg-red-50/95 text-red-900 border border-red-200/50' :
+                            behaviorMode === 'mildRoast' ? 'bg-amber-50/95 text-amber-900 border border-amber-200/50' :
+                            behaviorMode === 'toast' && pendingTasks === 0 ? 'bg-emerald-50/95 text-emerald-900 border border-emerald-200/50' :
+                            'bg-white/90 text-indigo-900 border border-indigo-100/50'
+                        }`}>
                             {message}
 
-                            {/* Bubble pointer (tail) - Moved to bottom-left to point at character on the left */}
-                            <div className="absolute -bottom-1.5 left-6 w-3 h-3 bg-white border-b border-l border-indigo-100/50 transform -rotate-45"></div>
+                            {/* Bubble tail */}
+                            <div className={`absolute -bottom-1.5 left-6 w-3 h-3 transform -rotate-45 ${
+                                isNightOwl ? 'bg-purple-900 border-b border-l border-purple-500/30' :
+                                behaviorMode === 'fullRoast' ? 'bg-red-50 border-b border-l border-red-200/50' :
+                                behaviorMode === 'mildRoast' ? 'bg-amber-50 border-b border-l border-amber-200/50' :
+                                behaviorMode === 'toast' && pendingTasks === 0 ? 'bg-emerald-50 border-b border-l border-emerald-200/50' :
+                                'bg-white border-b border-l border-indigo-100/50'
+                            }`}></div>
                         </div>
+
+                        {/* 🍅 Action Button */}
+                        {actionButton && (
+                            <motion.button
+                                initial={{ opacity: 0, y: 5 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 1 }}
+                                onClick={handleActionClick}
+                                className="mt-2 w-full text-xs font-bold py-1.5 px-3 rounded-xl cursor-pointer border-none transition-all duration-200 hover:-translate-y-0.5"
+                                style={{
+                                    background: actionButton.type === 'pomodoro' 
+                                        ? 'linear-gradient(135deg, #ef4444, #f97316)' 
+                                        : actionButton.type === 'notes'
+                                        ? 'linear-gradient(135deg, #6366f1, #8b5cf6)'
+                                        : 'linear-gradient(135deg, #8b5cf6, #a855f7)',
+                                    color: 'white',
+                                    boxShadow: '0 4px 15px rgba(99, 102, 241, 0.3)',
+                                }}
+                            >
+                                {actionButton.label}
+                            </motion.button>
+                        )}
                     </motion.div>
                 )}
             </AnimatePresence>
 
-            {/* Loading Skeleton/Spinner before character loads */}
+            {/* Loading Spinner */}
             {!isLoaded && (
                 <div className="absolute inset-0 flex items-center justify-center z-20">
                     <div className="w-10 h-10 border-4 border-indigo-300 border-t-white rounded-full animate-spin opacity-50"></div>
                 </div>
             )}
-
         </div>
     );
 }

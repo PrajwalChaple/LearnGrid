@@ -4,6 +4,7 @@ import { Sidebar } from './Sidebar';
 import { Navbar } from './Navbar';
 import { useAuth } from '../context/AuthContext';
 import { GlobalCalendarSync } from '../components/GlobalCalendarSync';
+import { PomodoroTimer } from '../components/PomodoroTimer';
 
 export function DashboardLayout() {
   const { user, isOnboarded } = useAuth();
@@ -28,6 +29,7 @@ export function DashboardLayout() {
   return (
     <div className="layout">
       <GlobalCalendarSync />
+      <PomodoroTimer />
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
       <div className="main-content">

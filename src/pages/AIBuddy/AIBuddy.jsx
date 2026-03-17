@@ -3,16 +3,14 @@
 // ============================================================
 // A full dashboard page with: chat history sidebar, main chat
 // window, document upload, smart suggestions, and tool actions.
-// ============================================================
-
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
     Send, Bot, Sparkles, Trash2, CheckCircle, XCircle,
     Loader2, Zap, ArrowRight, Plus, MessageSquare,
-    FileUp, X, FileText, Image, Paperclip, Clock,
-    ChevronLeft, MoreVertical, Download, Copy, Check
+    X, FileText, Paperclip, Clock, ChevronLeft, Copy, Check,
+    ListTodo, User, Search, Megaphone, PieChart, CalendarDays
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { sendMessage, getSmartSuggestions } from '../../lib/aiAgent';
@@ -117,7 +115,7 @@ export function AIBuddy() {
             setActiveSessionId(null);
             setMessages([]);
             chatHistoryRef.current = [];
-        }
+        };
     };
 
     const updateSessionMessages = (sessionId, newMessages) => {
@@ -199,7 +197,7 @@ export function AIBuddy() {
         setPendingDraft(null);
         const newMsg = {
             id: Date.now(), role: 'assistant',
-            content: 'Thik hai bhai, cancel kar diya. Kuch aur bata! 😊',
+            content: 'Alright, I cancelled the announcement. Let me know if there is anything else I can assist with! 😊',
             timestamp: new Date().toISOString()
         };
         const updated = [...messages, newMsg];
@@ -255,7 +253,7 @@ export function AIBuddy() {
 
 User's question about this file: "${messageText}"
 
-Analyze the file content and answer the user's question. Respond in casual Hinglish if the user's question is casual, or professional English if the content is academic. Keep it concise and helpful.`;
+Analyze the file content and answer the user's question. Respond in clear, professional English. Keep it concise and helpful.`;
 
                     // Use Gemini for multimodal (file analysis)
                     const geminiResponse = await fetch(
@@ -276,10 +274,10 @@ Analyze the file content and answer the user's question. Respond in casual Hingl
                     );
 
                     const data = await geminiResponse.json();
-                    finalText = data?.candidates?.[0]?.content?.parts?.[0]?.text || 'File analyze karne mein problem aayi 😥';
+                    finalText = data?.candidates?.[0]?.content?.parts?.[0]?.text || 'There was an issue analyzing your file 😥';
                 } catch (err) {
                     console.error('[AIBuddy] File analysis error:', err);
-                    finalText = 'File process karne mein error aaya. Please make sure the file is a valid document or image.';
+                    finalText = 'An error occurred while processing the file. Please make sure the file is a valid document or image.';
                 }
                 removeFile();
             } else {
@@ -295,7 +293,7 @@ Analyze the file content and answer the user's question. Respond in casual Hingl
 
             const assistantMsg = {
                 id: Date.now() + 1, role: 'assistant',
-                content: finalText || 'Hmm, kuch samajh nahi aaya 🤔',
+                content: finalText || 'Hmm, I didn\'t quite catch that. Could you rephrase? 🤔',
                 timestamp: new Date().toISOString(),
                 hasToolAction: false
             };
@@ -312,7 +310,7 @@ Analyze the file content and answer the user's question. Respond in casual Hingl
             console.error('[AIBuddy] Error:', error);
             const errMsg = {
                 id: Date.now() + 1, role: 'assistant',
-                content: 'Oops! Kuch gadbad ho gayi 😥. Thodi der baad try karo.',
+                content: 'Oops! Something went wrong 😥. Please try again in a few moments.',
                 timestamp: new Date().toISOString()
             };
             const updatedMessages = [...newMessages, errMsg];
@@ -412,7 +410,7 @@ Analyze the file content and answer the user's question. Respond in casual Hingl
                             <div>
                                 <h2>AIBuddy</h2>
                                 <span className="ab-topbar-status">
-                                    <span className="ab-status-dot" /> {isTyping ? 'Soch raha hai...' : 'Online • Groq + Gemini'}
+                                    <span className="ab-status-dot" /> {isTyping ? 'Thinking...' : 'Online'}
                                 </span>
                             </div>
                         </div>
@@ -430,34 +428,44 @@ Analyze the file content and answer the user's question. Respond in casual Hingl
                                 transition={{ duration: 0.5 }}
                                 className="ab-welcome-content"
                             >
-                                <div className="ab-welcome-icon">
-                                    <Sparkles size={40} />
-                                </div>
-                                <h1>Namaste, {firstName}! 👋</h1>
-                                <p>Main hu tera AIBuddy — LearnGrid ka personal assistant.<br/>Kuch bhi puch, kuch bhi karwa. Bol kya karna hai?</p>
+                                <h1>Welcome, {firstName}! 👋</h1>
+                                <p>I am your AIBuddy — your personal LearnGrid assistant.<br/>Ask me about assignments, announcements, or summarize your dashboard.</p>
 
                                 <div className="ab-welcome-grid">
-                                    {suggestions.map((s, i) => (
-                                        <motion.button
-                                            key={i}
-                                            initial={{ opacity: 0, y: 10 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            transition={{ delay: 0.2 + i * 0.1 }}
-                                            className="ab-welcome-card"
-                                            onClick={() => handleSend(s.message)}
-                                        >
-                                            <span className="ab-card-label">{s.label}</span>
-                                            <ArrowRight size={14} />
-                                        </motion.button>
-                                    ))}
+                                    {suggestions.map((s, i) => {
+                                        let Icon = Sparkles;
+                                        if (s.icon === 'ListTodo') Icon = ListTodo;
+                                        if (s.icon === 'Megaphone') Icon = Megaphone;
+                                        if (s.icon === 'PieChart') Icon = PieChart;
+                                        if (s.icon === 'CalendarDays') Icon = CalendarDays;
+
+                                        return (
+                                            <motion.button
+                                                key={i}
+                                                initial={{ opacity: 0, y: 10 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ delay: i * 0.1 }}
+                                                className="ab-welcome-card"
+                                                onClick={() => setInputValue(s.message)}
+                                            >
+                                                <Icon size={18} className="ab-card-icon" />
+                                                <span className="ab-card-label">{s.label}</span>
+                                                <ArrowRight size={14} />
+                                            </motion.button>
+                                        );
+                                    })}
                                     <motion.button
                                         initial={{ opacity: 0, y: 10 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: 0.6 }}
                                         className="ab-welcome-card"
-                                        onClick={() => fileInputRef.current?.click()}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            fileInputRef.current?.click();
+                                        }}
                                     >
-                                        <span className="ab-card-label">📄 Upload & Analyze Document</span>
+                                        <FileText size={18} className="ab-card-icon" />
+                                        <span className="ab-card-label">Upload & Analyze Document</span>
                                         <ArrowRight size={14} />
                                     </motion.button>
                                 </div>
@@ -513,13 +521,12 @@ Analyze the file content and answer the user's question. Respond in casual Hingl
                                 </motion.div>
                             ))}
 
-                            {/* Announcement Confirm */}
                             {pendingDraft && (
                                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="ab-confirm">
-                                    <p>🔔 Kya main ye announcement post karu?</p>
+                                    <p>🔔 Should I go ahead and post this announcement?</p>
                                     <div className="ab-confirm-btns">
                                         <button onClick={handleConfirmAnnouncement} className="ab-btn-yes">
-                                            <CheckCircle size={16} /> Haan, Post Karo!
+                                            <CheckCircle size={16} /> Yes, Post it!
                                         </button>
                                         <button onClick={handleRejectAnnouncement} className="ab-btn-no">
                                             <XCircle size={16} /> Cancel
@@ -576,7 +583,7 @@ Analyze the file content and answer the user's question. Respond in casual Hingl
                         <input
                             ref={inputRef}
                             type="text"
-                            placeholder={uploadedFile ? 'Document ke baare mein puch...' : 'AIBuddy se kuch bhi puch...'}
+                            placeholder={uploadedFile ? 'Ask a question about this document...' : 'Ask AIBuddy anything...'}
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
                             onKeyDown={handleKeyPress}
@@ -604,85 +611,106 @@ Analyze the file content and answer the user's question. Respond in casual Hingl
                     height: calc(100vh - 64px);
                     margin: -2rem;
                     margin-top: -1rem;
-                    background: #ffffff;
+                    background: #f8fafc;
                     overflow: hidden;
                     border-radius: 0;
+                    font-family: 'Inter', system-ui, sans-serif;
                 }
 
                 /* ═══ History Sidebar ═══ */
                 .ab-history {
-                    width: 280px;
-                    min-width: 280px;
-                    background: #f8fafc;
-                    border-right: 1px solid #e2e8f0;
+                    width: 300px;
+                    min-width: 300px;
+                    background: #ffffff;
+                    border-right: 1px solid rgba(0,0,0,0.05);
                     display: flex;
                     flex-direction: column;
                     overflow: hidden;
+                    box-shadow: 4px 0 24px rgba(0,0,0,0.02);
+                    z-index: 10;
                 }
 
                 .ab-history-header {
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
-                    padding: 20px 16px 12px;
-                    border-bottom: 1px solid #e2e8f0;
+                    padding: 24px 20px 16px;
+                    background: #ffffff;
                 }
 
                 .ab-history-header h3 {
-                    font-size: 0.85rem;
+                    font-size: 0.8rem;
                     font-weight: 700;
-                    color: #475569;
+                    color: #64748b;
                     margin: 0;
                     text-transform: uppercase;
-                    letter-spacing: 0.5px;
+                    letter-spacing: 0.8px;
                 }
 
                 .ab-new-chat-btn {
-                    width: 32px;
-                    height: 32px;
-                    border-radius: 8px;
-                    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+                    width: 36px;
+                    height: 36px;
+                    border-radius: 10px;
+                    background: #0f172a;
                     color: white;
                     display: flex;
                     align-items: center;
                     justify-content: center;
                     cursor: pointer;
                     border: none;
-                    transition: 0.2s;
+                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 }
-                .ab-new-chat-btn:hover { transform: scale(1.05); box-shadow: 0 4px 12px rgba(99,102,241,0.3); }
+                .ab-new-chat-btn:hover { 
+                    transform: translateY(-2px); 
+                    box-shadow: 0 8px 16px rgba(15,23,42,0.2); 
+                    background: #1e293b;
+                }
 
                 .ab-history-list {
                     flex: 1;
                     overflow-y: auto;
-                    padding: 8px;
-                    scrollbar-width: thin;
+                    padding: 12px;
+                    scrollbar-width: none;
                 }
+                .ab-history-list::-webkit-scrollbar { display: none; }
 
                 .ab-history-empty {
                     display: flex;
                     flex-direction: column;
                     align-items: center;
-                    gap: 8px;
-                    padding: 40px 20px;
-                    color: #94a3b8;
-                    font-size: 0.8rem;
+                    gap: 12px;
+                    padding: 60px 20px;
+                    color: #cbd5e1;
+                    font-size: 0.9rem;
+                    font-weight: 500;
                 }
 
                 .ab-history-item {
                     display: flex;
                     align-items: center;
-                    gap: 10px;
-                    padding: 10px 12px;
-                    border-radius: 10px;
+                    gap: 12px;
+                    padding: 14px 16px;
+                    border-radius: 14px;
                     cursor: pointer;
                     color: #64748b;
-                    font-size: 0.82rem;
-                    transition: 0.2s;
+                    font-size: 0.88rem;
+                    font-weight: 500;
+                    transition: all 0.2s;
                     position: relative;
+                    margin-bottom: 4px;
+                    border: 1px solid transparent;
                 }
-                .ab-history-item:hover { background: #e2e8f0; color: #1e293b; }
-                .ab-history-item.active { background: #e0e7ff; color: #4338ca; font-weight: 600; }
+                .ab-history-item:hover { 
+                    background: #f8fafc; 
+                    color: #0f172a; 
+                    border-color: #f1f5f9;
+                }
+                .ab-history-item.active { 
+                    background: #f1f5f9; 
+                    color: #0f172a; 
+                    font-weight: 600; 
+                    border-color: #e2e8f0;
+                }
 
                 .ab-history-title {
                     flex: 1;
@@ -693,16 +721,19 @@ Analyze the file content and answer the user's question. Respond in casual Hingl
 
                 .ab-history-delete {
                     opacity: 0;
-                    padding: 4px;
-                    border-radius: 6px;
-                    color: #94a3b8;
+                    padding: 6px;
+                    border-radius: 8px;
+                    color: #cbd5e1;
                     cursor: pointer;
                     border: none;
                     background: transparent;
                     transition: 0.2s;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
                 }
                 .ab-history-item:hover .ab-history-delete { opacity: 1; }
-                .ab-history-delete:hover { color: #ef4444; background: #fef2f2; }
+                .ab-history-delete:hover { color: #ef4444; background: #fee2e2; }
 
                 /* ═══ Main Chat ═══ */
                 .ab-main {
@@ -710,7 +741,8 @@ Analyze the file content and answer the user's question. Respond in casual Hingl
                     display: flex;
                     flex-direction: column;
                     min-width: 0;
-                    background: #fff;
+                    background: #f8fafc;
+                    position: relative;
                 }
 
                 /* Top Bar */
@@ -718,21 +750,25 @@ Analyze the file content and answer the user's question. Respond in casual Hingl
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
-                    padding: 12px 20px;
-                    border-bottom: 1px solid #f1f5f9;
-                    background: rgba(255,255,255,0.8);
-                    backdrop-filter: blur(10px);
+                    padding: 16px 24px;
+                    background: rgba(248, 250, 252, 0.8);
+                    backdrop-filter: blur(20px);
+                    -webkit-backdrop-filter: blur(20px);
+                    position: absolute;
+                    top: 0; left: 0; right: 0;
+                    z-index: 20;
+                    border-bottom: 1px solid rgba(0,0,0,0.03);
                 }
 
                 .ab-topbar-left {
                     display: flex;
                     align-items: center;
-                    gap: 12px;
+                    gap: 16px;
                 }
 
                 .ab-toggle-sidebar {
-                    width: 32px; height: 32px;
-                    border-radius: 8px;
+                    width: 36px; height: 36px;
+                    border-radius: 10px;
                     display: flex;
                     align-items: center;
                     justify-content: center;
@@ -740,59 +776,64 @@ Analyze the file content and answer the user's question. Respond in casual Hingl
                     border: 1px solid #e2e8f0;
                     background: white;
                     color: #64748b;
-                    transition: 0.2s;
+                    transition: all 0.2s;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
                 }
-                .ab-toggle-sidebar:hover { background: #f1f5f9; color: #1e293b; }
+                .ab-toggle-sidebar:hover { background: #f1f5f9; color: #0f172a; }
 
                 .ab-topbar-info {
                     display: flex;
                     align-items: center;
-                    gap: 10px;
+                    gap: 12px;
                 }
 
                 .ab-topbar-avatar {
-                    width: 34px; height: 34px;
-                    border-radius: 10px;
-                    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+                    width: 40px; height: 40px;
+                    border-radius: 12px;
+                    background: linear-gradient(135deg, #0f172a, #334155);
                     color: white;
                     display: flex;
                     align-items: center;
                     justify-content: center;
+                    box-shadow: 0 4px 12px rgba(15,23,42,0.15);
                 }
 
                 .ab-topbar h2 {
-                    font-size: 0.95rem;
+                    font-size: 1rem;
                     font-weight: 700;
-                    color: #1e293b;
+                    color: #0f172a;
                     margin: 0;
+                    letter-spacing: -0.3px;
                 }
 
                 .ab-topbar-status {
                     display: flex;
                     align-items: center;
-                    gap: 5px;
-                    font-size: 0.7rem;
-                    color: #94a3b8;
+                    gap: 6px;
+                    font-size: 0.75rem;
+                    color: #64748b;
+                    font-weight: 500;
                 }
 
                 .ab-status-dot {
-                    width: 6px; height: 6px;
-                    background: #22c55e;
+                    width: 8px; height: 8px;
+                    background: #10b981;
                     border-radius: 50%;
-                    animation: abBlink 2s infinite;
+                    animation: abBlink 2.5s infinite ease-in-out;
+                    box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
                 }
-                @keyframes abBlink { 0%,100%{opacity:1} 50%{opacity:0.4} }
+                @keyframes abBlink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
                 /* ═══ Messages ═══ */
                 .ab-messages {
                     flex: 1;
                     overflow-y: auto;
-                    padding: 20px;
+                    padding: 20px 40px 20px;
                     scrollbar-width: thin;
-                    scrollbar-color: #e2e8f0 transparent;
+                    scrollbar-color: rgba(0,0,0,0.1) transparent;
                 }
-                .ab-messages::-webkit-scrollbar { width: 5px; }
-                .ab-messages::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 5px; }
+                .ab-messages::-webkit-scrollbar { width: 6px; }
+                .ab-messages::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
 
                 /* ═══ Welcome Screen ═══ */
                 .ab-welcome {
@@ -800,81 +841,78 @@ Analyze the file content and answer the user's question. Respond in casual Hingl
                     align-items: center;
                     justify-content: center;
                     height: 100%;
-                    padding: 40px;
+                    padding: 10px 40px;
                 }
 
                 .ab-welcome-content {
                     text-align: center;
-                    max-width: 600px;
+                    max-width: 640px;
                 }
 
-                .ab-welcome-icon {
-                    width: 72px; height: 72px;
-                    margin: 0 auto 20px;
-                    background: linear-gradient(135deg, #eef2ff, #e0e7ff);
-                    border-radius: 20px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    color: #6366f1;
+                .ab-welcome-content h1 {
+                    margin-bottom: 0.5rem;
                 }
 
-                .ab-welcome h1 {
-                    font-size: 1.8rem;
-                    font-weight: 800;
-                    color: #1e293b;
-                    margin: 0 0 8px;
-                }
-
-                .ab-welcome p {
-                    color: #64748b;
-                    font-size: 0.95rem;
-                    line-height: 1.6;
-                    margin: 0 0 32px;
+                .ab-welcome-content p {
+                    margin-bottom: 1.5rem;
                 }
 
                 .ab-welcome-grid {
                     display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                    gap: 10px;
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 16px;
+                }
+
+                @media (max-width: 768px) {
+                    .ab-welcome-grid { grid-template-columns: 1fr; }
                 }
 
                 .ab-welcome-card {
                     display: flex;
                     align-items: center;
-                    justify-content: space-between;
-                    padding: 14px 16px;
-                    background: #f8fafc;
-                    border: 1px solid #e2e8f0;
-                    border-radius: 14px;
+                    gap: 14px;
+                    padding: 20px 24px;
+                    background: #ffffff;
+                    border: 1px solid rgba(0,0,0,0.06);
+                    border-radius: 16px;
                     cursor: pointer;
-                    transition: 0.2s;
+                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                     text-align: left;
-                    font-size: 0.82rem;
-                    color: #475569;
-                    font-weight: 500;
+                    font-size: 0.95rem;
+                    color: #0f172a;
+                    font-weight: 600;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.02);
                 }
                 .ab-welcome-card:hover {
-                    background: #eef2ff;
-                    border-color: #c7d2fe;
-                    color: #4338ca;
-                    transform: translateY(-2px);
-                    box-shadow: 0 4px 12px rgba(99,102,241,0.1);
+                    background: #0f172a;
+                    border-color: #0f172a;
+                    color: #ffffff;
+                    transform: translateY(-4px);
+                    box-shadow: 0 20px 40px rgba(15,23,42,0.15);
+                }
+                
+                .ab-card-icon {
+                    color: #6366f1;
+                    transition: 0.3s;
+                }
+                .ab-welcome-card:hover .ab-card-icon {
+                    color: #a5b4fc;
                 }
 
                 .ab-card-label { flex: 1; }
 
-                /* ═══ Messages ═══ */
+                /* ═══ Chat Messages ═══ */
                 .ab-msg {
-                    margin-bottom: 4px;
+                    margin-bottom: 8px;
                 }
 
-                .ab-msg.user { margin-bottom: 16px; }
+                .ab-msg.user { margin-bottom: 32px; }
+                .ab-msg.assistant { margin-bottom: 24px; }
 
                 .ab-msg-row {
                     display: flex;
-                    gap: 12px;
-                    max-width: 800px;
+                    gap: 16px;
+                    max-width: 860px;
                     margin: 0 auto;
                 }
 
@@ -883,26 +921,28 @@ Analyze the file content and answer the user's question. Respond in casual Hingl
                 }
 
                 .ab-msg-avatar {
-                    width: 30px; height: 30px; min-width: 30px;
-                    border-radius: 50%;
+                    width: 36px; height: 36px; min-width: 36px;
+                    border-radius: 12px;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    font-size: 0.75rem;
+                    font-size: 0.9rem;
                     font-weight: 700;
-                    margin-top: 2px;
+                    margin-top: 4px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
                 }
                 .ab-msg-avatar.assistant {
-                    background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
-                    color: #4f46e5;
+                    background: linear-gradient(135deg, #0f172a, #334155);
+                    color: white;
                 }
                 .ab-msg-avatar.user {
-                    background: linear-gradient(135deg, #6366f1, #8b5cf6);
-                    color: white;
+                    background: #ffffff;
+                    color: #0f172a;
+                    border: 1px solid #e2e8f0;
                 }
                 .ab-msg-avatar img {
                     width: 100%; height: 100%;
-                    border-radius: 50%;
+                    border-radius: 12px;
                     object-fit: cover;
                 }
 
@@ -911,196 +951,228 @@ Analyze the file content and answer the user's question. Respond in casual Hingl
                     min-width: 0;
                 }
 
+                .ab-msg.user .ab-msg-content {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-end;
+                }
+
                 .ab-msg-header {
                     display: flex;
                     align-items: center;
-                    gap: 8px;
-                    margin-bottom: 4px;
+                    gap: 12px;
+                    margin-bottom: 8px;
                 }
+                .ab-msg.user .ab-msg-header { flex-direction: row-reverse; }
 
                 .ab-msg-name {
-                    font-size: 0.8rem;
+                    font-size: 0.9rem;
                     font-weight: 700;
-                    color: #1e293b;
+                    color: #0f172a;
                 }
 
                 .ab-msg-time {
-                    font-size: 0.65rem;
+                    font-size: 0.75rem;
                     color: #94a3b8;
+                    font-weight: 500;
                 }
 
                 .ab-msg-file {
                     display: inline-flex;
                     align-items: center;
-                    gap: 6px;
-                    padding: 4px 10px;
-                    background: #eef2ff;
-                    border-radius: 8px;
-                    font-size: 0.75rem;
-                    color: #4338ca;
-                    margin-bottom: 6px;
+                    gap: 8px;
+                    padding: 8px 14px;
+                    background: #ffffff;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 10px;
+                    font-size: 0.8rem;
+                    color: #0f172a;
+                    font-weight: 500;
+                    margin-bottom: 12px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
                 }
 
                 .ab-msg-text {
-                    font-size: 0.9rem;
-                    line-height: 1.7;
-                    color: #374151;
+                    font-size: 1rem;
+                    line-height: 1.8;
+                    color: #334155;
                     word-break: break-word;
                 }
 
                 .ab-msg-text.action {
-                    background: linear-gradient(135deg, #ecfdf5, #d1fae5);
-                    border: 1px solid #a7f3d0;
-                    padding: 12px 16px;
-                    border-radius: 12px;
+                    background: #ffffff;
+                    border: 1px solid #10b981;
+                    padding: 16px 20px;
+                    border-radius: 16px;
+                    box-shadow: 0 10px 30px rgba(16,185,129,0.1);
+                    color: #065f46;
                 }
 
-                .ab-msg-text strong { font-weight: 700; color: #1e293b; }
+                .ab-msg-text strong { font-weight: 700; color: #0f172a; }
                 .ab-msg-text code {
-                    background: #f1f5f9;
-                    padding: 1px 6px;
-                    border-radius: 4px;
+                    background: rgba(0,0,0,0.05);
+                    padding: 2px 8px;
+                    border-radius: 6px;
                     font-size: 0.85em;
-                    font-family: 'JetBrains Mono', monospace;
+                    font-family: 'JetBrains Mono', Consolas, monospace;
+                    color: #db2777;
                 }
 
                 .ab-msg.user .ab-msg-text {
-                    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+                    background: #0f172a;
                     color: white;
-                    padding: 10px 16px;
-                    border-radius: 18px 18px 4px 18px;
+                    padding: 14px 20px;
+                    border-radius: 20px 20px 4px 20px;
                     display: inline-block;
+                    box-shadow: 0 10px 25px rgba(15,23,42,0.15);
                 }
 
                 .ab-msg-copy {
                     display: inline-flex;
                     align-items: center;
-                    gap: 4px;
-                    padding: 3px 8px;
-                    border-radius: 6px;
-                    font-size: 0.65rem;
-                    color: #94a3b8;
+                    gap: 6px;
+                    padding: 6px 12px;
+                    border-radius: 8px;
+                    font-size: 0.75rem;
+                    font-weight: 600;
+                    color: #64748b;
                     cursor: pointer;
-                    border: none;
-                    background: transparent;
-                    margin-top: 4px;
-                    transition: 0.2s;
+                    border: 1px solid #e2e8f0;
+                    background: #ffffff;
+                    margin-top: 12px;
+                    transition: all 0.2s;
                 }
-                .ab-msg-copy:hover { background: #f1f5f9; color: #4338ca; }
+                .ab-msg-copy:hover { 
+                    background: #f8fafc; 
+                    color: #0f172a; 
+                    border-color: #cbd5e1;
+                }
 
-                /* Typing */
+                /* Typing Indicator */
                 .ab-typing-dots {
-                    display: flex; gap: 5px; padding: 8px 0;
+                    display: flex; gap: 6px; padding: 12px 0;
                 }
                 .ab-typing-dots span {
                     width: 8px; height: 8px;
-                    background: #94a3b8; border-radius: 50%;
+                    background: #cbd5e1; border-radius: 50%;
                     animation: abTyping 1.4s infinite ease-in-out;
                 }
                 .ab-typing-dots span:nth-child(2) { animation-delay: 0.2s; }
                 .ab-typing-dots span:nth-child(3) { animation-delay: 0.4s; }
-                @keyframes abTyping { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-8px)} }
+                @keyframes abTyping { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-8px); background: #0f172a;} }
 
-                /* ═══ Confirmation ═══ */
+                /* ═══ Call to Action Confirmation ═══ */
                 .ab-confirm {
-                    max-width: 800px;
-                    margin: 12px auto;
-                    background: linear-gradient(135deg, #fefce8, #fef3c7);
-                    border: 1px solid #fde68a;
-                    border-radius: 14px;
-                    padding: 16px 20px;
+                    max-width: 860px;
+                    margin: 24px auto;
+                    background: white;
+                    border: 1px solid #e2e8f0;
+                    border-left: 4px solid #f59e0b;
+                    border-radius: 16px;
+                    padding: 24px;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
                 }
-                .ab-confirm p { font-size: 0.9rem; font-weight: 600; color: #92400e; margin: 0 0 12px; }
-                .ab-confirm-btns { display: flex; gap: 10px; }
+                .ab-confirm p { font-size: 1rem; font-weight: 700; color: #0f172a; margin: 0 0 16px; }
+                .ab-confirm-btns { display: flex; gap: 12px; }
 
                 .ab-btn-yes, .ab-btn-no {
-                    display: flex; align-items: center; gap: 6px;
-                    padding: 8px 16px; border-radius: 10px;
-                    font-size: 0.82rem; font-weight: 600;
-                    cursor: pointer; border: none; transition: 0.2s;
+                    display: flex; align-items: center; gap: 8px;
+                    padding: 10px 20px; border-radius: 12px;
+                    font-size: 0.9rem; font-weight: 600;
+                    cursor: pointer; border: none; transition: all 0.2s;
                 }
-                .ab-btn-yes { background: #059669; color: white; }
-                .ab-btn-yes:hover { background: #047857; transform: translateY(-1px); }
-                .ab-btn-no { background: white; color: #dc2626; border: 1px solid #fecaca; }
-                .ab-btn-no:hover { background: #fef2f2; }
+                .ab-btn-yes { background: #0f172a; color: white; }
+                .ab-btn-yes:hover { background: #1e293b; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(15,23,42,0.2); }
+                .ab-btn-no { background: white; color: #64748b; border: 1px solid #e2e8f0; }
+                .ab-btn-no:hover { background: #f8fafc; color: #0f172a; border-color: #cbd5e1; }
 
                 /* ═══ Input Area ═══ */
                 .ab-input-area {
-                    padding: 16px 20px 20px;
-                    max-width: 840px;
+                    padding: 20px 40px 32px;
+                    max-width: 940px;
                     margin: 0 auto;
                     width: 100%;
+                    background: linear-gradient(0deg, #f8fafc 80%, rgba(248, 250, 252, 0) 100%);
+                    position: relative;
+                    z-index: 20;
                 }
 
                 .ab-file-preview {
-                    display: flex;
+                    display: inline-flex;
                     align-items: center;
-                    gap: 10px;
-                    padding: 8px 12px;
-                    background: #eef2ff;
-                    border: 1px solid #c7d2fe;
-                    border-radius: 10px;
-                    margin-bottom: 10px;
-                    font-size: 0.8rem;
-                    color: #4338ca;
+                    gap: 12px;
+                    padding: 10px 16px;
+                    background: #ffffff;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 12px;
+                    margin-bottom: 12px;
+                    font-size: 0.85rem;
+                    color: #0f172a;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
                 }
                 .ab-file-name { font-weight: 600; }
-                .ab-file-size { color: #6366f1; font-size: 0.7rem; margin-left: 4px; }
+                .ab-file-size { color: #64748b; font-size: 0.75rem; margin-left: 6px; }
                 .ab-file-remove {
-                    margin-left: auto;
-                    padding: 4px; border-radius: 6px;
-                    cursor: pointer; border: none; background: transparent;
-                    color: #94a3b8; transition: 0.2s;
+                    margin-left: 8px;
+                    padding: 6px; border-radius: 8px;
+                    cursor: pointer; border: none; background: #f8fafc;
+                    color: #64748b; transition: 0.2s;
                 }
-                .ab-file-remove:hover { color: #ef4444; background: #fef2f2; }
+                .ab-file-remove:hover { color: #ef4444; background: #fee2e2; }
 
                 .ab-input-row {
                     display: flex;
                     align-items: center;
-                    gap: 8px;
-                    background: #f8fafc;
-                    border: 2px solid #e2e8f0;
-                    border-radius: 16px;
-                    padding: 6px 6px 6px 6px;
-                    transition: border-color 0.2s, box-shadow 0.2s;
+                    gap: 12px;
+                    background: #ffffff;
+                    border: 1px solid rgba(0,0,0,0.1);
+                    border-radius: 24px;
+                    padding: 10px 10px 10px 20px;
+                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
                 }
                 .ab-input-row:focus-within {
-                    border-color: #6366f1;
-                    box-shadow: 0 0 0 4px rgba(99,102,241,0.08);
-                    background: white;
+                    border-color: #0f172a;
+                    box-shadow: 0 10px 40px rgba(15,23,42,0.1);
                 }
 
                 .ab-attach-btn {
-                    width: 40px; height: 40px; min-width: 40px;
-                    border-radius: 10px;
+                    width: 44px; height: 44px; min-width: 44px;
+                    border-radius: 16px;
                     display: flex; align-items: center; justify-content: center;
                     cursor: pointer; border: none;
-                    background: transparent; color: #94a3b8; transition: 0.2s;
+                    background: #f8fafc; color: #64748b; transition: all 0.2s;
                 }
-                .ab-attach-btn:hover { color: #6366f1; background: #eef2ff; }
+                .ab-attach-btn:hover { color: #0f172a; background: #f1f5f9; }
 
                 .ab-input {
                     flex: 1; border: none; outline: none;
-                    font-size: 0.95rem; color: #1e293b;
+                    font-size: 1.05rem; color: #0f172a;
                     background: transparent; font-family: inherit;
-                    padding: 8px 0;
+                    padding: 12px 0;
+                    resize: none;
                 }
-                .ab-input::placeholder { color: #94a3b8; }
+                .ab-input::placeholder { color: #94a3b8; font-weight: 400; }
 
                 .ab-send-btn {
-                    width: 42px; height: 42px; min-width: 42px;
-                    border-radius: 12px;
-                    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+                    width: 48px; height: 48px; min-width: 48px;
+                    border-radius: 16px;
+                    background: #0f172a;
                     color: white;
                     display: flex; align-items: center; justify-content: center;
-                    cursor: pointer; border: none; transition: 0.2s;
+                    cursor: pointer; border: none; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 }
-                .ab-send-btn:hover:not(:disabled) { transform: scale(1.05); box-shadow: 0 4px 16px rgba(99,102,241,0.4); }
-                .ab-send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+                .ab-send-btn:hover:not(:disabled) { 
+                    transform: scale(1.05); 
+                    box-shadow: 0 8px 24px rgba(15,23,42,0.3);
+                    background: #1e293b;
+                }
+                .ab-send-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
                 .ab-footer-text {
                     display: flex; align-items: center; justify-content: center;
-                    gap: 4px; font-size: 0.65rem; color: #94a3b8; margin-top: 10px;
+                    gap: 6px; font-size: 0.75rem; color: #94a3b8; margin-top: 16px;
+                    font-weight: 500;
                 }
 
                 .ab-spin { animation: abSpin 1s linear infinite; }

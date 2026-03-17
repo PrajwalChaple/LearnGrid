@@ -749,19 +749,6 @@ export const LandingPage = () => {
                             </div>
                         </div>
 
-                        {/* AI Transparency Disclosure */}
-                        <div className="mt-12 pt-8 border-t border-slate-200/50">
-                            <div className="flex items-start gap-3 bg-white rounded-xl p-4 border border-slate-100">
-                                <div className="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                    <BrainCircuit size={16} className="text-indigo-600" />
-                                </div>
-                                <div>
-                                    <h4 className="text-xs font-bold text-slate-700 mb-1">AI Transparency</h4>
-                                    <p className="text-xs text-slate-400 leading-relaxed">LearnGrid uses <span className="font-semibold text-slate-600">Google Gemini</span> AI to power its AI Study Buddy feature, helping students with study assistance and academic queries.</p>
-                                </div>
-                            </div>
-                        </div>
-
                         <div className="mt-8 pt-8 border-t border-slate-200/50 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs font-medium text-slate-400">
                             <p>© {new Date().getFullYear()} LearnGrid. All rights reserved.</p>
                             <p>Designed & Developed by <span className="font-bold text-slate-500">Prajwal Chaple</span></p>

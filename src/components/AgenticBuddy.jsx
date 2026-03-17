@@ -73,7 +73,7 @@ export function AgenticBuddy() {
             setMessages([{
                 id: Date.now(),
                 role: 'assistant',
-                content: `Hey ${name}! 👋 Main hu tera AIBuddy — LearnGrid ka personal assistant.\n\nMujhse puch kuch bhi — assignments ke baare mein, announcements likhwao, ya dashboard ka summary lo. Bol kya karna hai? 🚀`,
+                content: `Hey ${name}! 👋 I am your AIBuddy — your personal LearnGrid assistant.\n\nYou can ask me about assignments, draft announcements, or get a dashboard summary. How can I help you today? 🚀`,
                 timestamp: new Date()
             }]);
         }
@@ -127,7 +127,7 @@ export function AgenticBuddy() {
         setMessages(prev => [...prev, {
             id: Date.now(),
             role: 'assistant',
-            content: 'Thik hai bhai, announcement cancel kar diya. Kuch aur karna hai toh bata! 😊',
+            content: 'Alright, I cancelled the announcement. Let me know if there is anything else I can assist with! 😊',
             timestamp: new Date()
         }]);
     };
@@ -173,7 +173,7 @@ export function AgenticBuddy() {
             const assistantMsg = {
                 id: Date.now() + 1,
                 role: 'assistant',
-                content: finalText || 'Hmm, kuch samajh nahi aaya 🤔. Dobara bol?',
+                content: finalText || 'Hmm, I didn\'t quite catch that 🤔. Could you rephrase?',
                 timestamp: new Date(),
                 hasToolAction: !!response.toolCall
             };
@@ -195,7 +195,7 @@ export function AgenticBuddy() {
             setMessages(prev => [...prev, {
                 id: Date.now() + 1,
                 role: 'assistant',
-                content: 'Oops! Kuch gadbad ho gayi 😥. Thodi der baad try karo.',
+                content: 'Oops! Something went wrong 😥. Please try again in a few moments.',
                 timestamp: new Date()
             }]);
         } finally {
@@ -319,11 +319,11 @@ export function AgenticBuddy() {
                                     animate={{ opacity: 1, y: 0 }}
                                     className="aibuddy-confirm"
                                 >
-                                    <p>Kya main ye announcement post karu?</p>
+                                    <p>Should I go ahead and post this announcement?</p>
                                     <div className="confirm-actions">
                                         <button onClick={handleConfirmAnnouncement} className="btn-confirm">
                                             <CheckCircle size={16} />
-                                            Haan, Post Karo!
+                                            Yes, Post it!
                                         </button>
                                         <button onClick={handleRejectAnnouncement} className="btn-reject">
                                             <XCircle size={16} />
@@ -376,7 +376,7 @@ export function AgenticBuddy() {
                                 <input
                                     ref={inputRef}
                                     type="text"
-                                    placeholder="Kuch bhi puch le..."
+                                    placeholder="Ask anything..."
                                     value={inputValue}
                                     onChange={(e) => setInputValue(e.target.value)}
                                     onKeyDown={handleKeyPress}
@@ -391,9 +391,6 @@ export function AgenticBuddy() {
                                     {isTyping ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
                                 </button>
                             </div>
-                            <span className="aibuddy-powered">
-                                <Zap size={10} /> Powered by Groq + Gemini
-                            </span>
                         </div>
                     </motion.div>
                 )}
@@ -443,19 +440,20 @@ export function AgenticBuddy() {
                     bottom: 24px;
                     right: 24px;
                     z-index: 9999;
-                    width: 400px;
+                    width: 420px;
                     max-width: calc(100vw - 32px);
-                    height: 600px;
+                    height: 640px;
                     max-height: calc(100vh - 100px);
-                    background: rgba(255, 255, 255, 0.95);
-                    backdrop-filter: blur(20px);
-                    -webkit-backdrop-filter: blur(20px);
-                    border-radius: 20px;
-                    border: 1px solid rgba(99, 102, 241, 0.15);
-                    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.8) inset;
+                    background: rgba(255, 255, 255, 0.98);
+                    backdrop-filter: blur(24px);
+                    -webkit-backdrop-filter: blur(24px);
+                    border-radius: 24px;
+                    border: 1px solid rgba(0, 0, 0, 0.05);
+                    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 1) inset;
                     display: flex;
                     flex-direction: column;
                     overflow: hidden;
+                    font-family: 'Inter', system-ui, sans-serif;
                 }
 
                 /* ═══ Header ═══ */
@@ -463,48 +461,54 @@ export function AgenticBuddy() {
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
-                    padding: 16px 20px;
-                    background: linear-gradient(135deg, #6366f1, #8b5cf6);
-                    color: white;
+                    padding: 20px 24px;
+                    background: rgba(248, 250, 252, 0.8);
+                    border-bottom: 1px solid rgba(0,0,0,0.03);
+                    color: #0f172a;
                 }
 
                 .aibuddy-header-left {
                     display: flex;
                     align-items: center;
-                    gap: 12px;
+                    gap: 14px;
                 }
 
                 .aibuddy-avatar {
-                    width: 36px;
-                    height: 36px;
-                    background: rgba(255, 255, 255, 0.2);
-                    border-radius: 10px;
+                    width: 44px;
+                    height: 44px;
+                    background: linear-gradient(135deg, #0f172a, #334155);
+                    color: white;
+                    border-radius: 14px;
                     display: flex;
                     align-items: center;
                     justify-content: center;
+                    box-shadow: 0 4px 12px rgba(15,23,42,0.15);
                 }
 
                 .aibuddy-header h3 {
-                    font-size: 1rem;
-                    font-weight: 700;
+                    font-size: 1.1rem;
+                    font-weight: 800;
                     margin: 0;
-                    letter-spacing: 0.3px;
+                    letter-spacing: -0.3px;
                 }
 
                 .aibuddy-status {
                     display: flex;
                     align-items: center;
-                    gap: 5px;
-                    font-size: 0.7rem;
-                    opacity: 0.85;
+                    gap: 6px;
+                    font-size: 0.75rem;
+                    color: #64748b;
+                    font-weight: 500;
+                    margin-top: 2px;
                 }
 
                 .status-dot {
-                    width: 6px;
-                    height: 6px;
-                    background: #4ade80;
+                    width: 8px;
+                    height: 8px;
+                    background: #10b981;
                     border-radius: 50%;
-                    animation: blink 2s infinite;
+                    animation: blink 2.5s infinite ease-in-out;
+                    box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
                 }
 
                 @keyframes blink {
@@ -518,39 +522,40 @@ export function AgenticBuddy() {
                 }
 
                 .aibuddy-icon-btn {
-                    padding: 6px;
-                    border-radius: 8px;
-                    color: rgba(255, 255, 255, 0.8);
+                    padding: 8px;
+                    border-radius: 12px;
+                    color: #64748b;
                     cursor: pointer;
-                    background: transparent;
-                    border: none;
+                    background: #f8fafc;
+                    border: 1px solid #f1f5f9;
                     transition: all 0.2s;
                 }
 
                 .aibuddy-icon-btn:hover {
-                    background: rgba(255, 255, 255, 0.15);
-                    color: white;
+                    background: #f1f5f9;
+                    color: #0f172a;
+                    border-color: #e2e8f0;
                 }
 
                 /* ═══ Messages Area ═══ */
                 .aibuddy-messages {
                     flex: 1;
                     overflow-y: auto;
-                    padding: 16px;
+                    padding: 24px;
                     display: flex;
                     flex-direction: column;
-                    gap: 12px;
+                    gap: 16px;
                     scrollbar-width: thin;
-                    scrollbar-color: #c7d2fe transparent;
+                    scrollbar-color: rgba(0,0,0,0.1) transparent;
                 }
 
-                .aibuddy-messages::-webkit-scrollbar { width: 4px; }
-                .aibuddy-messages::-webkit-scrollbar-thumb { background: #c7d2fe; border-radius: 4px; }
+                .aibuddy-messages::-webkit-scrollbar { width: 6px; }
+                .aibuddy-messages::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
 
                 .aibuddy-msg {
                     display: flex;
-                    gap: 8px;
-                    max-width: 88%;
+                    gap: 12px;
+                    max-width: 90%;
                 }
 
                 .aibuddy-msg.user {
@@ -563,42 +568,49 @@ export function AgenticBuddy() {
                 }
 
                 .msg-avatar {
-                    width: 26px;
-                    height: 26px;
-                    min-width: 26px;
-                    background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
-                    border-radius: 50%;
+                    width: 28px;
+                    height: 28px;
+                    min-width: 28px;
+                    background: linear-gradient(135deg, #0f172a, #334155);
+                    border-radius: 8px;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    color: #4f46e5;
-                    margin-top: 2px;
+                    color: white;
+                    margin-top: 4px;
+                    font-size: 0.7rem;
+                    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
                 }
 
                 .msg-bubble {
-                    padding: 10px 14px;
-                    border-radius: 16px;
-                    font-size: 0.85rem;
-                    line-height: 1.5;
+                    padding: 14px 18px;
+                    border-radius: 20px;
+                    font-size: 0.95rem;
+                    line-height: 1.6;
                     position: relative;
                     word-break: break-word;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.02);
                 }
 
                 .msg-bubble.assistant {
-                    background: #f1f5f9;
-                    color: #1e293b;
+                    background: #ffffff;
+                    color: #334155;
+                    border: 1px solid rgba(0,0,0,0.05);
                     border-bottom-left-radius: 4px;
                 }
 
                 .msg-bubble.assistant.action {
-                    background: linear-gradient(135deg, #ecfdf5, #d1fae5);
-                    border: 1px solid #a7f3d0;
+                    background: #ffffff;
+                    border: 1px solid #10b981;
+                    box-shadow: 0 10px 30px rgba(16,185,129,0.1);
+                    color: #065f46;
                 }
 
                 .msg-bubble.user {
-                    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+                    background: #0f172a;
                     color: white;
                     border-bottom-right-radius: 4px;
+                    box-shadow: 0 10px 25px rgba(15,23,42,0.15);
                 }
 
                 .msg-text strong {
@@ -615,18 +627,18 @@ export function AgenticBuddy() {
 
                 /* ═══ Typing Indicator ═══ */
                 .msg-bubble.typing {
-                    padding: 14px 18px;
+                    padding: 16px 20px;
                 }
 
                 .typing-dots {
                     display: flex;
-                    gap: 5px;
+                    gap: 6px;
                 }
 
                 .typing-dots span {
-                    width: 7px;
-                    height: 7px;
-                    background: #94a3b8;
+                    width: 8px;
+                    height: 8px;
+                    background: #cbd5e1;
                     border-radius: 50%;
                     animation: typingBounce 1.4s infinite ease-in-out;
                 }
@@ -641,32 +653,34 @@ export function AgenticBuddy() {
 
                 /* ═══ Confirmation Actions ═══ */
                 .aibuddy-confirm {
-                    background: linear-gradient(135deg, #fefce8, #fef3c7);
-                    border: 1px solid #fde68a;
-                    border-radius: 14px;
-                    padding: 14px;
-                    margin: 4px 0;
+                    background: white;
+                    border: 1px solid #e2e8f0;
+                    border-left: 4px solid #f59e0b;
+                    border-radius: 16px;
+                    padding: 16px;
+                    margin: 8px 0;
+                    box-shadow: 0 10px 20px rgba(0,0,0,0.03);
                 }
 
                 .aibuddy-confirm p {
-                    font-size: 0.85rem;
-                    font-weight: 600;
-                    color: #92400e;
-                    margin: 0 0 10px 0;
+                    font-size: 0.9rem;
+                    font-weight: 700;
+                    color: #0f172a;
+                    margin: 0 0 12px 0;
                 }
 
                 .confirm-actions {
                     display: flex;
-                    gap: 8px;
+                    gap: 12px;
                 }
 
                 .btn-confirm, .btn-reject {
                     display: flex;
                     align-items: center;
-                    gap: 5px;
-                    padding: 7px 14px;
-                    border-radius: 10px;
-                    font-size: 0.8rem;
+                    gap: 6px;
+                    padding: 8px 16px;
+                    border-radius: 12px;
+                    font-size: 0.85rem;
                     font-weight: 600;
                     cursor: pointer;
                     border: none;
@@ -674,104 +688,109 @@ export function AgenticBuddy() {
                 }
 
                 .btn-confirm {
-                    background: #059669;
+                    background: #0f172a;
                     color: white;
                 }
 
-                .btn-confirm:hover { background: #047857; transform: translateY(-1px); }
+                .btn-confirm:hover { background: #1e293b; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(15,23,42,0.15); }
 
                 .btn-reject {
                     background: white;
-                    color: #dc2626;
-                    border: 1px solid #fecaca;
+                    color: #64748b;
+                    border: 1px solid #e2e8f0;
                 }
 
-                .btn-reject:hover { background: #fef2f2; }
+                .btn-reject:hover { background: #f8fafc; color: #0f172a; border-color: #cbd5e1; }
 
                 /* ═══ Smart Suggestions ═══ */
                 .aibuddy-suggestions {
                     display: flex;
                     flex-wrap: wrap;
-                    gap: 6px;
-                    padding: 0 16px 12px;
+                    gap: 8px;
+                    padding: 0 24px 16px;
                 }
 
                 .suggestion-chip {
                     display: flex;
                     align-items: center;
-                    gap: 4px;
-                    padding: 6px 12px;
-                    background: linear-gradient(135deg, #eef2ff, #e0e7ff);
-                    border: 1px solid #c7d2fe;
+                    gap: 6px;
+                    padding: 8px 14px;
+                    background: #f8fafc;
+                    border: 1px solid #e2e8f0;
                     border-radius: 20px;
-                    font-size: 0.72rem;
+                    font-size: 0.8rem;
                     font-weight: 600;
-                    color: #4338ca;
+                    color: #475569;
                     cursor: pointer;
                     transition: all 0.2s;
                 }
 
                 .suggestion-chip:hover {
-                    background: linear-gradient(135deg, #c7d2fe, #a5b4fc);
-                    color: #3730a3;
+                    background: #f1f5f9;
+                    color: #0f172a;
+                    border-color: #cbd5e1;
                     transform: translateY(-1px);
                 }
 
                 /* ═══ Input Area ═══ */
                 .aibuddy-input-area {
-                    padding: 12px 16px 14px;
-                    border-top: 1px solid #e2e8f0;
-                    background: rgba(248, 250, 252, 0.8);
+                    padding: 16px 24px 24px;
+                    border-top: 1px solid rgba(0,0,0,0.05);
+                    background: rgba(248, 250, 252, 0.9);
+                    backdrop-filter: blur(10px);
                 }
 
                 .aibuddy-input-wrapper {
                     display: flex;
                     align-items: center;
-                    gap: 8px;
+                    gap: 12px;
                     background: white;
-                    border: 1.5px solid #e2e8f0;
-                    border-radius: 14px;
-                    padding: 4px 4px 4px 14px;
-                    transition: border-color 0.2s;
+                    border: 1px solid rgba(0,0,0,0.1);
+                    border-radius: 20px;
+                    padding: 8px 8px 8px 16px;
+                    transition: all 0.3s;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.02);
                 }
 
                 .aibuddy-input-wrapper:focus-within {
-                    border-color: #6366f1;
-                    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+                    border-color: #0f172a;
+                    box-shadow: 0 8px 24px rgba(15,23,42,0.1);
                 }
 
                 .aibuddy-input {
                     flex: 1;
                     border: none;
                     outline: none;
-                    font-size: 0.85rem;
-                    color: #1e293b;
+                    font-size: 0.95rem;
+                    color: #0f172a;
                     background: transparent;
                     font-family: inherit;
                 }
 
                 .aibuddy-input::placeholder {
                     color: #94a3b8;
+                    font-weight: 400;
                 }
 
                 .aibuddy-send-btn {
-                    width: 36px;
-                    height: 36px;
-                    min-width: 36px;
-                    border-radius: 10px;
-                    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+                    width: 42px;
+                    height: 42px;
+                    min-width: 42px;
+                    border-radius: 14px;
+                    background: #0f172a;
                     color: white;
                     display: flex;
                     align-items: center;
                     justify-content: center;
                     cursor: pointer;
                     border: none;
-                    transition: all 0.2s;
+                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 }
 
                 .aibuddy-send-btn:hover:not(:disabled) {
                     transform: scale(1.05);
-                    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+                    background: #1e293b;
+                    box-shadow: 0 8px 20px rgba(15,23,42,0.25);
                 }
 
                 .aibuddy-send-btn:disabled {

@@ -125,6 +125,22 @@ export function DashboardHome() {
               userName={userProfile?.name || user?.displayName || 'Dost'}
               announcementsCount={parseInt(statsData[3].value || '0')}
               notesCount={parseInt(statsData[0].value || '0')}
+              notesData={notesRef.current}
+              overdueCount={(() => {
+                const uid = user?.uid;
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                return assignmentsRef.current.filter(a => {
+                  const isPending = a.userStatuses?.[uid] === 'Pending' || 
+                    (a.userId === uid && (a.status || 'Pending') === 'Pending') || 
+                    (!a.userStatuses?.[uid] && a.userId !== uid);
+                  if (!isPending) return false;
+                  try {
+                    const deadline = new Date(a.deadline);
+                    return deadline < today;
+                  } catch { return false; }
+                }).length;
+              })()}
             />
           </div>
 
