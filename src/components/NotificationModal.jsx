@@ -64,7 +64,42 @@ export function NotificationModal({ isOpen, onClose, noteData, userProfile, onCo
     useEffect(() => {
         if (isOpen && !prevIsOpenRef.current && userProfile) {
             resetAll();
-            fetchInstitutions();
+            fetchInstitutions().then(() => {
+                // Attempt to load last used settings
+                try {
+                    const saved = localStorage.getItem('learngrid_last_audience');
+                    if (saved) {
+                        const data = JSON.parse(saved);
+                        
+                        if (data.sendInApp !== undefined) setSendInApp(data.sendInApp);
+                        if (data.sendEmail !== undefined) setSendEmail(data.sendEmail);
+
+                        if (isCollege && data.roleType === 'college') {
+                            setSelectedCollege(data.institutionName || '');
+                            setSelectedBranch(data.department || '');
+                            setSelectedYear(data.year || '');
+                            setSelectedDivision(data.section || '');
+                            
+                            if (data.institutionName) fetchBranches(data.institutionName);
+                            if (data.institutionName && data.department && data.year) {
+                                fetchDivisions(data.institutionName, data.department, data.year);
+                            }
+                            if (data.institutionName && data.department && data.year && data.section) {
+                                fetchRecipientsPreview(data);
+                            }
+                        } else if (!isCollege && data.roleType === 'school') {
+                            setSelectedSchool(data.institutionName || '');
+                            setSelectedStandard(data.standard || '');
+                            setSelectedSection(data.section || '');
+                            
+                            if (data.institutionName && data.standard) fetchSections(data.institutionName, data.standard);
+                            if (data.institutionName && data.standard && data.section) {
+                                fetchRecipientsPreview(data);
+                            }
+                        }
+                    }
+                } catch(e) { console.error("Could not load last audience", e); }
+            });
         }
         prevIsOpenRef.current = isOpen;
     }, [isOpen]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -271,6 +306,18 @@ export function NotificationModal({ isOpen, onClose, noteData, userProfile, onCo
         try {
             // 1. Fetch recipients
             const params = buildAudienceParams();
+
+            // Save to local storage for fast access next time
+            try {
+                localStorage.setItem('learngrid_last_audience', JSON.stringify({
+                    ...params,
+                    sendInApp,
+                    sendEmail
+                }));
+            } catch (e) {
+                console.warn('Failed to save audience settings', e);
+            }
+
             const currentUid = user?.uid || '';
             const recipients = await getDynamicRecipients(params, currentUid);
             const totalRecipients = recipients.length;
