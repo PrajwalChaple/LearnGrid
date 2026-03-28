@@ -9,7 +9,7 @@ import {
 
 export async function getUserProfile(uid) {
     const snap = await getDoc(doc(db, 'users', uid));
-    return snap.exists() ? snap.data() : null;
+    return snap.exists() ? { uid: snap.id, ...snap.data() } : null;
 }
 
 export async function saveUserProfile(uid, data) {
@@ -58,13 +58,29 @@ async function addItem(collectionName, data) {
 }
 
 async function getItems(collectionName, profile) {
-    const q = buildClassQuery(collectionName, profile);
-    const snap = await getDocs(q);
-    const items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const qClass = buildClassQuery(collectionName, profile);
+    const snapClass = await getDocs(qClass);
+    let classItems = snapClass.docs.map(d => ({ id: d.id, ...d.data() }));
+
+    const uid = profile?.uid || profile?.id;
+    let userItems = [];
+    if (uid) {
+        const qUser = query(collection(db, collectionName), where('userId', '==', uid));
+        const snapUser = await getDocs(qUser);
+        userItems = snapUser.docs.map(d => ({ id: d.id, ...d.data() }));
+    }
+
+    const allMap = new Map();
+    [...classItems, ...userItems].forEach(item => {
+        allMap.set(item.id, item);
+    });
+    
+    let items = Array.from(allMap.values());
+
     // Sort client-side by createdAt descending
     items.sort((a, b) => {
-        const ta = a.createdAt?.toMillis?.() || 0;
-        const tb = b.createdAt?.toMillis?.() || 0;
+        const ta = a.createdAt?.toMillis?.() || (a.createdAt?.seconds ? a.createdAt.seconds * 1000 : 0) || 0;
+        const tb = b.createdAt?.toMillis?.() || (b.createdAt?.seconds ? b.createdAt.seconds * 1000 : 0) || 0;
         return tb - ta;
     });
     return items;
@@ -82,17 +98,24 @@ async function hideItem(collectionName, id, userId) {
 // ─── Real-time listeners ────────────────────────────────────────
 
 function subscribeToCollection(collectionName, profile, callback) {
-    const q = buildClassQuery(collectionName, profile);
+    const qClass = buildClassQuery(collectionName, profile);
+    const uid = profile?.uid || profile?.id;
     console.log(`[Firestore] Subscribing to ${collectionName} for`, {
         institutionName: profile.institutionName,
         roleType: profile.roleType,
-        department: profile.department,
-        year: profile.year,
-        standard: profile.standard,
-        section: profile.section,
+        uid: uid
     });
-    return onSnapshot(q, (snapshot) => {
-        let items = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    
+    let classItems = [];
+    let userItems = [];
+    
+    const mergeAndCallback = () => {
+        const allMap = new Map();
+        [...classItems, ...userItems].forEach(item => {
+            allMap.set(item.id, item);
+        });
+        
+        let items = Array.from(allMap.values());
 
         // Filter out items that are soft-deleted for this user
         if (profile) {
@@ -102,17 +125,36 @@ function subscribeToCollection(collectionName, profile, callback) {
 
         // Sort client-side by createdAt descending
         items.sort((a, b) => {
-            const ta = a.createdAt?.toMillis?.() || 0;
-            const tb = b.createdAt?.toMillis?.() || 0;
+            const ta = a.createdAt?.toMillis?.() || (a.createdAt?.seconds ? a.createdAt.seconds * 1000 : 0) || 0;
+            const tb = b.createdAt?.toMillis?.() || (b.createdAt?.seconds ? b.createdAt.seconds * 1000 : 0) || 0;
             return tb - ta;
         });
-        console.log(`[Firestore] ${collectionName}: received ${items.length} items (fromCache: ${snapshot.metadata.fromCache})`);
         callback(items);
+    };
+
+    const unsubClass = onSnapshot(qClass, (snapshot) => {
+        classItems = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        mergeAndCallback();
     }, (err) => {
-        console.error(`[Firestore] Error listening to ${collectionName}:`, err);
-        console.error(`[Firestore] Error code: ${err.code}, message: ${err.message}`);
+        console.error(`[Firestore] Error listening to ${collectionName} (class):`, err);
         callback([]);
     });
+
+    let unsubUser = () => {};
+    if (uid) {
+        const qUser = query(collection(db, collectionName), where('userId', '==', uid));
+        unsubUser = onSnapshot(qUser, (snapshot) => {
+            userItems = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+            mergeAndCallback();
+        }, (err) => {
+            console.error(`[Firestore] Error listening to ${collectionName} (user):`, err);
+        });
+    }
+
+    return () => {
+        unsubClass();
+        unsubUser();
+    };
 }
 
 export function subscribeToNotes(profile, callback) {
