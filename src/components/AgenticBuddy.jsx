@@ -6,6 +6,7 @@
 // ============================================================
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import DOMPurify from 'dompurify';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -218,10 +219,13 @@ export function AgenticBuddy() {
         setPendingDraft(null);
     };
 
-    // ─── Format Message (basic markdown) ────────────────────
+    // ─── Format Message (XSS-safe) ────────────────────────────
     const formatMessage = (text) => {
         if (!text) return '';
-        return text
+        // Sanitize first: strip ALL HTML tags from AI response
+        const clean = DOMPurify.sanitize(text, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+        // Then apply safe markdown formatting
+        return clean
             .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
             .replace(/\n/g, '<br/>');
     };

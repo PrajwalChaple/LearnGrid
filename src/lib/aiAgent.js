@@ -6,9 +6,10 @@
 // ============================================================
 
 import { callGeminiWithRotation } from '../config/apiKeys';
+import { auth } from '../firebase';
 
 // ─── Groq Configuration ─────────────────────────────────────
-const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY || '';
+// API key is now securely stored on the server (/api/groq)
 const GROQ_MODEL = 'llama-3.3-70b-versatile';
 const GROQ_FAST_MODEL = 'llama-3.1-8b-instant';
 
@@ -82,26 +83,22 @@ RULES:
 6. When user wants to create an announcement, first draft it and show to the user, then ask for confirmation.`;
 }
 
-// ─── Groq API Call ───────────────────────────────────────────
+// ─── Groq API Call (via /api/groq proxy) ─────────────────────
 async function callGroq(messages, model = GROQ_MODEL, temperature = 0.7) {
-    if (!GROQ_API_KEY) {
-        console.warn('[AIAgent] No Groq API key found, falling back to Gemini');
-        return null;
-    }
-
     try {
-        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        // Get Firebase auth token for server verification
+        const token = auth.currentUser ? await auth.currentUser.getIdToken() : null;
+        const headers = { 'Content-Type': 'application/json' };
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+
+        const response = await fetch('/api/groq', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${GROQ_API_KEY}`
-            },
+            headers,
             body: JSON.stringify({
                 model,
                 messages,
                 temperature,
-                max_tokens: 1024,
-                stream: false
+                max_tokens: 1024
             })
         });
 
@@ -111,7 +108,7 @@ async function callGroq(messages, model = GROQ_MODEL, temperature = 0.7) {
         }
 
         if (!response.ok) {
-            console.warn(`[AIAgent] Groq error ${response.status}`);
+            console.warn(`[AIAgent] Groq proxy error ${response.status}`);
             return null;
         }
 

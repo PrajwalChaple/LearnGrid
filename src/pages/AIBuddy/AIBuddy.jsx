@@ -4,6 +4,7 @@
 // A full dashboard page with: chat history sidebar, main chat
 // window, document upload, smart suggestions, and tool actions.
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import DOMPurify from 'dompurify';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -15,7 +16,7 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { sendMessage, getSmartSuggestions } from '../../lib/aiAgent';
 import { executeTool, executeAnnouncement } from '../../lib/aiTools';
-import { callGeminiWithRotation } from '../../config/apiKeys';
+import { callGeminiMultimodal } from '../../config/apiKeys';
 
 // ─── Chat History Manager (localStorage) ─────────────────────
 const CHATS_KEY = 'aibuddy_chat_sessions';
@@ -255,25 +256,14 @@ User's question about this file: "${messageText}"
 
 Analyze the file content and answer the user's question. Respond in clear, professional English. Keep it concise and helpful.`;
 
-                    // Use Gemini for multimodal (file analysis)
-                    const geminiResponse = await fetch(
-                        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${import.meta.env.VITE_GEMINI_KEY_1}`,
-                        {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                contents: [{
-                                    parts: [
-                                        { text: filePrompt },
-                                        { inline_data: { mime_type: mimeType, data: base64 } }
-                                    ]
-                                }],
-                                generationConfig: { temperature: 0.7 }
-                            })
-                        }
-                    );
+                    // Use secure Gemini proxy for multimodal (file analysis)
+                    const data = await callGeminiMultimodal([{
+                        parts: [
+                            { text: filePrompt },
+                            { inline_data: { mime_type: mimeType, data: base64 } }
+                        ]
+                    }]);
 
-                    const data = await geminiResponse.json();
                     finalText = data?.candidates?.[0]?.content?.parts?.[0]?.text || 'There was an issue analyzing your file 😥';
                 } catch (err) {
                     console.error('[AIBuddy] File analysis error:', err);
@@ -328,10 +318,13 @@ Analyze the file content and answer the user's question. Respond in clear, profe
         }
     };
 
-    // ─── Format Message ──────────────────────────────────────
+    // ─── Format Message (XSS-safe) ────────────────────────────
     const formatMessage = (text) => {
         if (!text) return '';
-        return text
+        // Sanitize first: strip ALL HTML tags from AI response
+        const clean = DOMPurify.sanitize(text, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+        // Then apply safe markdown formatting
+        return clean
             .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
             .replace(/`([^`]+)`/g, '<code>$1</code>')
             .replace(/\n/g, '<br/>');
