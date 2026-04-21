@@ -1,0 +1,5194 @@
+{
+  "nodes": [
+    {
+      "id": "eslint_config_js",
+      "label": "eslint.config.js",
+      "file_type": "code",
+      "source_file": "eslint.config.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "vite_config_js",
+      "label": "vite.config.js",
+      "file_type": "code",
+      "source_file": "vite.config.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_app_jsx",
+      "label": "App.jsx",
+      "file_type": "code",
+      "source_file": "src\\App.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "app_errorboundary",
+      "label": "ErrorBoundary",
+      "file_type": "code",
+      "source_file": "src\\App.jsx",
+      "source_location": "L40"
+    },
+    {
+      "id": "app_errorboundary_constructor",
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src\\App.jsx",
+      "source_location": "L41"
+    },
+    {
+      "id": "app_errorboundary_getderivedstatefromerror",
+      "label": ".getDerivedStateFromError()",
+      "file_type": "code",
+      "source_file": "src\\App.jsx",
+      "source_location": "L45"
+    },
+    {
+      "id": "app_errorboundary_render",
+      "label": ".render()",
+      "file_type": "code",
+      "source_file": "src\\App.jsx",
+      "source_location": "L48"
+    },
+    {
+      "id": "app_loadingspinner",
+      "label": "LoadingSpinner()",
+      "file_type": "code",
+      "source_file": "src\\App.jsx",
+      "source_location": "L72"
+    },
+    {
+      "id": "app_miniloader",
+      "label": "MiniLoader()",
+      "file_type": "code",
+      "source_file": "src\\App.jsx",
+      "source_location": "L90"
+    },
+    {
+      "id": "app_appcontent",
+      "label": "AppContent()",
+      "file_type": "code",
+      "source_file": "src\\App.jsx",
+      "source_location": "L102"
+    },
+    {
+      "id": "app_app",
+      "label": "App()",
+      "file_type": "code",
+      "source_file": "src\\App.jsx",
+      "source_location": "L148"
+    },
+    {
+      "id": "src_auth_js",
+      "label": "auth.js",
+      "file_type": "code",
+      "source_file": "src\\auth.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "auth_registerwithemail",
+      "label": "registerWithEmail()",
+      "file_type": "code",
+      "source_file": "src\\auth.js",
+      "source_location": "L27"
+    },
+    {
+      "id": "auth_resendverificationemail",
+      "label": "resendVerificationEmail()",
+      "file_type": "code",
+      "source_file": "src\\auth.js",
+      "source_location": "L39"
+    },
+    {
+      "id": "auth_loginwithemail",
+      "label": "loginWithEmail()",
+      "file_type": "code",
+      "source_file": "src\\auth.js",
+      "source_location": "L51"
+    },
+    {
+      "id": "auth_loginwithgoogle",
+      "label": "loginWithGoogle()",
+      "file_type": "code",
+      "source_file": "src\\auth.js",
+      "source_location": "L60"
+    },
+    {
+      "id": "auth_resetpassword",
+      "label": "resetPassword()",
+      "file_type": "code",
+      "source_file": "src\\auth.js",
+      "source_location": "L98"
+    },
+    {
+      "id": "auth_logoutuser",
+      "label": "logoutUser()",
+      "file_type": "code",
+      "source_file": "src\\auth.js",
+      "source_location": "L107"
+    },
+    {
+      "id": "auth_subscribetoauthchanges",
+      "label": "subscribeToAuthChanges()",
+      "file_type": "code",
+      "source_file": "src\\auth.js",
+      "source_location": "L111"
+    },
+    {
+      "id": "auth_updateauthprofile",
+      "label": "updateAuthProfile()",
+      "file_type": "code",
+      "source_file": "src\\auth.js",
+      "source_location": "L116"
+    },
+    {
+      "id": "auth_isgooglelinked",
+      "label": "isGoogleLinked()",
+      "file_type": "code",
+      "source_file": "src\\auth.js",
+      "source_location": "L122"
+    },
+    {
+      "id": "auth_hasemailprovider",
+      "label": "hasEmailProvider()",
+      "file_type": "code",
+      "source_file": "src\\auth.js",
+      "source_location": "L128"
+    },
+    {
+      "id": "auth_reauthenticatewithemail",
+      "label": "reauthenticateWithEmail()",
+      "file_type": "code",
+      "source_file": "src\\auth.js",
+      "source_location": "L134"
+    },
+    {
+      "id": "auth_changepassword",
+      "label": "changePassword()",
+      "file_type": "code",
+      "source_file": "src\\auth.js",
+      "source_location": "L146"
+    },
+    {
+      "id": "auth_unlinkgoogle",
+      "label": "unlinkGoogle()",
+      "file_type": "code",
+      "source_file": "src\\auth.js",
+      "source_location": "L163"
+    },
+    {
+      "id": "auth_deleteuseraccount",
+      "label": "deleteUserAccount()",
+      "file_type": "code",
+      "source_file": "src\\auth.js",
+      "source_location": "L181"
+    },
+    {
+      "id": "src_firebase_js",
+      "label": "firebase.js",
+      "file_type": "code",
+      "source_file": "src\\firebase.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_main_jsx",
+      "label": "main.jsx",
+      "file_type": "code",
+      "source_file": "src\\main.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_ui_js",
+      "label": "ui.js",
+      "file_type": "code",
+      "source_file": "src\\ui.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "ui_formaterrormessage",
+      "label": "formatErrorMessage()",
+      "file_type": "code",
+      "source_file": "src\\ui.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "ui_getfriendlymessage",
+      "label": "getFriendlyMessage()",
+      "file_type": "code",
+      "source_file": "src\\ui.js",
+      "source_location": "L48"
+    },
+    {
+      "id": "src_components_agenticbuddy_jsx",
+      "label": "AgenticBuddy.jsx",
+      "file_type": "code",
+      "source_file": "src\\components\\AgenticBuddy.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "agenticbuddy_agenticbuddy",
+      "label": "AgenticBuddy()",
+      "file_type": "code",
+      "source_file": "src\\components\\AgenticBuddy.jsx",
+      "source_location": "L20"
+    },
+    {
+      "id": "src_components_aibuddy_jsx",
+      "label": "AiBuddy.jsx",
+      "file_type": "code",
+      "source_file": "src\\components\\AiBuddy.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "aibuddy_aibuddy",
+      "label": "AiBuddy()",
+      "file_type": "code",
+      "source_file": "src\\components\\AiBuddy.jsx",
+      "source_location": "L10"
+    },
+    {
+      "id": "src_components_globalcalendarsync_jsx",
+      "label": "GlobalCalendarSync.jsx",
+      "file_type": "code",
+      "source_file": "src\\components\\GlobalCalendarSync.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "globalcalendarsync_globalcalendarsync",
+      "label": "GlobalCalendarSync()",
+      "file_type": "code",
+      "source_file": "src\\components\\GlobalCalendarSync.jsx",
+      "source_location": "L6"
+    },
+    {
+      "id": "src_components_notificationdropdown_jsx",
+      "label": "NotificationDropdown.jsx",
+      "file_type": "code",
+      "source_file": "src\\components\\NotificationDropdown.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "notificationdropdown_timeago",
+      "label": "timeAgo()",
+      "file_type": "code",
+      "source_file": "src\\components\\NotificationDropdown.jsx",
+      "source_location": "L12"
+    },
+    {
+      "id": "notificationdropdown_notificationdropdown",
+      "label": "NotificationDropdown()",
+      "file_type": "code",
+      "source_file": "src\\components\\NotificationDropdown.jsx",
+      "source_location": "L25"
+    },
+    {
+      "id": "notificationdropdown_useunreadcount",
+      "label": "useUnreadCount()",
+      "file_type": "code",
+      "source_file": "src\\components\\NotificationDropdown.jsx",
+      "source_location": "L412"
+    },
+    {
+      "id": "src_components_notificationhistory_jsx",
+      "label": "NotificationHistory.jsx",
+      "file_type": "code",
+      "source_file": "src\\components\\NotificationHistory.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "notificationhistory_formattimestamp",
+      "label": "formatTimestamp()",
+      "file_type": "code",
+      "source_file": "src\\components\\NotificationHistory.jsx",
+      "source_location": "L7"
+    },
+    {
+      "id": "notificationhistory_notificationhistory",
+      "label": "NotificationHistory()",
+      "file_type": "code",
+      "source_file": "src\\components\\NotificationHistory.jsx",
+      "source_location": "L18"
+    },
+    {
+      "id": "notificationhistory_statusbadge",
+      "label": "StatusBadge()",
+      "file_type": "code",
+      "source_file": "src\\components\\NotificationHistory.jsx",
+      "source_location": "L135"
+    },
+    {
+      "id": "src_components_notificationmodal_jsx",
+      "label": "NotificationModal.jsx",
+      "file_type": "code",
+      "source_file": "src\\components\\NotificationModal.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "notificationmodal_notificationmodal",
+      "label": "NotificationModal()",
+      "file_type": "code",
+      "source_file": "src\\components\\NotificationModal.jsx",
+      "source_location": "L20"
+    },
+    {
+      "id": "src_components_pagetransition_jsx",
+      "label": "PageTransition.jsx",
+      "file_type": "code",
+      "source_file": "src\\components\\PageTransition.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "pagetransition_pagetransition",
+      "label": "PageTransition()",
+      "file_type": "code",
+      "source_file": "src\\components\\PageTransition.jsx",
+      "source_location": "L14"
+    },
+    {
+      "id": "src_components_pomodorotimer_jsx",
+      "label": "PomodoroTimer.jsx",
+      "file_type": "code",
+      "source_file": "src\\components\\PomodoroTimer.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "pomodorotimer_pomodorotimer",
+      "label": "PomodoroTimer()",
+      "file_type": "code",
+      "source_file": "src\\components\\PomodoroTimer.jsx",
+      "source_location": "L16"
+    },
+    {
+      "id": "src_config_apikeys_js",
+      "label": "apiKeys.js",
+      "file_type": "code",
+      "source_file": "src\\config\\apiKeys.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "apikeys_getnextgeminikey",
+      "label": "getNextGeminiKey()",
+      "file_type": "code",
+      "source_file": "src\\config\\apiKeys.js",
+      "source_location": "L38"
+    },
+    {
+      "id": "apikeys_callgeminiwithrotation",
+      "label": "callGeminiWithRotation()",
+      "file_type": "code",
+      "source_file": "src\\config\\apiKeys.js",
+      "source_location": "L52"
+    },
+    {
+      "id": "src_context_authcontext_jsx",
+      "label": "AuthContext.jsx",
+      "file_type": "code",
+      "source_file": "src\\context\\AuthContext.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "authcontext_authprovider",
+      "label": "AuthProvider()",
+      "file_type": "code",
+      "source_file": "src\\context\\AuthContext.jsx",
+      "source_location": "L16"
+    },
+    {
+      "id": "authcontext_useauth",
+      "label": "useAuth()",
+      "file_type": "code",
+      "source_file": "src\\context\\AuthContext.jsx",
+      "source_location": "L165"
+    },
+    {
+      "id": "src_context_themecontext_jsx",
+      "label": "ThemeContext.jsx",
+      "file_type": "code",
+      "source_file": "src\\context\\ThemeContext.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "themecontext_applylighttheme",
+      "label": "applyLightTheme()",
+      "file_type": "code",
+      "source_file": "src\\context\\ThemeContext.jsx",
+      "source_location": "L6"
+    },
+    {
+      "id": "themecontext_themeprovider",
+      "label": "ThemeProvider()",
+      "file_type": "code",
+      "source_file": "src\\context\\ThemeContext.jsx",
+      "source_location": "L13"
+    },
+    {
+      "id": "themecontext_usetheme",
+      "label": "useTheme()",
+      "file_type": "code",
+      "source_file": "src\\context\\ThemeContext.jsx",
+      "source_location": "L25"
+    },
+    {
+      "id": "src_hooks_useismobiledevice_js",
+      "label": "useIsMobileDevice.js",
+      "file_type": "code",
+      "source_file": "src\\hooks\\useIsMobileDevice.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "useismobiledevice_checkismobiledevice",
+      "label": "checkIsMobileDevice()",
+      "file_type": "code",
+      "source_file": "src\\hooks\\useIsMobileDevice.js",
+      "source_location": "L4"
+    },
+    {
+      "id": "useismobiledevice_useismobiledevice",
+      "label": "useIsMobileDevice()",
+      "file_type": "code",
+      "source_file": "src\\hooks\\useIsMobileDevice.js",
+      "source_location": "L25"
+    },
+    {
+      "id": "src_layouts_dashboardlayout_jsx",
+      "label": "DashboardLayout.jsx",
+      "file_type": "code",
+      "source_file": "src\\layouts\\DashboardLayout.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "dashboardlayout_dashboardlayout",
+      "label": "DashboardLayout()",
+      "file_type": "code",
+      "source_file": "src\\layouts\\DashboardLayout.jsx",
+      "source_location": "L9"
+    },
+    {
+      "id": "src_layouts_navbar_jsx",
+      "label": "Navbar.jsx",
+      "file_type": "code",
+      "source_file": "src\\layouts\\Navbar.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "navbar_navbar",
+      "label": "Navbar()",
+      "file_type": "code",
+      "source_file": "src\\layouts\\Navbar.jsx",
+      "source_location": "L15"
+    },
+    {
+      "id": "src_layouts_sidebar_jsx",
+      "label": "Sidebar.jsx",
+      "file_type": "code",
+      "source_file": "src\\layouts\\Sidebar.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "sidebar_sidebar",
+      "label": "Sidebar()",
+      "file_type": "code",
+      "source_file": "src\\layouts\\Sidebar.jsx",
+      "source_location": "L27"
+    },
+    {
+      "id": "src_layouts_staticlayout_jsx",
+      "label": "StaticLayout.jsx",
+      "file_type": "code",
+      "source_file": "src\\layouts\\StaticLayout.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "staticlayout_staticlayout",
+      "label": "StaticLayout()",
+      "file_type": "code",
+      "source_file": "src\\layouts\\StaticLayout.jsx",
+      "source_location": "L13"
+    },
+    {
+      "id": "src_lib_aiagent_js",
+      "label": "aiAgent.js",
+      "file_type": "code",
+      "source_file": "src\\lib\\aiAgent.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "aiagent_buildsystemprompt",
+      "label": "buildSystemPrompt()",
+      "file_type": "code",
+      "source_file": "src\\lib\\aiAgent.js",
+      "source_location": "L46"
+    },
+    {
+      "id": "aiagent_callgroq",
+      "label": "callGroq()",
+      "file_type": "code",
+      "source_file": "src\\lib\\aiAgent.js",
+      "source_location": "L86"
+    },
+    {
+      "id": "aiagent_callgeminifallback",
+      "label": "callGeminiFallback()",
+      "file_type": "code",
+      "source_file": "src\\lib\\aiAgent.js",
+      "source_location": "L127"
+    },
+    {
+      "id": "aiagent_parsetoolcall",
+      "label": "parseToolCall()",
+      "file_type": "code",
+      "source_file": "src\\lib\\aiAgent.js",
+      "source_location": "L141"
+    },
+    {
+      "id": "aiagent_sendmessage",
+      "label": "sendMessage()",
+      "file_type": "code",
+      "source_file": "src\\lib\\aiAgent.js",
+      "source_location": "L167"
+    },
+    {
+      "id": "aiagent_getsmartsuggestions",
+      "label": "getSmartSuggestions()",
+      "file_type": "code",
+      "source_file": "src\\lib\\aiAgent.js",
+      "source_location": "L201"
+    },
+    {
+      "id": "src_lib_aitools_js",
+      "label": "aiTools.js",
+      "file_type": "code",
+      "source_file": "src\\lib\\aiTools.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "aitools_getpendingassignments",
+      "label": "getPendingAssignments()",
+      "file_type": "code",
+      "source_file": "src\\lib\\aiTools.js",
+      "source_location": "L12"
+    },
+    {
+      "id": "aitools_draftannouncement",
+      "label": "draftAnnouncement()",
+      "file_type": "code",
+      "source_file": "src\\lib\\aiTools.js",
+      "source_location": "L59"
+    },
+    {
+      "id": "aitools_executeannouncement",
+      "label": "executeAnnouncement()",
+      "file_type": "code",
+      "source_file": "src\\lib\\aiTools.js",
+      "source_location": "L82"
+    },
+    {
+      "id": "aitools_summarizedashboard",
+      "label": "summarizeDashboard()",
+      "file_type": "code",
+      "source_file": "src\\lib\\aiTools.js",
+      "source_location": "L116"
+    },
+    {
+      "id": "aitools_navigateto",
+      "label": "navigateTo()",
+      "file_type": "code",
+      "source_file": "src\\lib\\aiTools.js",
+      "source_location": "L148"
+    },
+    {
+      "id": "aitools_executetool",
+      "label": "executeTool()",
+      "file_type": "code",
+      "source_file": "src\\lib\\aiTools.js",
+      "source_location": "L175"
+    },
+    {
+      "id": "src_lib_cloudinary_js",
+      "label": "cloudinary.js",
+      "file_type": "code",
+      "source_file": "src\\lib\\cloudinary.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "cloudinary_uploadtocloudinary",
+      "label": "uploadToCloudinary()",
+      "file_type": "code",
+      "source_file": "src\\lib\\cloudinary.js",
+      "source_location": "L25"
+    },
+    {
+      "id": "cloudinary_uploadprofilepicturetocloudinary",
+      "label": "uploadProfilePictureToCloudinary()",
+      "file_type": "code",
+      "source_file": "src\\lib\\cloudinary.js",
+      "source_location": "L65"
+    },
+    {
+      "id": "cloudinary_uploadassignmentpdftocloudinary",
+      "label": "uploadAssignmentPDFToCloudinary()",
+      "file_type": "code",
+      "source_file": "src\\lib\\cloudinary.js",
+      "source_location": "L96"
+    },
+    {
+      "id": "cloudinary_deletefromcloudinary",
+      "label": "deleteFromCloudinary()",
+      "file_type": "code",
+      "source_file": "src\\lib\\cloudinary.js",
+      "source_location": "L132"
+    },
+    {
+      "id": "src_lib_email_js",
+      "label": "email.js",
+      "file_type": "code",
+      "source_file": "src\\lib\\email.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "email_sendemailbatch",
+      "label": "sendEmailBatch()",
+      "file_type": "code",
+      "source_file": "src\\lib\\email.js",
+      "source_location": "L18"
+    },
+    {
+      "id": "src_lib_firestore_js",
+      "label": "firestore.js",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "firestore_getuserprofile",
+      "label": "getUserProfile()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L10"
+    },
+    {
+      "id": "firestore_saveuserprofile",
+      "label": "saveUserProfile()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L15"
+    },
+    {
+      "id": "firestore_deleteuserprofile",
+      "label": "deleteUserProfile()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L20"
+    },
+    {
+      "id": "firestore_buildclassfilters",
+      "label": "buildClassFilters()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L26"
+    },
+    {
+      "id": "firestore_buildclassquery",
+      "label": "buildClassQuery()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L43"
+    },
+    {
+      "id": "firestore_additem",
+      "label": "addItem()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L52"
+    },
+    {
+      "id": "firestore_getitems",
+      "label": "getItems()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L60"
+    },
+    {
+      "id": "firestore_hideitem",
+      "label": "hideItem()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L89"
+    },
+    {
+      "id": "firestore_subscribetocollection",
+      "label": "subscribeToCollection()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L100"
+    },
+    {
+      "id": "firestore_subscribetonotes",
+      "label": "subscribeToNotes()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L160"
+    },
+    {
+      "id": "firestore_subscribetoassignments",
+      "label": "subscribeToAssignments()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L164"
+    },
+    {
+      "id": "firestore_subscribetoannouncements",
+      "label": "subscribeToAnnouncements()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L168"
+    },
+    {
+      "id": "firestore_addnote",
+      "label": "addNote()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L174"
+    },
+    {
+      "id": "firestore_getnotes",
+      "label": "getNotes()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L175"
+    },
+    {
+      "id": "firestore_hidenotedoc",
+      "label": "hideNoteDoc()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L176"
+    },
+    {
+      "id": "firestore_addassignment",
+      "label": "addAssignment()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L180"
+    },
+    {
+      "id": "firestore_getassignments",
+      "label": "getAssignments()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L181"
+    },
+    {
+      "id": "firestore_hideassignmentdoc",
+      "label": "hideAssignmentDoc()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L182"
+    },
+    {
+      "id": "firestore_addannouncement",
+      "label": "addAnnouncement()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L186"
+    },
+    {
+      "id": "firestore_getannouncements",
+      "label": "getAnnouncements()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L187"
+    },
+    {
+      "id": "firestore_hideannouncementdoc",
+      "label": "hideAnnouncementDoc()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L188"
+    },
+    {
+      "id": "firestore_updateassignment",
+      "label": "updateAssignment()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L192"
+    },
+    {
+      "id": "firestore_getdistinctinstitutions",
+      "label": "getDistinctInstitutions()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L202"
+    },
+    {
+      "id": "firestore_getbranchesforcollege",
+      "label": "getBranchesForCollege()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L216"
+    },
+    {
+      "id": "firestore_getsectionsforschool",
+      "label": "getSectionsForSchool()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L235"
+    },
+    {
+      "id": "firestore_getdivisionsforcollege",
+      "label": "getDivisionsForCollege()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L256"
+    },
+    {
+      "id": "firestore_builddynamicconstraints",
+      "label": "buildDynamicConstraints()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L278"
+    },
+    {
+      "id": "firestore_getdynamicrecipientcount",
+      "label": "getDynamicRecipientCount()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L293"
+    },
+    {
+      "id": "firestore_getdynamicrecipients",
+      "label": "getDynamicRecipients()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L307"
+    },
+    {
+      "id": "firestore_createnotification",
+      "label": "createNotification()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L319"
+    },
+    {
+      "id": "firestore_getrecipientcount",
+      "label": "getRecipientCount()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L325"
+    },
+    {
+      "id": "firestore_getrecipients",
+      "label": "getRecipients()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L349"
+    },
+    {
+      "id": "firestore_buildrecipientconstraints",
+      "label": "buildRecipientConstraints()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L363"
+    },
+    {
+      "id": "firestore_subscribetonotifications",
+      "label": "subscribeToNotifications()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L407"
+    },
+    {
+      "id": "firestore_createusernotifications",
+      "label": "createUserNotifications()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L430"
+    },
+    {
+      "id": "firestore_subscribetomynotifications",
+      "label": "subscribeToMyNotifications()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L455"
+    },
+    {
+      "id": "firestore_marknotificationread",
+      "label": "markNotificationRead()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L480"
+    },
+    {
+      "id": "firestore_markallnotificationsread",
+      "label": "markAllNotificationsRead()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L487"
+    },
+    {
+      "id": "firestore_deletenotification",
+      "label": "deleteNotification()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L503"
+    },
+    {
+      "id": "firestore_deleteallnotifications",
+      "label": "deleteAllNotifications()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L510"
+    },
+    {
+      "id": "firestore_deletealluserdata",
+      "label": "deleteAllUserData()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L524"
+    },
+    {
+      "id": "src_lib_googlecalendar_js",
+      "label": "googleCalendar.js",
+      "file_type": "code",
+      "source_file": "src\\lib\\googleCalendar.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "googlecalendar_getstoragekey",
+      "label": "getStorageKey()",
+      "file_type": "code",
+      "source_file": "src\\lib\\googleCalendar.js",
+      "source_location": "L13"
+    },
+    {
+      "id": "googlecalendar_getsyncedmap",
+      "label": "getSyncedMap()",
+      "file_type": "code",
+      "source_file": "src\\lib\\googleCalendar.js",
+      "source_location": "L15"
+    },
+    {
+      "id": "googlecalendar_savesyncedmap",
+      "label": "saveSyncedMap()",
+      "file_type": "code",
+      "source_file": "src\\lib\\googleCalendar.js",
+      "source_location": "L24"
+    },
+    {
+      "id": "googlecalendar_iscalendarconnected",
+      "label": "isCalendarConnected()",
+      "file_type": "code",
+      "source_file": "src\\lib\\googleCalendar.js",
+      "source_location": "L31"
+    },
+    {
+      "id": "googlecalendar_getcalendartoken",
+      "label": "getCalendarToken()",
+      "file_type": "code",
+      "source_file": "src\\lib\\googleCalendar.js",
+      "source_location": "L59"
+    },
+    {
+      "id": "googlecalendar_disconnectcalendar",
+      "label": "disconnectCalendar()",
+      "file_type": "code",
+      "source_file": "src\\lib\\googleCalendar.js",
+      "source_location": "L66"
+    },
+    {
+      "id": "googlecalendar_saveeventtosyncmap",
+      "label": "saveEventToSyncMap()",
+      "file_type": "code",
+      "source_file": "src\\lib\\googleCalendar.js",
+      "source_location": "L76"
+    },
+    {
+      "id": "googlecalendar_removecalendarevent",
+      "label": "removeCalendarEvent()",
+      "file_type": "code",
+      "source_file": "src\\lib\\googleCalendar.js",
+      "source_location": "L86"
+    },
+    {
+      "id": "googlecalendar_synccalendar",
+      "label": "syncCalendar()",
+      "file_type": "code",
+      "source_file": "src\\lib\\googleCalendar.js",
+      "source_location": "L108"
+    },
+    {
+      "id": "googlecalendar_addeventtocalendar",
+      "label": "addEventToCalendar()",
+      "file_type": "code",
+      "source_file": "src\\lib\\googleCalendar.js",
+      "source_location": "L177"
+    },
+    {
+      "id": "googlecalendar_deleteeventfromcalendar",
+      "label": "deleteEventFromCalendar()",
+      "file_type": "code",
+      "source_file": "src\\lib\\googleCalendar.js",
+      "source_location": "L268"
+    },
+    {
+      "id": "src_lib_storage_js",
+      "label": "storage.js",
+      "file_type": "code",
+      "source_file": "src\\lib\\storage.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "storage_uploaduseravatar",
+      "label": "uploadUserAvatar()",
+      "file_type": "code",
+      "source_file": "src\\lib\\storage.js",
+      "source_location": "L10"
+    },
+    {
+      "id": "src_pages_aibuddy_aibuddy_jsx",
+      "label": "AIBuddy.jsx",
+      "file_type": "code",
+      "source_file": "src\\pages\\AIBuddy\\AIBuddy.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "aibuddy_loadchatsessions",
+      "label": "loadChatSessions()",
+      "file_type": "code",
+      "source_file": "src\\pages\\AIBuddy\\AIBuddy.jsx",
+      "source_location": "L23"
+    },
+    {
+      "id": "aibuddy_savechatsessions",
+      "label": "saveChatSessions()",
+      "file_type": "code",
+      "source_file": "src\\pages\\AIBuddy\\AIBuddy.jsx",
+      "source_location": "L30"
+    },
+    {
+      "id": "aibuddy_aibuddy",
+      "label": "AIBuddy()",
+      "file_type": "code",
+      "source_file": "src\\pages\\AIBuddy\\AIBuddy.jsx",
+      "source_location": "L36"
+    },
+    {
+      "id": "src_pages_announcements_announcements_jsx",
+      "label": "Announcements.jsx",
+      "file_type": "code",
+      "source_file": "src\\pages\\Announcements\\Announcements.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "announcements_announcements",
+      "label": "Announcements()",
+      "file_type": "code",
+      "source_file": "src\\pages\\Announcements\\Announcements.jsx",
+      "source_location": "L7"
+    },
+    {
+      "id": "src_pages_assignments_assignments_jsx",
+      "label": "Assignments.jsx",
+      "file_type": "code",
+      "source_file": "src\\pages\\Assignments\\Assignments.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "assignments_assignments",
+      "label": "Assignments()",
+      "file_type": "code",
+      "source_file": "src\\pages\\Assignments\\Assignments.jsx",
+      "source_location": "L8"
+    },
+    {
+      "id": "src_pages_auth_login_jsx",
+      "label": "Login.jsx",
+      "file_type": "code",
+      "source_file": "src\\pages\\Auth\\Login.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "login_login",
+      "label": "Login()",
+      "file_type": "code",
+      "source_file": "src\\pages\\Auth\\Login.jsx",
+      "source_location": "L6"
+    },
+    {
+      "id": "src_pages_auth_register_jsx",
+      "label": "Register.jsx",
+      "file_type": "code",
+      "source_file": "src\\pages\\Auth\\Register.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "register_register",
+      "label": "Register()",
+      "file_type": "code",
+      "source_file": "src\\pages\\Auth\\Register.jsx",
+      "source_location": "L6"
+    },
+    {
+      "id": "src_pages_auth_verifyemail_jsx",
+      "label": "VerifyEmail.jsx",
+      "file_type": "code",
+      "source_file": "src\\pages\\Auth\\VerifyEmail.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "verifyemail_verifyemail",
+      "label": "VerifyEmail()",
+      "file_type": "code",
+      "source_file": "src\\pages\\Auth\\VerifyEmail.jsx",
+      "source_location": "L6"
+    },
+    {
+      "id": "src_pages_calendar_calendar_jsx",
+      "label": "Calendar.jsx",
+      "file_type": "code",
+      "source_file": "src\\pages\\Calendar\\Calendar.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "calendar_calendar",
+      "label": "Calendar()",
+      "file_type": "code",
+      "source_file": "src\\pages\\Calendar\\Calendar.jsx",
+      "source_location": "L6"
+    },
+    {
+      "id": "src_pages_dashboard_home_jsx",
+      "label": "Home.jsx",
+      "file_type": "code",
+      "source_file": "src\\pages\\Dashboard\\Home.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "home_dashboardhome",
+      "label": "DashboardHome()",
+      "file_type": "code",
+      "source_file": "src\\pages\\Dashboard\\Home.jsx",
+      "source_location": "L18"
+    },
+    {
+      "id": "src_pages_dashboard_components_networklist_jsx",
+      "label": "NetworkList.jsx",
+      "file_type": "code",
+      "source_file": "src\\pages\\Dashboard\\components\\NetworkList.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "networklist_networklist",
+      "label": "NetworkList()",
+      "file_type": "code",
+      "source_file": "src\\pages\\Dashboard\\components\\NetworkList.jsx",
+      "source_location": "L7"
+    },
+    {
+      "id": "src_pages_landing_landingpage_jsx",
+      "label": "LandingPage.jsx",
+      "file_type": "code",
+      "source_file": "src\\pages\\Landing\\LandingPage.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "landingpage_landingpage",
+      "label": "LandingPage()",
+      "file_type": "code",
+      "source_file": "src\\pages\\Landing\\LandingPage.jsx",
+      "source_location": "L47"
+    },
+    {
+      "id": "src_pages_notes_notes_jsx",
+      "label": "Notes.jsx",
+      "file_type": "code",
+      "source_file": "src\\pages\\Notes\\Notes.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "notes_notes",
+      "label": "Notes()",
+      "file_type": "code",
+      "source_file": "src\\pages\\Notes\\Notes.jsx",
+      "source_location": "L8"
+    },
+    {
+      "id": "src_pages_onboarding_onboarding_jsx",
+      "label": "Onboarding.jsx",
+      "file_type": "code",
+      "source_file": "src\\pages\\Onboarding\\Onboarding.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "onboarding_onboarding",
+      "label": "Onboarding()",
+      "file_type": "code",
+      "source_file": "src\\pages\\Onboarding\\Onboarding.jsx",
+      "source_location": "L10"
+    },
+    {
+      "id": "src_pages_profile_profile_jsx",
+      "label": "Profile.jsx",
+      "file_type": "code",
+      "source_file": "src\\pages\\Profile\\Profile.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "profile_profile",
+      "label": "Profile()",
+      "file_type": "code",
+      "source_file": "src\\pages\\Profile\\Profile.jsx",
+      "source_location": "L8"
+    },
+    {
+      "id": "src_pages_settings_settings_jsx",
+      "label": "Settings.jsx",
+      "file_type": "code",
+      "source_file": "src\\pages\\Settings\\Settings.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "settings_mergesettings",
+      "label": "mergeSettings()",
+      "file_type": "code",
+      "source_file": "src\\pages\\Settings\\Settings.jsx",
+      "source_location": "L31"
+    },
+    {
+      "id": "settings_settings",
+      "label": "Settings()",
+      "file_type": "code",
+      "source_file": "src\\pages\\Settings\\Settings.jsx",
+      "source_location": "L39"
+    },
+    {
+      "id": "src_pages_static_about_jsx",
+      "label": "About.jsx",
+      "file_type": "code",
+      "source_file": "src\\pages\\Static\\About.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "about_about",
+      "label": "About()",
+      "file_type": "code",
+      "source_file": "src\\pages\\Static\\About.jsx",
+      "source_location": "L12"
+    },
+    {
+      "id": "src_pages_static_community_jsx",
+      "label": "Community.jsx",
+      "file_type": "code",
+      "source_file": "src\\pages\\Static\\Community.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "community_community",
+      "label": "Community()",
+      "file_type": "code",
+      "source_file": "src\\pages\\Static\\Community.jsx",
+      "source_location": "L5"
+    },
+    {
+      "id": "src_pages_static_cookiepolicy_jsx",
+      "label": "CookiePolicy.jsx",
+      "file_type": "code",
+      "source_file": "src\\pages\\Static\\CookiePolicy.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "cookiepolicy_cookiepolicy",
+      "label": "CookiePolicy()",
+      "file_type": "code",
+      "source_file": "src\\pages\\Static\\CookiePolicy.jsx",
+      "source_location": "L4"
+    },
+    {
+      "id": "src_pages_static_features_jsx",
+      "label": "Features.jsx",
+      "file_type": "code",
+      "source_file": "src\\pages\\Static\\Features.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "features_features",
+      "label": "Features()",
+      "file_type": "code",
+      "source_file": "src\\pages\\Static\\Features.jsx",
+      "source_location": "L16"
+    },
+    {
+      "id": "src_pages_static_help_jsx",
+      "label": "Help.jsx",
+      "file_type": "code",
+      "source_file": "src\\pages\\Static\\Help.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "help_help",
+      "label": "Help()",
+      "file_type": "code",
+      "source_file": "src\\pages\\Static\\Help.jsx",
+      "source_location": "L17"
+    },
+    {
+      "id": "src_pages_static_integrations_jsx",
+      "label": "Integrations.jsx",
+      "file_type": "code",
+      "source_file": "src\\pages\\Static\\Integrations.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "integrations_integrations",
+      "label": "Integrations()",
+      "file_type": "code",
+      "source_file": "src\\pages\\Static\\Integrations.jsx",
+      "source_location": "L14"
+    },
+    {
+      "id": "src_pages_static_privacypolicy_jsx",
+      "label": "PrivacyPolicy.jsx",
+      "file_type": "code",
+      "source_file": "src\\pages\\Static\\PrivacyPolicy.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "privacypolicy_privacypolicy",
+      "label": "PrivacyPolicy()",
+      "file_type": "code",
+      "source_file": "src\\pages\\Static\\PrivacyPolicy.jsx",
+      "source_location": "L4"
+    },
+    {
+      "id": "src_pages_static_termsofservice_jsx",
+      "label": "TermsOfService.jsx",
+      "file_type": "code",
+      "source_file": "src\\pages\\Static\\TermsOfService.jsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "termsofservice_termsofservice",
+      "label": "TermsOfService()",
+      "file_type": "code",
+      "source_file": "src\\pages\\Static\\TermsOfService.jsx",
+      "source_location": "L4"
+    }
+  ],
+  "edges": [
+    {
+      "source": "eslint_config_js",
+      "target": "js",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "eslint.config.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "eslint_config_js",
+      "target": "globals",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "eslint.config.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "eslint_config_js",
+      "target": "eslint_plugin_react_hooks",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "eslint.config.js",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "eslint_config_js",
+      "target": "eslint_plugin_react_refresh",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "eslint.config.js",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "eslint_config_js",
+      "target": "config",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "eslint.config.js",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "vite_config_js",
+      "target": "vite",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "vite.config.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "vite_config_js",
+      "target": "plugin_react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "vite.config.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "vite_config_js",
+      "target": "vite",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "vite.config.js",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_app_jsx",
+      "target": "react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\App.jsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_app_jsx",
+      "target": "src_context_authcontext",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\App.jsx",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_app_jsx",
+      "target": "src_context_themecontext",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\App.jsx",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_app_jsx",
+      "target": "react_router_dom",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\App.jsx",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_app_jsx",
+      "target": "src_layouts_dashboardlayout",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\App.jsx",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "src_app_jsx",
+      "target": "src_layouts_staticlayout",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\App.jsx",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "src_app_jsx",
+      "target": "src_pages_auth_login",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\App.jsx",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "src_app_jsx",
+      "target": "src_pages_auth_register",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\App.jsx",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "src_app_jsx",
+      "target": "src_pages_auth_verifyemail",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\App.jsx",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "src_app_jsx",
+      "target": "src_pages_onboarding_onboarding",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\App.jsx",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "src_app_jsx",
+      "target": "app_errorboundary",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\App.jsx",
+      "source_location": "L40",
+      "weight": 1.0
+    },
+    {
+      "source": "app_errorboundary",
+      "target": "app_errorboundary_constructor",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\App.jsx",
+      "source_location": "L41",
+      "weight": 1.0
+    },
+    {
+      "source": "app_errorboundary",
+      "target": "app_errorboundary_getderivedstatefromerror",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\App.jsx",
+      "source_location": "L45",
+      "weight": 1.0
+    },
+    {
+      "source": "app_errorboundary",
+      "target": "app_errorboundary_render",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\App.jsx",
+      "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "src_app_jsx",
+      "target": "app_loadingspinner",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\App.jsx",
+      "source_location": "L72",
+      "weight": 1.0
+    },
+    {
+      "source": "src_app_jsx",
+      "target": "app_miniloader",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\App.jsx",
+      "source_location": "L90",
+      "weight": 1.0
+    },
+    {
+      "source": "src_app_jsx",
+      "target": "app_appcontent",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\App.jsx",
+      "source_location": "L102",
+      "weight": 1.0
+    },
+    {
+      "source": "src_app_jsx",
+      "target": "app_app",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\App.jsx",
+      "source_location": "L148",
+      "weight": 1.0
+    },
+    {
+      "source": "src_auth_js",
+      "target": "src_firebase",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\auth.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_auth_js",
+      "target": "auth",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\auth.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_auth_js",
+      "target": "auth_registerwithemail",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\auth.js",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "src_auth_js",
+      "target": "auth_resendverificationemail",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\auth.js",
+      "source_location": "L39",
+      "weight": 1.0
+    },
+    {
+      "source": "src_auth_js",
+      "target": "auth_loginwithemail",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\auth.js",
+      "source_location": "L51",
+      "weight": 1.0
+    },
+    {
+      "source": "src_auth_js",
+      "target": "auth_loginwithgoogle",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\auth.js",
+      "source_location": "L60",
+      "weight": 1.0
+    },
+    {
+      "source": "src_auth_js",
+      "target": "auth_resetpassword",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\auth.js",
+      "source_location": "L98",
+      "weight": 1.0
+    },
+    {
+      "source": "src_auth_js",
+      "target": "auth_logoutuser",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\auth.js",
+      "source_location": "L107",
+      "weight": 1.0
+    },
+    {
+      "source": "src_auth_js",
+      "target": "auth_subscribetoauthchanges",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\auth.js",
+      "source_location": "L111",
+      "weight": 1.0
+    },
+    {
+      "source": "src_auth_js",
+      "target": "auth_updateauthprofile",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\auth.js",
+      "source_location": "L116",
+      "weight": 1.0
+    },
+    {
+      "source": "src_auth_js",
+      "target": "auth_isgooglelinked",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\auth.js",
+      "source_location": "L122",
+      "weight": 1.0
+    },
+    {
+      "source": "src_auth_js",
+      "target": "auth_hasemailprovider",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\auth.js",
+      "source_location": "L128",
+      "weight": 1.0
+    },
+    {
+      "source": "src_auth_js",
+      "target": "auth_reauthenticatewithemail",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\auth.js",
+      "source_location": "L134",
+      "weight": 1.0
+    },
+    {
+      "source": "src_auth_js",
+      "target": "auth_changepassword",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\auth.js",
+      "source_location": "L146",
+      "weight": 1.0
+    },
+    {
+      "source": "src_auth_js",
+      "target": "auth_unlinkgoogle",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\auth.js",
+      "source_location": "L163",
+      "weight": 1.0
+    },
+    {
+      "source": "src_auth_js",
+      "target": "auth_deleteuseraccount",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\auth.js",
+      "source_location": "L181",
+      "weight": 1.0
+    },
+    {
+      "source": "auth_changepassword",
+      "target": "auth_hasemailprovider",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\auth.js",
+      "source_location": "L148",
+      "weight": 1.0
+    },
+    {
+      "source": "auth_changepassword",
+      "target": "auth_reauthenticatewithemail",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\auth.js",
+      "source_location": "L153",
+      "weight": 1.0
+    },
+    {
+      "source": "auth_unlinkgoogle",
+      "target": "auth_hasemailprovider",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\auth.js",
+      "source_location": "L165",
+      "weight": 1.0
+    },
+    {
+      "source": "src_firebase_js",
+      "target": "app",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\firebase.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_firebase_js",
+      "target": "auth",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\firebase.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_firebase_js",
+      "target": "firestore",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\firebase.js",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_firebase_js",
+      "target": "storage",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\firebase.js",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_main_jsx",
+      "target": "react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\main.jsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_main_jsx",
+      "target": "client",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\main.jsx",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_main_jsx",
+      "target": "src_app_tsx",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\main.jsx",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_main_jsx",
+      "target": "src_styles_global_css",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\main.jsx",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_ui_js",
+      "target": "ui_formaterrormessage",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\ui.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_ui_js",
+      "target": "ui_getfriendlymessage",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\ui.js",
+      "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "ui_getfriendlymessage",
+      "target": "ui_formaterrormessage",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\ui.js",
+      "source_location": "L51",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_agenticbuddy_jsx",
+      "target": "react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\AgenticBuddy.jsx",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_agenticbuddy_jsx",
+      "target": "framer_motion",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\AgenticBuddy.jsx",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_agenticbuddy_jsx",
+      "target": "react_router_dom",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\AgenticBuddy.jsx",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_agenticbuddy_jsx",
+      "target": "lucide_react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\AgenticBuddy.jsx",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_agenticbuddy_jsx",
+      "target": "src_context_authcontext",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\AgenticBuddy.jsx",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_agenticbuddy_jsx",
+      "target": "src_lib_aiagent",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\AgenticBuddy.jsx",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_agenticbuddy_jsx",
+      "target": "src_lib_aitools",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\AgenticBuddy.jsx",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_agenticbuddy_jsx",
+      "target": "agenticbuddy_agenticbuddy",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\AgenticBuddy.jsx",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_aibuddy_jsx",
+      "target": "react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\AiBuddy.jsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_aibuddy_jsx",
+      "target": "react_spline",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\AiBuddy.jsx",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_aibuddy_jsx",
+      "target": "framer_motion",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\AiBuddy.jsx",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_aibuddy_jsx",
+      "target": "src_config_apikeys",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\AiBuddy.jsx",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_aibuddy_jsx",
+      "target": "react_use",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\AiBuddy.jsx",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_aibuddy_jsx",
+      "target": "src_hooks_useismobiledevice",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\AiBuddy.jsx",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_aibuddy_jsx",
+      "target": "src_context_authcontext",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\AiBuddy.jsx",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_aibuddy_jsx",
+      "target": "react_router_dom",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\AiBuddy.jsx",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_aibuddy_jsx",
+      "target": "aibuddy_aibuddy",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\AiBuddy.jsx",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_globalcalendarsync_jsx",
+      "target": "react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\GlobalCalendarSync.jsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_globalcalendarsync_jsx",
+      "target": "src_context_authcontext",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\GlobalCalendarSync.jsx",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_globalcalendarsync_jsx",
+      "target": "src_lib_googlecalendar",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\GlobalCalendarSync.jsx",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_globalcalendarsync_jsx",
+      "target": "src_lib_firestore",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\GlobalCalendarSync.jsx",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_globalcalendarsync_jsx",
+      "target": "globalcalendarsync_globalcalendarsync",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\GlobalCalendarSync.jsx",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_notificationdropdown_jsx",
+      "target": "react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\NotificationDropdown.jsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_notificationdropdown_jsx",
+      "target": "src_context_authcontext",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\NotificationDropdown.jsx",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_notificationdropdown_jsx",
+      "target": "src_lib_firestore",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\NotificationDropdown.jsx",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_notificationdropdown_jsx",
+      "target": "lucide_react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\NotificationDropdown.jsx",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_notificationdropdown_jsx",
+      "target": "notificationdropdown_timeago",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\NotificationDropdown.jsx",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_notificationdropdown_jsx",
+      "target": "notificationdropdown_notificationdropdown",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\NotificationDropdown.jsx",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_notificationdropdown_jsx",
+      "target": "notificationdropdown_useunreadcount",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\NotificationDropdown.jsx",
+      "source_location": "L412",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_notificationhistory_jsx",
+      "target": "react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\NotificationHistory.jsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_notificationhistory_jsx",
+      "target": "src_lib_firestore",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\NotificationHistory.jsx",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_notificationhistory_jsx",
+      "target": "src_context_authcontext",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\NotificationHistory.jsx",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_notificationhistory_jsx",
+      "target": "lucide_react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\NotificationHistory.jsx",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_notificationhistory_jsx",
+      "target": "notificationhistory_formattimestamp",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\NotificationHistory.jsx",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_notificationhistory_jsx",
+      "target": "notificationhistory_notificationhistory",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\NotificationHistory.jsx",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_notificationhistory_jsx",
+      "target": "notificationhistory_statusbadge",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\NotificationHistory.jsx",
+      "source_location": "L135",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_notificationmodal_jsx",
+      "target": "react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\NotificationModal.jsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_notificationmodal_jsx",
+      "target": "lucide_react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\NotificationModal.jsx",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_notificationmodal_jsx",
+      "target": "src_lib_firestore",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\NotificationModal.jsx",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_notificationmodal_jsx",
+      "target": "src_lib_email",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\NotificationModal.jsx",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_notificationmodal_jsx",
+      "target": "src_context_authcontext",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\NotificationModal.jsx",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_notificationmodal_jsx",
+      "target": "src_ui",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\NotificationModal.jsx",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_notificationmodal_jsx",
+      "target": "notificationmodal_notificationmodal",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\NotificationModal.jsx",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_pagetransition_jsx",
+      "target": "framer_motion",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\PageTransition.jsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_pagetransition_jsx",
+      "target": "pagetransition_pagetransition",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\PageTransition.jsx",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_pomodorotimer_jsx",
+      "target": "react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\PomodoroTimer.jsx",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_pomodorotimer_jsx",
+      "target": "framer_motion",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\PomodoroTimer.jsx",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_pomodorotimer_jsx",
+      "target": "lucide_react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\PomodoroTimer.jsx",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_pomodorotimer_jsx",
+      "target": "pomodorotimer_pomodorotimer",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\PomodoroTimer.jsx",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "src_config_apikeys_js",
+      "target": "apikeys_getnextgeminikey",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\config\\apiKeys.js",
+      "source_location": "L38",
+      "weight": 1.0
+    },
+    {
+      "source": "src_config_apikeys_js",
+      "target": "apikeys_callgeminiwithrotation",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\config\\apiKeys.js",
+      "source_location": "L52",
+      "weight": 1.0
+    },
+    {
+      "source": "apikeys_callgeminiwithrotation",
+      "target": "apikeys_getnextgeminikey",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\config\\apiKeys.js",
+      "source_location": "L57",
+      "weight": 1.0
+    },
+    {
+      "source": "src_context_authcontext_jsx",
+      "target": "react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\context\\AuthContext.jsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_context_authcontext_jsx",
+      "target": "src_auth",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\context\\AuthContext.jsx",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_context_authcontext_jsx",
+      "target": "src_ui",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\context\\AuthContext.jsx",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "src_context_authcontext_jsx",
+      "target": "src_lib_firestore",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\context\\AuthContext.jsx",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "src_context_authcontext_jsx",
+      "target": "authcontext_authprovider",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\context\\AuthContext.jsx",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "src_context_authcontext_jsx",
+      "target": "authcontext_useauth",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\context\\AuthContext.jsx",
+      "source_location": "L165",
+      "weight": 1.0
+    },
+    {
+      "source": "src_context_themecontext_jsx",
+      "target": "react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\context\\ThemeContext.jsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_context_themecontext_jsx",
+      "target": "themecontext_applylighttheme",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\context\\ThemeContext.jsx",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "src_context_themecontext_jsx",
+      "target": "themecontext_themeprovider",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\context\\ThemeContext.jsx",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "src_context_themecontext_jsx",
+      "target": "themecontext_usetheme",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\context\\ThemeContext.jsx",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "src_hooks_useismobiledevice_js",
+      "target": "react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\hooks\\useIsMobileDevice.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_hooks_useismobiledevice_js",
+      "target": "useismobiledevice_checkismobiledevice",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\hooks\\useIsMobileDevice.js",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_hooks_useismobiledevice_js",
+      "target": "useismobiledevice_useismobiledevice",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\hooks\\useIsMobileDevice.js",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "src_layouts_dashboardlayout_jsx",
+      "target": "react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\layouts\\DashboardLayout.jsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_layouts_dashboardlayout_jsx",
+      "target": "react_router_dom",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\layouts\\DashboardLayout.jsx",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_layouts_dashboardlayout_jsx",
+      "target": "src_layouts_sidebar",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\layouts\\DashboardLayout.jsx",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_layouts_dashboardlayout_jsx",
+      "target": "src_layouts_navbar",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\layouts\\DashboardLayout.jsx",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_layouts_dashboardlayout_jsx",
+      "target": "src_context_authcontext",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\layouts\\DashboardLayout.jsx",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "src_layouts_dashboardlayout_jsx",
+      "target": "src_components_globalcalendarsync",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\layouts\\DashboardLayout.jsx",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "src_layouts_dashboardlayout_jsx",
+      "target": "src_components_pomodorotimer",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\layouts\\DashboardLayout.jsx",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "src_layouts_dashboardlayout_jsx",
+      "target": "dashboardlayout_dashboardlayout",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\layouts\\DashboardLayout.jsx",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "src_layouts_navbar_jsx",
+      "target": "react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\layouts\\Navbar.jsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_layouts_navbar_jsx",
+      "target": "react_router_dom",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\layouts\\Navbar.jsx",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_layouts_navbar_jsx",
+      "target": "src_context_authcontext",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\layouts\\Navbar.jsx",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_layouts_navbar_jsx",
+      "target": "lucide_react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\layouts\\Navbar.jsx",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_layouts_navbar_jsx",
+      "target": "src_components_notificationdropdown",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\layouts\\Navbar.jsx",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "src_layouts_navbar_jsx",
+      "target": "src_lib_firestore",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\layouts\\Navbar.jsx",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "src_layouts_navbar_jsx",
+      "target": "navbar_navbar",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\layouts\\Navbar.jsx",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "src_layouts_sidebar_jsx",
+      "target": "react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\layouts\\Sidebar.jsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_layouts_sidebar_jsx",
+      "target": "react_router_dom",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\layouts\\Sidebar.jsx",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_layouts_sidebar_jsx",
+      "target": "src_context_authcontext",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\layouts\\Sidebar.jsx",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_layouts_sidebar_jsx",
+      "target": "lucide_react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\layouts\\Sidebar.jsx",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_layouts_sidebar_jsx",
+      "target": "sidebar_sidebar",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\layouts\\Sidebar.jsx",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "src_layouts_staticlayout_jsx",
+      "target": "react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\layouts\\StaticLayout.jsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_layouts_staticlayout_jsx",
+      "target": "react_router_dom",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\layouts\\StaticLayout.jsx",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_layouts_staticlayout_jsx",
+      "target": "src_components_pagetransition",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\layouts\\StaticLayout.jsx",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_layouts_staticlayout_jsx",
+      "target": "lucide_react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\layouts\\StaticLayout.jsx",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_layouts_staticlayout_jsx",
+      "target": "staticlayout_staticlayout",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\layouts\\StaticLayout.jsx",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_aiagent_js",
+      "target": "src_config_apikeys",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\aiAgent.js",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_aiagent_js",
+      "target": "aiagent_buildsystemprompt",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\aiAgent.js",
+      "source_location": "L46",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_aiagent_js",
+      "target": "aiagent_callgroq",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\aiAgent.js",
+      "source_location": "L86",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_aiagent_js",
+      "target": "aiagent_callgeminifallback",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\aiAgent.js",
+      "source_location": "L127",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_aiagent_js",
+      "target": "aiagent_parsetoolcall",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\aiAgent.js",
+      "source_location": "L141",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_aiagent_js",
+      "target": "aiagent_sendmessage",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\aiAgent.js",
+      "source_location": "L167",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_aiagent_js",
+      "target": "aiagent_getsmartsuggestions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\aiAgent.js",
+      "source_location": "L201",
+      "weight": 1.0
+    },
+    {
+      "source": "aiagent_sendmessage",
+      "target": "aiagent_buildsystemprompt",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\aiAgent.js",
+      "source_location": "L168",
+      "weight": 1.0
+    },
+    {
+      "source": "aiagent_sendmessage",
+      "target": "aiagent_callgroq",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\aiAgent.js",
+      "source_location": "L178",
+      "weight": 1.0
+    },
+    {
+      "source": "aiagent_sendmessage",
+      "target": "aiagent_callgeminifallback",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\aiAgent.js",
+      "source_location": "L183",
+      "weight": 1.0
+    },
+    {
+      "source": "aiagent_sendmessage",
+      "target": "aiagent_parsetoolcall",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\aiAgent.js",
+      "source_location": "L192",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_aitools_js",
+      "target": "src_lib_firestore",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\aiTools.js",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_aitools_js",
+      "target": "aitools_getpendingassignments",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\aiTools.js",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_aitools_js",
+      "target": "aitools_draftannouncement",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\aiTools.js",
+      "source_location": "L59",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_aitools_js",
+      "target": "aitools_executeannouncement",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\aiTools.js",
+      "source_location": "L82",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_aitools_js",
+      "target": "aitools_summarizedashboard",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\aiTools.js",
+      "source_location": "L116",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_aitools_js",
+      "target": "aitools_navigateto",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\aiTools.js",
+      "source_location": "L148",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_aitools_js",
+      "target": "aitools_executetool",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\aiTools.js",
+      "source_location": "L175",
+      "weight": 1.0
+    },
+    {
+      "source": "aitools_summarizedashboard",
+      "target": "aitools_getpendingassignments",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\aiTools.js",
+      "source_location": "L120",
+      "weight": 1.0
+    },
+    {
+      "source": "aitools_executetool",
+      "target": "aitools_getpendingassignments",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\aiTools.js",
+      "source_location": "L180",
+      "weight": 1.0
+    },
+    {
+      "source": "aitools_executetool",
+      "target": "aitools_draftannouncement",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\aiTools.js",
+      "source_location": "L183",
+      "weight": 1.0
+    },
+    {
+      "source": "aitools_executetool",
+      "target": "aitools_summarizedashboard",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\aiTools.js",
+      "source_location": "L186",
+      "weight": 1.0
+    },
+    {
+      "source": "aitools_executetool",
+      "target": "aitools_navigateto",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\aiTools.js",
+      "source_location": "L189",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_cloudinary_js",
+      "target": "cloudinary_uploadtocloudinary",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\cloudinary.js",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_cloudinary_js",
+      "target": "cloudinary_uploadprofilepicturetocloudinary",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\cloudinary.js",
+      "source_location": "L65",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_cloudinary_js",
+      "target": "cloudinary_uploadassignmentpdftocloudinary",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\cloudinary.js",
+      "source_location": "L96",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_cloudinary_js",
+      "target": "cloudinary_deletefromcloudinary",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\cloudinary.js",
+      "source_location": "L132",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_email_js",
+      "target": "browser",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\email.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_email_js",
+      "target": "email_sendemailbatch",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\email.js",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "src_firebase",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_getuserprofile",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_saveuserprofile",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_deleteuserprofile",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_buildclassfilters",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_buildclassquery",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L43",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_additem",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L52",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_getitems",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L60",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_hideitem",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L89",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_subscribetocollection",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L100",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_subscribetonotes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L160",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_subscribetoassignments",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L164",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_subscribetoannouncements",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L168",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_addnote",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L174",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_getnotes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L175",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_hidenotedoc",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L176",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_addassignment",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L180",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_getassignments",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L181",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_hideassignmentdoc",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L182",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_addannouncement",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L186",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_getannouncements",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L187",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_hideannouncementdoc",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L188",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_updateassignment",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L192",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_getdistinctinstitutions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L202",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_getbranchesforcollege",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L216",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_getsectionsforschool",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L235",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_getdivisionsforcollege",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L256",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_builddynamicconstraints",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L278",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_getdynamicrecipientcount",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L293",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_getdynamicrecipients",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L307",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_createnotification",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L319",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_getrecipientcount",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L325",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_getrecipients",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L349",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_buildrecipientconstraints",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L363",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_subscribetonotifications",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L407",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_createusernotifications",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L430",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_subscribetomynotifications",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L455",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_marknotificationread",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L480",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_markallnotificationsread",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L487",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_deletenotification",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L503",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_deleteallnotifications",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L510",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_firestore_js",
+      "target": "firestore_deletealluserdata",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L524",
+      "weight": 1.0
+    },
+    {
+      "source": "firestore_buildclassquery",
+      "target": "firestore_buildclassfilters",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L44",
+      "weight": 1.0
+    },
+    {
+      "source": "firestore_getitems",
+      "target": "firestore_buildclassquery",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L61",
+      "weight": 1.0
+    },
+    {
+      "source": "firestore_subscribetocollection",
+      "target": "firestore_buildclassquery",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L101",
+      "weight": 1.0
+    },
+    {
+      "source": "firestore_subscribetonotes",
+      "target": "firestore_subscribetocollection",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L161",
+      "weight": 1.0
+    },
+    {
+      "source": "firestore_subscribetoassignments",
+      "target": "firestore_subscribetocollection",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L165",
+      "weight": 1.0
+    },
+    {
+      "source": "firestore_subscribetoannouncements",
+      "target": "firestore_subscribetocollection",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L169",
+      "weight": 1.0
+    },
+    {
+      "source": "firestore_addnote",
+      "target": "firestore_additem",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L174",
+      "weight": 1.0
+    },
+    {
+      "source": "firestore_getnotes",
+      "target": "firestore_getitems",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L175",
+      "weight": 1.0
+    },
+    {
+      "source": "firestore_hidenotedoc",
+      "target": "firestore_hideitem",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L176",
+      "weight": 1.0
+    },
+    {
+      "source": "firestore_addassignment",
+      "target": "firestore_additem",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L180",
+      "weight": 1.0
+    },
+    {
+      "source": "firestore_getassignments",
+      "target": "firestore_getitems",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L181",
+      "weight": 1.0
+    },
+    {
+      "source": "firestore_hideassignmentdoc",
+      "target": "firestore_hideitem",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L182",
+      "weight": 1.0
+    },
+    {
+      "source": "firestore_addannouncement",
+      "target": "firestore_additem",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L186",
+      "weight": 1.0
+    },
+    {
+      "source": "firestore_getannouncements",
+      "target": "firestore_getitems",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L187",
+      "weight": 1.0
+    },
+    {
+      "source": "firestore_hideannouncementdoc",
+      "target": "firestore_hideitem",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L188",
+      "weight": 1.0
+    },
+    {
+      "source": "firestore_getdynamicrecipientcount",
+      "target": "firestore_builddynamicconstraints",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L294",
+      "weight": 1.0
+    },
+    {
+      "source": "firestore_getdynamicrecipients",
+      "target": "firestore_builddynamicconstraints",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L308",
+      "weight": 1.0
+    },
+    {
+      "source": "firestore_createnotification",
+      "target": "firestore_additem",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L321",
+      "weight": 1.0
+    },
+    {
+      "source": "firestore_getrecipientcount",
+      "target": "firestore_buildrecipientconstraints",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L328",
+      "weight": 1.0
+    },
+    {
+      "source": "firestore_getrecipients",
+      "target": "firestore_buildrecipientconstraints",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L352",
+      "weight": 1.0
+    },
+    {
+      "source": "firestore_deletealluserdata",
+      "target": "firestore_deleteallnotifications",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L534",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_googlecalendar_js",
+      "target": "googlecalendar_getstoragekey",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\googleCalendar.js",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_googlecalendar_js",
+      "target": "googlecalendar_getsyncedmap",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\googleCalendar.js",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_googlecalendar_js",
+      "target": "googlecalendar_savesyncedmap",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\googleCalendar.js",
+      "source_location": "L24",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_googlecalendar_js",
+      "target": "googlecalendar_iscalendarconnected",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\googleCalendar.js",
+      "source_location": "L31",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_googlecalendar_js",
+      "target": "googlecalendar_getcalendartoken",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\googleCalendar.js",
+      "source_location": "L59",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_googlecalendar_js",
+      "target": "googlecalendar_disconnectcalendar",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\googleCalendar.js",
+      "source_location": "L66",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_googlecalendar_js",
+      "target": "googlecalendar_saveeventtosyncmap",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\googleCalendar.js",
+      "source_location": "L76",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_googlecalendar_js",
+      "target": "googlecalendar_removecalendarevent",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\googleCalendar.js",
+      "source_location": "L86",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_googlecalendar_js",
+      "target": "googlecalendar_synccalendar",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\googleCalendar.js",
+      "source_location": "L108",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_googlecalendar_js",
+      "target": "googlecalendar_addeventtocalendar",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\googleCalendar.js",
+      "source_location": "L177",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_googlecalendar_js",
+      "target": "googlecalendar_deleteeventfromcalendar",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\googleCalendar.js",
+      "source_location": "L268",
+      "weight": 1.0
+    },
+    {
+      "source": "googlecalendar_getsyncedmap",
+      "target": "googlecalendar_getstoragekey",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\googleCalendar.js",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "googlecalendar_savesyncedmap",
+      "target": "googlecalendar_getstoragekey",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\googleCalendar.js",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "googlecalendar_saveeventtosyncmap",
+      "target": "googlecalendar_getsyncedmap",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\googleCalendar.js",
+      "source_location": "L77",
+      "weight": 1.0
+    },
+    {
+      "source": "googlecalendar_saveeventtosyncmap",
+      "target": "googlecalendar_savesyncedmap",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\googleCalendar.js",
+      "source_location": "L79",
+      "weight": 1.0
+    },
+    {
+      "source": "googlecalendar_removecalendarevent",
+      "target": "googlecalendar_getsyncedmap",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\googleCalendar.js",
+      "source_location": "L90",
+      "weight": 1.0
+    },
+    {
+      "source": "googlecalendar_removecalendarevent",
+      "target": "googlecalendar_deleteeventfromcalendar",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\googleCalendar.js",
+      "source_location": "L95",
+      "weight": 1.0
+    },
+    {
+      "source": "googlecalendar_removecalendarevent",
+      "target": "googlecalendar_savesyncedmap",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\googleCalendar.js",
+      "source_location": "L97",
+      "weight": 1.0
+    },
+    {
+      "source": "googlecalendar_synccalendar",
+      "target": "googlecalendar_getsyncedmap",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\googleCalendar.js",
+      "source_location": "L137",
+      "weight": 1.0
+    },
+    {
+      "source": "googlecalendar_synccalendar",
+      "target": "googlecalendar_addeventtocalendar",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\googleCalendar.js",
+      "source_location": "L151",
+      "weight": 1.0
+    },
+    {
+      "source": "googlecalendar_synccalendar",
+      "target": "googlecalendar_deleteeventfromcalendar",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\googleCalendar.js",
+      "source_location": "L165",
+      "weight": 1.0
+    },
+    {
+      "source": "googlecalendar_synccalendar",
+      "target": "googlecalendar_savesyncedmap",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\googleCalendar.js",
+      "source_location": "L171",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_storage_js",
+      "target": "src_firebase",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\storage.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_storage_js",
+      "target": "storage",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\storage.js",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_storage_js",
+      "target": "storage_uploaduseravatar",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\storage.js",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_aibuddy_aibuddy_jsx",
+      "target": "react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\AIBuddy\\AIBuddy.jsx",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_aibuddy_aibuddy_jsx",
+      "target": "framer_motion",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\AIBuddy\\AIBuddy.jsx",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_aibuddy_aibuddy_jsx",
+      "target": "react_router_dom",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\AIBuddy\\AIBuddy.jsx",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_aibuddy_aibuddy_jsx",
+      "target": "lucide_react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\AIBuddy\\AIBuddy.jsx",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_aibuddy_aibuddy_jsx",
+      "target": "src_context_authcontext",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\AIBuddy\\AIBuddy.jsx",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_aibuddy_aibuddy_jsx",
+      "target": "src_lib_aiagent",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\AIBuddy\\AIBuddy.jsx",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_aibuddy_aibuddy_jsx",
+      "target": "src_lib_aitools",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\AIBuddy\\AIBuddy.jsx",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_aibuddy_aibuddy_jsx",
+      "target": "src_config_apikeys",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\AIBuddy\\AIBuddy.jsx",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_aibuddy_aibuddy_jsx",
+      "target": "aibuddy_loadchatsessions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\AIBuddy\\AIBuddy.jsx",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_aibuddy_aibuddy_jsx",
+      "target": "aibuddy_savechatsessions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\AIBuddy\\AIBuddy.jsx",
+      "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_aibuddy_aibuddy_jsx",
+      "target": "aibuddy_aibuddy",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\AIBuddy\\AIBuddy.jsx",
+      "source_location": "L36",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_announcements_announcements_jsx",
+      "target": "react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Announcements\\Announcements.jsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_announcements_announcements_jsx",
+      "target": "src_context_authcontext",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Announcements\\Announcements.jsx",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_announcements_announcements_jsx",
+      "target": "lucide_react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Announcements\\Announcements.jsx",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_announcements_announcements_jsx",
+      "target": "src_lib_firestore",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Announcements\\Announcements.jsx",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_announcements_announcements_jsx",
+      "target": "src_components_notificationmodal",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Announcements\\Announcements.jsx",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_announcements_announcements_jsx",
+      "target": "announcements_announcements",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Announcements\\Announcements.jsx",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_assignments_assignments_jsx",
+      "target": "react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Assignments\\Assignments.jsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_assignments_assignments_jsx",
+      "target": "src_context_authcontext",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Assignments\\Assignments.jsx",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_assignments_assignments_jsx",
+      "target": "lucide_react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Assignments\\Assignments.jsx",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_assignments_assignments_jsx",
+      "target": "src_lib_firestore",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Assignments\\Assignments.jsx",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_assignments_assignments_jsx",
+      "target": "src_components_notificationmodal",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Assignments\\Assignments.jsx",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_assignments_assignments_jsx",
+      "target": "src_lib_cloudinary",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Assignments\\Assignments.jsx",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_assignments_assignments_jsx",
+      "target": "assignments_assignments",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Assignments\\Assignments.jsx",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_auth_login_jsx",
+      "target": "react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Auth\\Login.jsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_auth_login_jsx",
+      "target": "react_router_dom",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Auth\\Login.jsx",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_auth_login_jsx",
+      "target": "src_context_authcontext",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Auth\\Login.jsx",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_auth_login_jsx",
+      "target": "lucide_react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Auth\\Login.jsx",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_auth_login_jsx",
+      "target": "login_login",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Auth\\Login.jsx",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_auth_register_jsx",
+      "target": "react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Auth\\Register.jsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_auth_register_jsx",
+      "target": "react_router_dom",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Auth\\Register.jsx",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_auth_register_jsx",
+      "target": "src_context_authcontext",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Auth\\Register.jsx",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_auth_register_jsx",
+      "target": "lucide_react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Auth\\Register.jsx",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_auth_register_jsx",
+      "target": "register_register",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Auth\\Register.jsx",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_auth_verifyemail_jsx",
+      "target": "react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Auth\\VerifyEmail.jsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_auth_verifyemail_jsx",
+      "target": "react_router_dom",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Auth\\VerifyEmail.jsx",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_auth_verifyemail_jsx",
+      "target": "src_context_authcontext",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Auth\\VerifyEmail.jsx",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_auth_verifyemail_jsx",
+      "target": "lucide_react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Auth\\VerifyEmail.jsx",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_auth_verifyemail_jsx",
+      "target": "verifyemail_verifyemail",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Auth\\VerifyEmail.jsx",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_calendar_calendar_jsx",
+      "target": "react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Calendar\\Calendar.jsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_calendar_calendar_jsx",
+      "target": "lucide_react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Calendar\\Calendar.jsx",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_calendar_calendar_jsx",
+      "target": "src_context_authcontext",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Calendar\\Calendar.jsx",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_calendar_calendar_jsx",
+      "target": "src_lib_firestore",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Calendar\\Calendar.jsx",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_calendar_calendar_jsx",
+      "target": "calendar_calendar",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Calendar\\Calendar.jsx",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_dashboard_home_jsx",
+      "target": "react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Dashboard\\Home.jsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_dashboard_home_jsx",
+      "target": "react_router_dom",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Dashboard\\Home.jsx",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_dashboard_home_jsx",
+      "target": "src_context_authcontext",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Dashboard\\Home.jsx",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_dashboard_home_jsx",
+      "target": "lucide_react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Dashboard\\Home.jsx",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_dashboard_home_jsx",
+      "target": "src_lib_firestore",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Dashboard\\Home.jsx",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_dashboard_home_jsx",
+      "target": "src_components_notificationhistory",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Dashboard\\Home.jsx",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_dashboard_home_jsx",
+      "target": "src_pages_dashboard_components_networklist",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Dashboard\\Home.jsx",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_dashboard_home_jsx",
+      "target": "src_components_aibuddy",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Dashboard\\Home.jsx",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_dashboard_home_jsx",
+      "target": "home_dashboardhome",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Dashboard\\Home.jsx",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_dashboard_components_networklist_jsx",
+      "target": "react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Dashboard\\components\\NetworkList.jsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_dashboard_components_networklist_jsx",
+      "target": "lucide_react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Dashboard\\components\\NetworkList.jsx",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_dashboard_components_networklist_jsx",
+      "target": "firestore",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Dashboard\\components\\NetworkList.jsx",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_dashboard_components_networklist_jsx",
+      "target": "src_firebase",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Dashboard\\components\\NetworkList.jsx",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_dashboard_components_networklist_jsx",
+      "target": "src_context_authcontext",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Dashboard\\components\\NetworkList.jsx",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_dashboard_components_networklist_jsx",
+      "target": "networklist_networklist",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Dashboard\\components\\NetworkList.jsx",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_landing_landingpage_jsx",
+      "target": "react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Landing\\LandingPage.jsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_landing_landingpage_jsx",
+      "target": "react_router_dom",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Landing\\LandingPage.jsx",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_landing_landingpage_jsx",
+      "target": "lucide_react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Landing\\LandingPage.jsx",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_landing_landingpage_jsx",
+      "target": "framer_motion",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Landing\\LandingPage.jsx",
+      "source_location": "L40",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_landing_landingpage_jsx",
+      "target": "src_hooks_useismobiledevice",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Landing\\LandingPage.jsx",
+      "source_location": "L45",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_landing_landingpage_jsx",
+      "target": "landingpage_landingpage",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Landing\\LandingPage.jsx",
+      "source_location": "L47",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_notes_notes_jsx",
+      "target": "react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Notes\\Notes.jsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_notes_notes_jsx",
+      "target": "src_context_authcontext",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Notes\\Notes.jsx",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_notes_notes_jsx",
+      "target": "lucide_react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Notes\\Notes.jsx",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_notes_notes_jsx",
+      "target": "src_lib_firestore",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Notes\\Notes.jsx",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_notes_notes_jsx",
+      "target": "src_lib_cloudinary",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Notes\\Notes.jsx",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_notes_notes_jsx",
+      "target": "src_components_notificationmodal",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Notes\\Notes.jsx",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_notes_notes_jsx",
+      "target": "notes_notes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Notes\\Notes.jsx",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_onboarding_onboarding_jsx",
+      "target": "react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Onboarding\\Onboarding.jsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_onboarding_onboarding_jsx",
+      "target": "react_router_dom",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Onboarding\\Onboarding.jsx",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_onboarding_onboarding_jsx",
+      "target": "src_context_authcontext",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Onboarding\\Onboarding.jsx",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_onboarding_onboarding_jsx",
+      "target": "src_lib_firestore",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Onboarding\\Onboarding.jsx",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_onboarding_onboarding_jsx",
+      "target": "lucide_react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Onboarding\\Onboarding.jsx",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_onboarding_onboarding_jsx",
+      "target": "onboarding_onboarding",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Onboarding\\Onboarding.jsx",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_profile_profile_jsx",
+      "target": "react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Profile\\Profile.jsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_profile_profile_jsx",
+      "target": "src_context_authcontext",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Profile\\Profile.jsx",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_profile_profile_jsx",
+      "target": "lucide_react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Profile\\Profile.jsx",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_profile_profile_jsx",
+      "target": "src_lib_firestore",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Profile\\Profile.jsx",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_profile_profile_jsx",
+      "target": "src_lib_cloudinary",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Profile\\Profile.jsx",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_profile_profile_jsx",
+      "target": "src_auth",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Profile\\Profile.jsx",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_profile_profile_jsx",
+      "target": "profile_profile",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Profile\\Profile.jsx",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_settings_settings_jsx",
+      "target": "react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Settings\\Settings.jsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_settings_settings_jsx",
+      "target": "lucide_react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Settings\\Settings.jsx",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_settings_settings_jsx",
+      "target": "src_context_authcontext",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Settings\\Settings.jsx",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_settings_settings_jsx",
+      "target": "src_lib_firestore",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Settings\\Settings.jsx",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_settings_settings_jsx",
+      "target": "src_auth",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Settings\\Settings.jsx",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_settings_settings_jsx",
+      "target": "src_lib_googlecalendar",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Settings\\Settings.jsx",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_settings_settings_jsx",
+      "target": "src_auth",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Settings\\Settings.jsx",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_settings_settings_jsx",
+      "target": "src_ui",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Settings\\Settings.jsx",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_settings_settings_jsx",
+      "target": "settings_mergesettings",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Settings\\Settings.jsx",
+      "source_location": "L31",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_settings_settings_jsx",
+      "target": "settings_settings",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Settings\\Settings.jsx",
+      "source_location": "L39",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_static_about_jsx",
+      "target": "react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Static\\About.jsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_static_about_jsx",
+      "target": "react_router_dom",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Static\\About.jsx",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_static_about_jsx",
+      "target": "lucide_react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Static\\About.jsx",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_static_about_jsx",
+      "target": "about_about",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Static\\About.jsx",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_static_community_jsx",
+      "target": "react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Static\\Community.jsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_static_community_jsx",
+      "target": "react_router_dom",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Static\\Community.jsx",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_static_community_jsx",
+      "target": "lucide_react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Static\\Community.jsx",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_static_community_jsx",
+      "target": "community_community",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Static\\Community.jsx",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_static_cookiepolicy_jsx",
+      "target": "react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Static\\CookiePolicy.jsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_static_cookiepolicy_jsx",
+      "target": "react_router_dom",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Static\\CookiePolicy.jsx",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_static_cookiepolicy_jsx",
+      "target": "cookiepolicy_cookiepolicy",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Static\\CookiePolicy.jsx",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_static_features_jsx",
+      "target": "react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Static\\Features.jsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_static_features_jsx",
+      "target": "react_router_dom",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Static\\Features.jsx",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_static_features_jsx",
+      "target": "lucide_react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Static\\Features.jsx",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_static_features_jsx",
+      "target": "features_features",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Static\\Features.jsx",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_static_help_jsx",
+      "target": "react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Static\\Help.jsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_static_help_jsx",
+      "target": "lucide_react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Static\\Help.jsx",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_static_help_jsx",
+      "target": "help_help",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Static\\Help.jsx",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_static_integrations_jsx",
+      "target": "react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Static\\Integrations.jsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_static_integrations_jsx",
+      "target": "react_router_dom",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Static\\Integrations.jsx",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_static_integrations_jsx",
+      "target": "lucide_react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Static\\Integrations.jsx",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_static_integrations_jsx",
+      "target": "integrations_integrations",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Static\\Integrations.jsx",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_static_privacypolicy_jsx",
+      "target": "react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Static\\PrivacyPolicy.jsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_static_privacypolicy_jsx",
+      "target": "react_router_dom",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Static\\PrivacyPolicy.jsx",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_static_privacypolicy_jsx",
+      "target": "privacypolicy_privacypolicy",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Static\\PrivacyPolicy.jsx",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_static_termsofservice_jsx",
+      "target": "react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Static\\TermsOfService.jsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_static_termsofservice_jsx",
+      "target": "react_router_dom",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Static\\TermsOfService.jsx",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_static_termsofservice_jsx",
+      "target": "termsofservice_termsofservice",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\Static\\TermsOfService.jsx",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "agenticbuddy_agenticbuddy",
+      "target": "authcontext_useauth",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\components\\AgenticBuddy.jsx",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "agenticbuddy_agenticbuddy",
+      "target": "aiagent_getsmartsuggestions",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\components\\AgenticBuddy.jsx",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "aibuddy_aibuddy",
+      "target": "authcontext_useauth",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\components\\AiBuddy.jsx",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "aibuddy_aibuddy",
+      "target": "useismobiledevice_useismobiledevice",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\components\\AiBuddy.jsx",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "globalcalendarsync_globalcalendarsync",
+      "target": "authcontext_useauth",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\components\\GlobalCalendarSync.jsx",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "globalcalendarsync_globalcalendarsync",
+      "target": "googlecalendar_iscalendarconnected",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\components\\GlobalCalendarSync.jsx",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "notificationdropdown_notificationdropdown",
+      "target": "authcontext_useauth",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\components\\NotificationDropdown.jsx",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "notificationdropdown_useunreadcount",
+      "target": "authcontext_useauth",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\components\\NotificationDropdown.jsx",
+      "source_location": "L413",
+      "weight": 1.0
+    },
+    {
+      "source": "notificationhistory_notificationhistory",
+      "target": "authcontext_useauth",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\components\\NotificationHistory.jsx",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "notificationmodal_notificationmodal",
+      "target": "authcontext_useauth",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\components\\NotificationModal.jsx",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "dashboardlayout_dashboardlayout",
+      "target": "authcontext_useauth",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\layouts\\DashboardLayout.jsx",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "navbar_navbar",
+      "target": "authcontext_useauth",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\layouts\\Navbar.jsx",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "navbar_navbar",
+      "target": "notificationdropdown_useunreadcount",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\layouts\\Navbar.jsx",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "sidebar_sidebar",
+      "target": "authcontext_useauth",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\layouts\\Sidebar.jsx",
+      "source_location": "L28",
+      "weight": 1.0
+    },
+    {
+      "source": "aiagent_callgeminifallback",
+      "target": "apikeys_callgeminiwithrotation",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\lib\\aiAgent.js",
+      "source_location": "L129",
+      "weight": 1.0
+    },
+    {
+      "source": "aitools_getpendingassignments",
+      "target": "firestore_getassignments",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\lib\\aiTools.js",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "aitools_executeannouncement",
+      "target": "firestore_addannouncement",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\lib\\aiTools.js",
+      "source_location": "L102",
+      "weight": 1.0
+    },
+    {
+      "source": "aibuddy_aibuddy",
+      "target": "aiagent_getsmartsuggestions",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\pages\\AIBuddy\\AIBuddy.jsx",
+      "source_location": "L67",
+      "weight": 1.0
+    },
+    {
+      "source": "announcements_announcements",
+      "target": "authcontext_useauth",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\pages\\Announcements\\Announcements.jsx",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "assignments_assignments",
+      "target": "authcontext_useauth",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\pages\\Assignments\\Assignments.jsx",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "login_login",
+      "target": "authcontext_useauth",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\pages\\Auth\\Login.jsx",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "register_register",
+      "target": "authcontext_useauth",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\pages\\Auth\\Register.jsx",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "verifyemail_verifyemail",
+      "target": "authcontext_useauth",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\pages\\Auth\\VerifyEmail.jsx",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "calendar_calendar",
+      "target": "authcontext_useauth",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\pages\\Calendar\\Calendar.jsx",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "home_dashboardhome",
+      "target": "authcontext_useauth",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\pages\\Dashboard\\Home.jsx",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "networklist_networklist",
+      "target": "authcontext_useauth",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\pages\\Dashboard\\components\\NetworkList.jsx",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "landingpage_landingpage",
+      "target": "useismobiledevice_useismobiledevice",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\pages\\Landing\\LandingPage.jsx",
+      "source_location": "L49",
+      "weight": 1.0
+    },
+    {
+      "source": "notes_notes",
+      "target": "authcontext_useauth",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\pages\\Notes\\Notes.jsx",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "onboarding_onboarding",
+      "target": "authcontext_useauth",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\pages\\Onboarding\\Onboarding.jsx",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "profile_profile",
+      "target": "authcontext_useauth",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\pages\\Profile\\Profile.jsx",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "settings_settings",
+      "target": "authcontext_useauth",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\pages\\Settings\\Settings.jsx",
+      "source_location": "L40",
+      "weight": 1.0
+    },
+    {
+      "source": "settings_settings",
+      "target": "auth_hasemailprovider",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\pages\\Settings\\Settings.jsx",
+      "source_location": "L263",
+      "weight": 1.0
+    },
+    {
+      "source": "settings_settings",
+      "target": "auth_isgooglelinked",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\pages\\Settings\\Settings.jsx",
+      "source_location": "L279",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

@@ -1,0 +1,434 @@
+{
+  "communities": {
+    "0": [
+      "firestore_addassignment",
+      "firestore_additem",
+      "firestore_addnote",
+      "firestore_buildclassfilters",
+      "firestore_buildclassquery",
+      "firestore_builddynamicconstraints",
+      "firestore_buildrecipientconstraints",
+      "firestore_createnotification",
+      "firestore_createusernotifications",
+      "firestore_deleteallnotifications",
+      "firestore_deletealluserdata",
+      "firestore_deletenotification",
+      "firestore_deleteuserprofile",
+      "firestore_getannouncements",
+      "firestore_getassignments",
+      "firestore_getbranchesforcollege",
+      "firestore_getdistinctinstitutions",
+      "firestore_getdivisionsforcollege",
+      "firestore_getdynamicrecipientcount",
+      "firestore_getdynamicrecipients",
+      "firestore_getitems",
+      "firestore_getnotes",
+      "firestore_getrecipientcount",
+      "firestore_getrecipients",
+      "firestore_getsectionsforschool",
+      "firestore_getuserprofile",
+      "firestore_hideannouncementdoc",
+      "firestore_hideassignmentdoc",
+      "firestore_hideitem",
+      "firestore_hidenotedoc",
+      "firestore_markallnotificationsread",
+      "firestore_marknotificationread",
+      "firestore_saveuserprofile",
+      "firestore_subscribetoannouncements",
+      "firestore_subscribetoassignments",
+      "firestore_subscribetocollection",
+      "firestore_subscribetomynotifications",
+      "firestore_subscribetonotes",
+      "firestore_subscribetonotifications",
+      "firestore_updateassignment",
+      "src_lib_firestore_js"
+    ],
+    "1": [
+      "announcements_announcements",
+      "assignments_assignments",
+      "authcontext_authprovider",
+      "authcontext_useauth",
+      "calendar_calendar",
+      "dashboardlayout_dashboardlayout",
+      "home_dashboardhome",
+      "login_login",
+      "navbar_navbar",
+      "networklist_networklist",
+      "notes_notes",
+      "notificationdropdown_notificationdropdown",
+      "notificationdropdown_timeago",
+      "notificationdropdown_useunreadcount",
+      "notificationmodal_notificationmodal",
+      "onboarding_onboarding",
+      "profile_profile",
+      "register_register",
+      "sidebar_sidebar",
+      "src_components_notificationdropdown_jsx",
+      "src_components_notificationmodal_jsx",
+      "src_context_authcontext_jsx",
+      "src_layouts_dashboardlayout_jsx",
+      "src_layouts_navbar_jsx",
+      "src_layouts_sidebar_jsx",
+      "src_pages_announcements_announcements_jsx",
+      "src_pages_assignments_assignments_jsx",
+      "src_pages_auth_login_jsx",
+      "src_pages_auth_register_jsx",
+      "src_pages_auth_verifyemail_jsx",
+      "src_pages_calendar_calendar_jsx",
+      "src_pages_dashboard_components_networklist_jsx",
+      "src_pages_dashboard_home_jsx",
+      "src_pages_notes_notes_jsx",
+      "src_pages_onboarding_onboarding_jsx",
+      "src_pages_profile_profile_jsx",
+      "verifyemail_verifyemail"
+    ],
+    "2": [
+      "auth_changepassword",
+      "auth_deleteuseraccount",
+      "auth_hasemailprovider",
+      "auth_isgooglelinked",
+      "auth_loginwithemail",
+      "auth_loginwithgoogle",
+      "auth_logoutuser",
+      "auth_reauthenticatewithemail",
+      "auth_registerwithemail",
+      "auth_resendverificationemail",
+      "auth_resetpassword",
+      "auth_subscribetoauthchanges",
+      "auth_unlinkgoogle",
+      "auth_updateauthprofile",
+      "settings_mergesettings",
+      "settings_settings",
+      "src_auth_js",
+      "src_pages_settings_settings_jsx"
+    ],
+    "3": [
+      "globalcalendarsync_globalcalendarsync",
+      "googlecalendar_addeventtocalendar",
+      "googlecalendar_deleteeventfromcalendar",
+      "googlecalendar_disconnectcalendar",
+      "googlecalendar_getcalendartoken",
+      "googlecalendar_getstoragekey",
+      "googlecalendar_getsyncedmap",
+      "googlecalendar_iscalendarconnected",
+      "googlecalendar_removecalendarevent",
+      "googlecalendar_saveeventtosyncmap",
+      "googlecalendar_savesyncedmap",
+      "googlecalendar_synccalendar",
+      "src_components_globalcalendarsync_jsx",
+      "src_lib_googlecalendar_js"
+    ],
+    "4": [
+      "agenticbuddy_agenticbuddy",
+      "aiagent_getsmartsuggestions",
+      "aibuddy_aibuddy",
+      "aibuddy_loadchatsessions",
+      "aibuddy_savechatsessions",
+      "landingpage_landingpage",
+      "src_components_agenticbuddy_jsx",
+      "src_components_aibuddy_jsx",
+      "src_hooks_useismobiledevice_js",
+      "src_pages_aibuddy_aibuddy_jsx",
+      "src_pages_landing_landingpage_jsx",
+      "useismobiledevice_checkismobiledevice",
+      "useismobiledevice_useismobiledevice"
+    ],
+    "5": [
+      "app_app",
+      "app_appcontent",
+      "app_errorboundary",
+      "app_errorboundary_constructor",
+      "app_errorboundary_getderivedstatefromerror",
+      "app_errorboundary_render",
+      "app_loadingspinner",
+      "app_miniloader",
+      "src_app_jsx"
+    ],
+    "6": [
+      "aiagent_buildsystemprompt",
+      "aiagent_callgeminifallback",
+      "aiagent_callgroq",
+      "aiagent_parsetoolcall",
+      "aiagent_sendmessage",
+      "apikeys_callgeminiwithrotation",
+      "apikeys_getnextgeminikey",
+      "src_config_apikeys_js",
+      "src_lib_aiagent_js"
+    ],
+    "7": [
+      "aitools_draftannouncement",
+      "aitools_executeannouncement",
+      "aitools_executetool",
+      "aitools_getpendingassignments",
+      "aitools_navigateto",
+      "aitools_summarizedashboard",
+      "firestore_addannouncement",
+      "src_lib_aitools_js"
+    ],
+    "8": [
+      "cloudinary_deletefromcloudinary",
+      "cloudinary_uploadassignmentpdftocloudinary",
+      "cloudinary_uploadprofilepicturetocloudinary",
+      "cloudinary_uploadtocloudinary",
+      "src_lib_cloudinary_js"
+    ],
+    "9": [
+      "notificationhistory_formattimestamp",
+      "notificationhistory_notificationhistory",
+      "notificationhistory_statusbadge",
+      "src_components_notificationhistory_jsx"
+    ],
+    "10": [
+      "src_context_themecontext_jsx",
+      "themecontext_applylighttheme",
+      "themecontext_themeprovider",
+      "themecontext_usetheme"
+    ],
+    "11": [
+      "src_ui_js",
+      "ui_formaterrormessage",
+      "ui_getfriendlymessage"
+    ],
+    "12": [
+      "pagetransition_pagetransition",
+      "src_components_pagetransition_jsx"
+    ],
+    "13": [
+      "pomodorotimer_pomodorotimer",
+      "src_components_pomodorotimer_jsx"
+    ],
+    "14": [
+      "src_layouts_staticlayout_jsx",
+      "staticlayout_staticlayout"
+    ],
+    "15": [
+      "email_sendemailbatch",
+      "src_lib_email_js"
+    ],
+    "16": [
+      "src_lib_storage_js",
+      "storage_uploaduseravatar"
+    ],
+    "17": [
+      "about_about",
+      "src_pages_static_about_jsx"
+    ],
+    "18": [
+      "community_community",
+      "src_pages_static_community_jsx"
+    ],
+    "19": [
+      "cookiepolicy_cookiepolicy",
+      "src_pages_static_cookiepolicy_jsx"
+    ],
+    "20": [
+      "features_features",
+      "src_pages_static_features_jsx"
+    ],
+    "21": [
+      "help_help",
+      "src_pages_static_help_jsx"
+    ],
+    "22": [
+      "integrations_integrations",
+      "src_pages_static_integrations_jsx"
+    ],
+    "23": [
+      "privacypolicy_privacypolicy",
+      "src_pages_static_privacypolicy_jsx"
+    ],
+    "24": [
+      "src_pages_static_termsofservice_jsx",
+      "termsofservice_termsofservice"
+    ],
+    "25": [
+      "eslint_config_js"
+    ],
+    "26": [
+      "vite_config_js"
+    ],
+    "27": [
+      "src_firebase_js"
+    ],
+    "28": [
+      "src_main_jsx"
+    ]
+  },
+  "cohesion": {
+    "0": 0.07,
+    "1": 0.06,
+    "2": 0.14,
+    "3": 0.26,
+    "4": 0.15,
+    "5": 0.22,
+    "6": 0.36,
+    "7": 0.43,
+    "8": 0.4,
+    "9": 0.5,
+    "10": 0.5,
+    "11": 1.0,
+    "12": 1.0,
+    "13": 1.0,
+    "14": 1.0,
+    "15": 1.0,
+    "16": 1.0,
+    "17": 1.0,
+    "18": 1.0,
+    "19": 1.0,
+    "20": 1.0,
+    "21": 1.0,
+    "22": 1.0,
+    "23": 1.0,
+    "24": 1.0,
+    "25": 1.0,
+    "26": 1.0,
+    "27": 1.0,
+    "28": 1.0
+  },
+  "gods": [
+    {
+      "id": "authcontext_useauth",
+      "label": "useAuth()",
+      "degree": 23
+    },
+    {
+      "id": "aibuddy_aibuddy",
+      "label": "AIBuddy()",
+      "degree": 5
+    },
+    {
+      "id": "aiagent_sendmessage",
+      "label": "sendMessage()",
+      "degree": 5
+    },
+    {
+      "id": "aitools_executetool",
+      "label": "executeTool()",
+      "degree": 5
+    },
+    {
+      "id": "firestore_additem",
+      "label": "addItem()",
+      "degree": 5
+    },
+    {
+      "id": "firestore_getitems",
+      "label": "getItems()",
+      "degree": 5
+    },
+    {
+      "id": "firestore_subscribetocollection",
+      "label": "subscribeToCollection()",
+      "degree": 5
+    },
+    {
+      "id": "googlecalendar_getsyncedmap",
+      "label": "getSyncedMap()",
+      "degree": 5
+    },
+    {
+      "id": "googlecalendar_savesyncedmap",
+      "label": "saveSyncedMap()",
+      "degree": 5
+    },
+    {
+      "id": "googlecalendar_synccalendar",
+      "label": "syncCalendar()",
+      "degree": 5
+    }
+  ],
+  "surprises": [
+    {
+      "source": "NotificationHistory()",
+      "target": "useAuth()",
+      "source_files": [
+        "src\\components\\NotificationHistory.jsx",
+        "src\\context\\AuthContext.jsx"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities; peripheral node `NotificationHistory()` unexpectedly reaches hub `useAuth()`"
+    },
+    {
+      "source": "AgenticBuddy()",
+      "target": "useAuth()",
+      "source_files": [
+        "src\\components\\AgenticBuddy.jsx",
+        "src\\context\\AuthContext.jsx"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "AIBuddy()",
+      "target": "useAuth()",
+      "source_files": [
+        "src\\pages\\AIBuddy\\AIBuddy.jsx",
+        "src\\context\\AuthContext.jsx"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "GlobalCalendarSync()",
+      "target": "useAuth()",
+      "source_files": [
+        "src\\components\\GlobalCalendarSync.jsx",
+        "src\\context\\AuthContext.jsx"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "NotificationDropdown()",
+      "target": "useAuth()",
+      "source_files": [
+        "src\\components\\NotificationDropdown.jsx",
+        "src\\context\\AuthContext.jsx"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; peripheral node `NotificationDropdown()` unexpectedly reaches hub `useAuth()`"
+    }
+  ],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `useAuth()` connect `Community 1` to `Community 9`, `Community 2`, `Community 3`, `Community 4`?",
+      "why": "High betweenness centrality (0.207) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `Settings()` connect `Community 2` to `Community 1`?",
+      "why": "High betweenness centrality (0.072) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `AIBuddy()` connect `Community 4` to `Community 1`?",
+      "why": "High betweenness centrality (0.062) - this node is a cross-community bridge."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 22 inferred relationships involving `useAuth()` (e.g. with `AgenticBuddy()` and `AIBuddy()`) actually correct?",
+      "why": "`useAuth()` has 22 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 3 inferred relationships involving `AIBuddy()` (e.g. with `useAuth()` and `useIsMobileDevice()`) actually correct?",
+      "why": "`AIBuddy()` has 3 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 0` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.07 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 1` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.06 - nodes in this community are weakly interconnected."
+    }
+  ]
+}
