@@ -75,6 +75,7 @@ export const LandingPage = () => {
 
                     <div className="hidden md:flex items-center gap-10">
                         <Link to="/features" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors no-underline">Features</Link>
+                        <Link to="/pricing" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors no-underline">Pricing</Link>
                         <Link to="/help" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors no-underline">Help</Link>
                         <Link to="/about" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors no-underline">About Us</Link>
                     </div>
@@ -95,6 +96,7 @@ export const LandingPage = () => {
                 {isMenuOpen && (
                     <div className="md:hidden border-t border-slate-200 bg-white px-6 py-6 flex flex-col gap-4 absolute w-full shadow-2xl">
                         <Link to="/features" className="text-slate-600 font-medium py-2 text-lg no-underline" onClick={toggleMenu}>Features</Link>
+                        <Link to="/pricing" className="text-slate-600 font-medium py-2 text-lg no-underline" onClick={toggleMenu}>Pricing</Link>
                         <Link to="/help" className="text-slate-600 font-medium py-2 text-lg no-underline" onClick={toggleMenu}>Help</Link>
                         <Link to="/about" className="text-slate-600 font-medium py-2 text-lg no-underline" onClick={toggleMenu}>About Us</Link>
                         <hr className="border-slate-100 my-2" />
@@ -727,6 +729,7 @@ export const LandingPage = () => {
                                 </ul>
                                 <ul className="space-y-4">
                                     <li><Link to="/features" className="text-sm font-medium text-slate-500 hover:text-blue-600 flex items-center gap-2 no-underline"><ArrowRight size={12} /> Features</Link></li>
+                                    <li><Link to="/pricing" className="text-sm font-medium text-slate-500 hover:text-blue-600 flex items-center gap-2 no-underline"><ArrowRight size={12} /> Pricing</Link></li>
                                     <li><Link to="/integrations" className="text-sm font-medium text-slate-500 hover:text-blue-600 flex items-center gap-2 no-underline"><ArrowRight size={12} /> Integrations</Link></li>
                                     <li><Link to="/register" className="text-sm font-medium text-slate-500 hover:text-blue-600 flex items-center gap-2 no-underline"><ArrowRight size={12} /> Get Started</Link></li>
                                 </ul>
