@@ -28,6 +28,7 @@ const AIBuddyPage = lazy(() => import('./pages/AIBuddy/AIBuddy').then(m => ({ de
 
 // Static pages
 const Features = lazy(() => import('./pages/Static/Features').then(m => ({ default: m.Features })));
+const Pricing = lazy(() => import('./pages/Static/Pricing').then(m => ({ default: m.Pricing })));
 const Integrations = lazy(() => import('./pages/Static/Integrations').then(m => ({ default: m.Integrations })));
 const Help = lazy(() => import('./pages/Static/Help').then(m => ({ default: m.Help })));
 const Community = lazy(() => import('./pages/Static/Community').then(m => ({ default: m.Community })));
@@ -116,6 +117,7 @@ function AppContent() {
           {/* Static pages with shared layout */}
           <Route element={<StaticLayout />}>
             <Route path="/features" element={<Features />} />
+            <Route path="/pricing" element={<Pricing />} />
             <Route path="/integrations" element={<Integrations />} />
             <Route path="/help" element={<Help />} />
             <Route path="/community" element={<Community />} />

@@ -25,6 +25,7 @@ export function StaticLayout() {
 
                     <div className="hidden md:flex items-center gap-8">
                         <Link to="/features" className="text-sm font-medium text-gray-500 hover:text-indigo-600 transition-colors no-underline">Features</Link>
+                        <Link to="/pricing" className="text-sm font-medium text-gray-500 hover:text-indigo-600 transition-colors no-underline">Pricing</Link>
 
                         <Link to="/help" className="text-sm font-medium text-gray-500 hover:text-indigo-600 transition-colors no-underline">Help</Link>
                         <Link to="/about" className="text-sm font-medium text-gray-500 hover:text-indigo-600 transition-colors no-underline">About</Link>
@@ -45,6 +46,7 @@ export function StaticLayout() {
                 {isMenuOpen && (
                     <div className="md:hidden border-t border-gray-100 bg-white px-6 py-4 flex flex-col gap-3">
                         <Link to="/features" className="text-gray-600 font-medium py-1 no-underline" onClick={() => setIsMenuOpen(false)}>Features</Link>
+                        <Link to="/pricing" className="text-gray-600 font-medium py-1 no-underline" onClick={() => setIsMenuOpen(false)}>Pricing</Link>
 
                         <Link to="/help" className="text-gray-600 font-medium py-1 no-underline" onClick={() => setIsMenuOpen(false)}>Help</Link>
                         <Link to="/about" className="text-gray-600 font-medium py-1 no-underline" onClick={() => setIsMenuOpen(false)}>About</Link>
@@ -82,6 +84,7 @@ export function StaticLayout() {
                             <h4 className="text-white text-sm font-bold mb-4">Platform</h4>
                             <div className="flex flex-col gap-2.5">
                                 <Link to="/features" className="text-sm text-gray-400 hover:text-white transition-colors no-underline">Features</Link>
+                                <Link to="/pricing" className="text-sm text-gray-400 hover:text-white transition-colors no-underline">Pricing</Link>
 
                                 <Link to="/integrations" className="text-sm text-gray-400 hover:text-white transition-colors no-underline">Integrations</Link>
                             </div>
