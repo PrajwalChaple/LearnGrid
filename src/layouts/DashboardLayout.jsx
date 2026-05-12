@@ -15,12 +15,6 @@ export function DashboardLayout() {
     return <Navigate to="/login" replace />;
   }
 
-  // Redirect to verify-email if email not verified
-  const isGoogleUser = user.providerData?.some(p => p.providerId === 'google.com');
-  if (!user.emailVerified && !isGoogleUser) {
-    return <Navigate to="/verify-email" replace />;
-  }
-
   // Redirect to onboarding if profile is incomplete
   if (!isOnboarded) {
     return <Navigate to="/onboarding" replace />;
