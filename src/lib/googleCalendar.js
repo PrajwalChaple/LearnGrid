@@ -65,7 +65,7 @@ export function getCalendarToken() {
  */
 export function disconnectCalendar(userId) {
     sessionStorage.removeItem('gcal_token');
-    if (userId) try { localStorage.removeItem(`gcal_synced_assignments_${userId}`); } catch (_) { }
+    if (userId) try { localStorage.removeItem(`gcal_synced_assignments_${userId}`); } catch { /* ignored */ }
     if (typeof window !== 'undefined') window.dispatchEvent(new Event('calendarConnectionChanged'));
 }
 

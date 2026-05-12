@@ -304,7 +304,7 @@ export function Settings() {
                             <h3>Delete account</h3>
                             <p>Permanently delete your account and all data. This cannot be undone.</p>
                         </div>
-                        <button type="button" className="btn-danger-outline" onClick={() => { setDeleteModal(true); setAuthError(''); setDeletePassword(''); }}>
+                        <button type="button" className="btn-danger-outline" onClick={() => { setDeleteModal(true); setAuthError(''); setDeleteAccountConfirm(''); }}>
                             Delete account
                         </button>
                     </div>

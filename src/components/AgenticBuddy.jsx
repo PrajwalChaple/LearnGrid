@@ -33,9 +33,6 @@ export function AgenticBuddy() {
     const inputRef = useRef(null);
     const chatHistoryRef = useRef([]); // For AI context
 
-    // Don't render if not logged in or not onboarded
-    if (!user || !userProfile?.roleType) return null;
-
     // ─── User Context for AI ────────────────────────────────
     const userContext = {
         userName: userProfile?.name || user?.displayName || '',
@@ -69,7 +66,7 @@ export function AgenticBuddy() {
 
     // ─── Welcome message on first open ──────────────────────
     useEffect(() => {
-        if (isOpen && messages.length === 0) {
+        if (isOpen && messages.length === 0 && userProfile) {
             const name = userProfile?.name?.split(' ')[0] || 'Bhai';
             setMessages([{
                 id: Date.now(),
@@ -78,7 +75,10 @@ export function AgenticBuddy() {
                 timestamp: new Date()
             }]);
         }
-    }, [isOpen]);
+    }, [isOpen, messages.length, userProfile]);
+
+    // Don't render if not logged in or not onboarded
+    if (!user || !userProfile?.roleType) return null;
 
     // ─── Handle Tool Execution ──────────────────────────────
     const handleToolResult = async (toolCall) => {

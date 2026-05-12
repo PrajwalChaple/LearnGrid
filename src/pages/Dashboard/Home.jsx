@@ -20,6 +20,8 @@ export function DashboardHome() {
   const navigate = useNavigate();
   const [statsData, setStatsData] = useState(defaultStats);
   const [activities, setActivities] = useState([]);
+  const [assignmentsState, setAssignmentsState] = useState([]);
+  const [notesState, setNotesState] = useState([]);
 
   const [greeting] = useState('Welcome back');
 
@@ -43,6 +45,7 @@ export function DashboardHome() {
 
     const unsubNotes = subscribeToNotes(userProfile, (data) => {
       notesRef.current = data;
+      setNotesState(data);
       setStatsData(prev => {
         const next = [...prev];
         next[0] = { ...defaultStats[0], value: data.length.toString() };
@@ -53,6 +56,7 @@ export function DashboardHome() {
 
     const unsubAssignments = subscribeToAssignments(userProfile, (data) => {
       assignmentsRef.current = data;
+      setAssignmentsState(data);
       const uid = user?.uid;
       const pendingCount = data.filter(a => {
         if (a.userStatuses && a.userStatuses[uid]) return a.userStatuses[uid] === 'Pending';
@@ -120,17 +124,17 @@ export function DashboardHome() {
           <div className="absolute right-0 bottom-0 md:-top-16 md:-right-4 w-[120%] md:w-[60%] h-[350px] md:h-[500px] z-20 pointer-events-none flex items-center justify-center opacity-90 hover:opacity-100 transition-opacity">
             <AiBuddy
               pendingTasks={parseInt(statsData[2].value || '0')}
-              assignmentsData={assignmentsRef.current}
+              assignmentsData={assignmentsState}
               currentUserId={user?.uid}
               userName={userProfile?.name || user?.displayName || 'Dost'}
               announcementsCount={parseInt(statsData[3].value || '0')}
               notesCount={parseInt(statsData[0].value || '0')}
-              notesData={notesRef.current}
+              notesData={notesState}
               overdueCount={(() => {
                 const uid = user?.uid;
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
-                return assignmentsRef.current.filter(a => {
+                return assignmentsState.filter(a => {
                   const isPending = a.userStatuses?.[uid] === 'Pending' || 
                     (a.userId === uid && (a.status || 'Pending') === 'Pending') || 
                     (!a.userStatuses?.[uid] && a.userId !== uid);

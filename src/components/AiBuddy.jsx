@@ -31,9 +31,7 @@ export function AiBuddy({ pendingTasks, assignmentsData = [], currentUserId = nu
     const { width, height } = useWindowSize();
     const isMobileDevice = useIsMobileDevice();
 
-    if (isMobileDevice) {
-        return null;
-    }
+    // Mobile guard moved below all hooks to comply with rules-of-hooks
 
     // ============================================================
     // 🌙 TIME AWARENESS — Detect time of day (NO API CALL)
@@ -311,14 +309,14 @@ export function AiBuddy({ pendingTasks, assignmentsData = [], currentUserId = nu
             let clean = text.replace(/```json/gi, '').replace(/```/g, '').trim();
             let parsed = JSON.parse(clean);
             if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-        } catch (e) { }
+        } catch { /* ignored */ }
         try {
             const match = text.match(/\[[\s\S]*\]/);
             if (match) {
                 let parsed = JSON.parse(match[0]);
                 if (Array.isArray(parsed) && parsed.length > 0) return parsed;
             }
-        } catch (e) { }
+        } catch { /* ignored */ }
         return null;
     };
 
@@ -408,7 +406,7 @@ export function AiBuddy({ pendingTasks, assignmentsData = [], currentUserId = nu
                 if (Array.isArray(parsedCache) && parsedCache.length > 0) {
                     return buildSmartMessageQueue(parsedCache);
                 }
-            } catch (e) { }
+            } catch { /* ignored */ }
         }
 
         try {
@@ -504,7 +502,7 @@ Return EXACTLY a JSON array: ["msg1", "msg2", ...]`;
         if (isLoaded && splineRef.current) {
             try {
                 splineRef.current.emitEvent('mouseDown', newEmotion);
-            } catch (e) { }
+            } catch { /* ignored */ }
         }
 
         // Determine action button
@@ -582,6 +580,9 @@ Return EXACTLY a JSON array: ["msg1", "msg2", ...]`;
         setLastKnown(pendingTasks);
         localStorage.setItem(`ag_pending_tasks_${currentUserId}`, pendingTasks.toString());
     }, [pendingTasks, isLoaded, currentUserId, userName]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    // Don't render on mobile devices
+    if (isMobileDevice) return null;
 
     // ─── Action Button Handler ──────────────────────────────
     const handleActionClick = () => {

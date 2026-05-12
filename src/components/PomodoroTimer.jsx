@@ -36,34 +36,6 @@ export function PomodoroTimer() {
         return () => window.removeEventListener('start-pomodoro', handleStartPomodoro);
     }, []);
 
-    // Timer logic
-    useEffect(() => {
-        if (isRunning && timeLeft > 0) {
-            intervalRef.current = setInterval(() => {
-                setTimeLeft(prev => prev - 1);
-            }, 1000);
-        } else if (timeLeft === 0) {
-            // Timer completed — play beep and switch mode
-            playBeep();
-            if (isBreak) {
-                // Break over → back to work
-                setTimeLeft(WORK_TIME);
-                setIsBreak(false);
-                setIsRunning(false);
-            } else {
-                // Work done → start break
-                setSessions(prev => prev + 1);
-                setTimeLeft(BREAK_TIME);
-                setIsBreak(true);
-                setIsRunning(false);
-            }
-        }
-
-        return () => {
-            if (intervalRef.current) clearInterval(intervalRef.current);
-        };
-    }, [isRunning, timeLeft, isBreak]);
-
     // Web Audio API beep notification
     const playBeep = useCallback(() => {
         try {
@@ -78,8 +50,39 @@ export function PomodoroTimer() {
             gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
             oscillator.start(ctx.currentTime);
             oscillator.stop(ctx.currentTime + 0.5);
-        } catch (e) { }
+        } catch { /* audio not supported */ }
     }, [isBreak]);
+
+    // Timer logic
+    useEffect(() => {
+        if (!isRunning) return;
+
+        intervalRef.current = setInterval(() => {
+            setTimeLeft(prev => {
+                if (prev <= 1) {
+                    // Timer completed — play beep and switch mode
+                    playBeep();
+                    clearInterval(intervalRef.current);
+                    setIsRunning(false);
+                    if (isBreak) {
+                        // Break over → back to work
+                        setIsBreak(false);
+                        return WORK_TIME;
+                    } else {
+                        // Work done → start break
+                        setSessions(s => s + 1);
+                        setIsBreak(true);
+                        return BREAK_TIME;
+                    }
+                }
+                return prev - 1;
+            });
+        }, 1000);
+
+        return () => {
+            if (intervalRef.current) clearInterval(intervalRef.current);
+        };
+    }, [isRunning, isBreak, playBeep]);
 
     const toggleTimer = () => setIsRunning(!isRunning);
     const resetTimer = () => {

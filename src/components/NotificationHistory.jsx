@@ -18,7 +18,8 @@ function formatTimestamp(ts) {
 export function NotificationHistory() {
     const { user, userProfile } = useAuth();
     const [notifications, setNotifications] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const hasAuth = !!user && !!userProfile;
+    const [loading, setLoading] = useState(hasAuth);
 
     const isCollege = userProfile?.roleType === 'college';
     const collegeFilters = ['All', 'Branch', 'Year', 'Section'];
@@ -28,9 +29,9 @@ export function NotificationHistory() {
 
     useEffect(() => {
         if (!user || !userProfile) {
-            setLoading(false);
             return;
         }
+
 
         const unsubscribe = subscribeToNotifications(user.uid, (data) => {
             setNotifications(data);
