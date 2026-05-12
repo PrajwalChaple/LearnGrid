@@ -1,0 +1,179 @@
+﻿
+C:\Users\Prajwal\Desktop\LearnGrid\src\auth.js
+  9:5  warning  'reauthenticateWithPopup' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\Prajwal\Desktop\LearnGrid\src\components\AgenticBuddy.jsx
+  10:10  warning  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                                  no-unused-vars
+  18:44  warning  'parseToolCall' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                           no-unused-vars
+  54:28  error    React Hook "useCallback" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+  58:5   error    React Hook "useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?    react-hooks/rules-of-hooks
+  63:5   error    React Hook "useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?    react-hooks/rules-of-hooks
+  71:5   error    React Hook "useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?    react-hooks/rules-of-hooks
+  81:8   warning  React Hook useEffect has missing dependencies: 'messages.length' and 'userProfile?.name'. Either include them or remove the dependency array                                                   react-hooks/exhaustive-deps
+
+C:\Users\Prajwal\Desktop\LearnGrid\src\components\AiBuddy.jsx
+    3:10  warning  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                                no-unused-vars
+   14:12  warning  'emotion' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                      no-unused-vars
+   17:12  warning  'messageIndex' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                 no-unused-vars
+   31:13  warning  'width' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                        no-unused-vars
+   31:20  warning  'height' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                       no-unused-vars
+  314:18  warning  'e' is defined but never used                                                                                                                                                                no-unused-vars
+  314:21  error    Empty block statement                                                                                                                                                                        no-empty
+  321:18  warning  'e' is defined but never used                                                                                                                                                                no-unused-vars
+  321:21  error    Empty block statement                                                                                                                                                                        no-empty
+  411:22  warning  'e' is defined but never used                                                                                                                                                                no-unused-vars
+  411:25  error    Empty block statement                                                                                                                                                                        no-empty
+  482:5   error    React Hook "useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+  507:22  warning  'e' is defined but never used                                                                                                                                                                no-unused-vars
+  507:25  error    Empty block statement                                                                                                                                                                        no-empty
+  549:8   warning  React Hook useEffect has missing dependencies: 'behaviorMode', 'fetchGeminiMessages', 'isNightOwl', 'notesData.length', and 'userName'. Either include them or remove the dependency array   react-hooks/exhaustive-deps
+  552:5   error    React Hook "useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+  565:5   error    React Hook "useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+
+C:\Users\Prajwal\Desktop\LearnGrid\src\components\NotificationDropdown.jsx
+  412:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\Prajwal\Desktop\LearnGrid\src\components\NotificationHistory.jsx
+  31:13  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  29 |     useEffect(() => {
+  30 |         if (!user || !userProfile) {
+> 31 |             setLoading(false);
+     |             ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  32 |             return;
+  33 |         }
+  34 |  react-hooks/set-state-in-effect
+
+C:\Users\Prajwal\Desktop\LearnGrid\src\components\NotificationModal.jsx
+  8:5  warning  'getDynamicRecipientCount' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\Prajwal\Desktop\LearnGrid\src\components\PageTransition.jsx
+  1:10  warning  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\Prajwal\Desktop\LearnGrid\src\components\PomodoroTimer.jsx
+  10:10  warning  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         no-unused-vars
+  47:13  error    Error: Cannot access variable before it is declared
+
+`playBeep` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+  45 |         } else if (timeLeft === 0) {
+  46 |             // Timer completed ΓÇö play beep and switch mode
+> 47 |             playBeep();
+     |             ^^^^^^^^ `playBeep` accessed before it is declared
+  48 |             if (isBreak) {
+  49 |                 // Break over ΓåÆ back to work
+  50 |                 setTimeLeft(WORK_TIME);
+
+  66 |
+  67 |     // Web Audio API beep notification
+> 68 |     const playBeep = useCallback(() => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 69 |         try {
+     | ^^^^^^^^^^^^^
+> 70 |             const ctx = new (window.AudioContext || window.webkitAudioContext)();
+     ΓÇª
+     | ^^^^^^^^^^^^^
+> 81 |         } catch (e) { }
+     | ^^^^^^^^^^^^^
+> 82 |     }, [isBreak]);
+     | ^^^^^^^^^^^^^^^^^^^ `playBeep` is declared here
+  83 |
+  84 |     const toggleTimer = () => setIsRunning(!isRunning);
+  85 |     const resetTimer = () => {  react-hooks/immutability
+  65:8   warning  React Hook useEffect has a missing dependency: 'playBeep'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           react-hooks/exhaustive-deps
+  81:18  warning  'e' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         no-unused-vars
+  81:21  error    Empty block statement                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 no-empty
+
+C:\Users\Prajwal\Desktop\LearnGrid\src\context\AuthContext.jsx
+  165:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\Prajwal\Desktop\LearnGrid\src\context\ThemeContext.jsx
+  25:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\Prajwal\Desktop\LearnGrid\src\layouts\Navbar.jsx
+  159:58  warning  'Icon' is defined but never used  no-unused-vars
+
+C:\Users\Prajwal\Desktop\LearnGrid\src\lib\googleCalendar.js
+  68:94  warning  '_' is defined but never used  no-unused-vars
+  68:97  error    Empty block statement          no-empty
+
+C:\Users\Prajwal\Desktop\LearnGrid\src\pages\AIBuddy\AIBuddy.jsx
+  6:46  warning  'useCallback' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+  8:10  warning  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u       no-unused-vars
+
+C:\Users\Prajwal\Desktop\LearnGrid\src\pages\Assignments\Assignments.jsx
+   41:19  warning  Unused eslint-disable directive (no problems were reported from 'react-hooks/exhaustive-deps')
+  140:9   warning  'getMyGrade' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u      no-unused-vars
+
+C:\Users\Prajwal\Desktop\LearnGrid\src\pages\Dashboard\Home.jsx
+   86:6   warning  React Hook useEffect has a missing dependency: 'user?.uid'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        react-hooks/exhaustive-deps
+  123:32  error    Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+  121 |             <AiBuddy
+  122 |               pendingTasks={parseInt(statsData[2].value || '0')}
+> 123 |               assignmentsData={assignmentsRef.current}
+      |                                ^^^^^^^^^^^^^^^^^^^^^^ Cannot access ref value during render
+  124 |               currentUserId={user?.uid}
+  125 |               userName={userProfile?.name || user?.displayName || 'Dost'}
+  126 |               announcementsCount={parseInt(statsData[3].value || '0')}                                                                      react-hooks/refs
+  128:26  error    Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+  126 |               announcementsCount={parseInt(statsData[3].value || '0')}
+  127 |               notesCount={parseInt(statsData[0].value || '0')}
+> 128 |               notesData={notesRef.current}
+      |                          ^^^^^^^^^^^^^^^^ Cannot access ref value during render
+  129 |               overdueCount={(() => {
+  130 |                 const uid = user?.uid;
+  131 |                 const today = new Date();                                                                                                                 react-hooks/refs
+  133:24  error    Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+  131 |                 const today = new Date();
+  132 |                 today.setHours(0, 0, 0, 0);
+> 133 |                 return assignmentsRef.current.filter(a => {
+      |                        ^^^^^^^^^^^^^^^^^^^^^^ Passing a ref to a function may read its value during render
+  134 |                   const isPending = a.userStatuses?.[uid] === 'Pending' || 
+  135 |                     (a.userId === uid && (a.status || 'Pending') === 'Pending') || 
+  136 |                     (!a.userStatuses?.[uid] && a.userId !== uid);         react-hooks/refs
+  133:24  error    Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+  131 |                 const today = new Date();
+  132 |                 today.setHours(0, 0, 0, 0);
+> 133 |                 return assignmentsRef.current.filter(a => {
+      |                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Passing a ref to a function may read its value during render
+  134 |                   const isPending = a.userStatuses?.[uid] === 'Pending' || 
+  135 |                     (a.userId === uid && (a.status || 'Pending') === 'Pending') || 
+  136 |                     (!a.userStatuses?.[uid] && a.userId !== uid);  react-hooks/refs
+
+C:\Users\Prajwal\Desktop\LearnGrid\src\pages\Landing\LandingPage.jsx
+   1:27  warning  'useEffect' is defined but never used. Allowed unused vars must match /^[A-Z_]/u              no-unused-vars
+  40:10  warning  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                 no-unused-vars
+  53:11  warning  'integrations' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\Prajwal\Desktop\LearnGrid\src\pages\Notes\Notes.jsx
+  17:23  warning  'setSearchQuery' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+  42:19  warning  Unused eslint-disable directive (no problems were reported from 'react-hooks/exhaustive-deps')
+
+C:\Users\Prajwal\Desktop\LearnGrid\src\pages\Profile\Profile.jsx
+  1:27  warning  'useEffect' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\Prajwal\Desktop\LearnGrid\src\pages\Settings\Settings.jsx
+   18:10   warning  'formatErrorMessage' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+  307:135  error    'setDeletePassword' is not defined                                                         no-undef
+
+Γ£û 56 problems (20 errors, 36 warnings)
+  0 errors and 2 warnings potentially fixable with the `--fix` option.
+

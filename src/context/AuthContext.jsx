@@ -67,12 +67,6 @@ export function AuthProvider({ children }) {
             setAuthError(msg);
             return { success: false, message: msg };
         }
-        // Block unverified email/password users
-        if (!u.emailVerified) {
-            const msg = 'Please verify your email before logging in. Check your inbox for the verification link.';
-            setAuthError(msg);
-            return { success: false, message: msg, needsVerification: true };
-        }
         await fetchProfile(u);
         return { success: true };
     };
@@ -85,9 +79,9 @@ export function AuthProvider({ children }) {
             setAuthError(msg);
             return { success: false, message: msg };
         }
-        // New user — profile won't exist yet, verification email sent
+        // New user — profile won't exist yet
         setUserProfile(null);
-        return { success: true, user: u, needsVerification: true };
+        return { success: true, user: u };
     };
 
     const resendVerification = async () => {

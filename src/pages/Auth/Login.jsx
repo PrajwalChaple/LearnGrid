@@ -6,24 +6,17 @@ import { Mail, Lock, LogIn, ArrowLeft, ArrowRight, Star } from 'lucide-react';
 export function Login() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const { login, loginGoogle, user, forgotPassword, resendVerification } = useAuth();
+  const { login, loginGoogle, user, forgotPassword } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [needsVerification, setNeedsVerification] = useState(false);
-  const [resendMsg, setResendMsg] = useState('');
   const [forgotMode, setForgotMode] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
   const [resetMsg, setResetMsg] = useState('');
 
   useEffect(() => {
-    if (user && user.emailVerified) {
+    if (user) {
       navigate('/dashboard');
-    } else if (user && !user.emailVerified) {
-      const isGoogleUser = user.providerData?.some(p => p.providerId === 'google.com');
-      if (!isGoogleUser) {
-        navigate('/verify-email');
-      }
     }
   }, [user, navigate]);
 
@@ -39,8 +32,6 @@ export function Login() {
     e.preventDefault();
     setLoading(true);
     setError('');
-    setNeedsVerification(false);
-    setResendMsg('');
 
     const result = await login(email, password);
     setLoading(false);
@@ -49,19 +40,6 @@ export function Login() {
       navigate('/dashboard');
     } else {
       setError(result.message || 'Something went wrong. Please try again.');
-      if (result.needsVerification) {
-        setNeedsVerification(true);
-      }
-    }
-  };
-
-  const handleResendFromLogin = async () => {
-    setResendMsg('');
-    const result = await resendVerification();
-    if (result.success) {
-      setResendMsg('Verification email sent! Check your inbox.');
-    } else {
-      setResendMsg(result.message || 'Something went wrong. Please try again.');
     }
   };
 
@@ -138,22 +116,6 @@ export function Login() {
             </div>
           )}
 
-          {needsVerification && (
-            <div className="mb-4">
-              {resendMsg && (
-                <div className={`mb-2 p-3 rounded-xl text-sm font-medium ${resendMsg.includes('sent') ? 'bg-green-50 border border-green-100 text-green-600' : 'bg-red-50 border border-red-100 text-red-600'}`}>
-                  {resendMsg}
-                </div>
-              )}
-              <button
-                type="button"
-                onClick={handleResendFromLogin}
-                className="w-full py-2.5 px-4 rounded-xl text-sm font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 transition-all"
-              >
-                Resend verification email
-              </button>
-            </div>
-          )}
 
           <form onSubmit={handleLogin} className="space-y-6">
             <div>

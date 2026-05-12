@@ -6,20 +6,13 @@ import { User, Mail, Lock, ArrowRight, ArrowLeft, CheckCircle } from 'lucide-rea
 export function Register() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const { register, loginGoogle, user, resendVerification } = useAuth();
+  const { register, loginGoogle, user } = useAuth();
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
   const [error, setError] = useState('');
-  const [verificationSent, setVerificationSent] = useState(false);
-  const [resendMsg, setResendMsg] = useState('');
 
   useEffect(() => {
-    if (user && user.emailVerified) {
+    if (user) {
       navigate('/dashboard');
-    } else if (user && !user.emailVerified) {
-      const isGoogleUser = user.providerData?.some(p => p.providerId === 'google.com');
-      if (!isGoogleUser) {
-        navigate('/verify-email');
-      }
     }
   }, [user, navigate]);
 
@@ -37,22 +30,10 @@ export function Register() {
 
     setLoading(false);
 
-    if (result.success && result.needsVerification) {
-      setVerificationSent(true);
-    } else if (result.success) {
+    if (result.success) {
       navigate('/dashboard');
     } else {
       setError(result.message || 'Something went wrong. Please try again.');
-    }
-  };
-
-  const handleResend = async () => {
-    setResendMsg('');
-    const result = await resendVerification();
-    if (result.success) {
-      setResendMsg('Verification email sent again! Check your inbox.');
-    } else {
-      setResendMsg(result.message || 'Something went wrong. Please try again.');
     }
   };
 
@@ -130,42 +111,6 @@ export function Register() {
 
       {/* Right Column - Register Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-50">
-        {verificationSent ? (
-          /* Email Verification Sent Screen */
-          <div className="w-full max-w-md bg-white p-8 sm:p-10 rounded-2xl shadow-xl border border-gray-100 animate-slide-in text-center">
-            <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-6">
-              <Mail size={32} className="text-green-600" />
-            </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-3">Check your email!</h1>
-            <p className="text-gray-500 mb-2">
-              We've sent a verification link to
-            </p>
-            <p className="text-indigo-600 font-semibold mb-6">{formData.email}</p>
-            <p className="text-gray-400 text-sm mb-8">
-              Click the link in the email to verify your account, then come back and log in.
-            </p>
-
-            {resendMsg && (
-              <div className={`mb-4 p-3 rounded-xl text-sm font-medium ${resendMsg.includes('sent') ? 'bg-green-50 border border-green-100 text-green-600' : 'bg-red-50 border border-red-100 text-red-600'}`}>
-                {resendMsg}
-              </div>
-            )}
-
-            <button
-              onClick={handleResend}
-              className="w-full py-3 px-4 rounded-xl text-sm font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 transition-all mb-3"
-            >
-              Resend verification email
-            </button>
-
-            <Link
-              to="/login"
-              className="w-full flex justify-center items-center gap-2 py-3 px-4 rounded-xl shadow-lg text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-all"
-            >
-              Go to Login <ArrowRight size={18} />
-            </Link>
-          </div>
-        ) : (
           <div className="w-full max-w-md bg-white p-8 sm:p-10 rounded-2xl shadow-xl border border-gray-100 animate-slide-in">
             <div className="text-center mb-8">
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Create an account</h1>
@@ -278,7 +223,6 @@ export function Register() {
               By creating an account, you agree to our <Link to="/terms-of-service" className="underline hover:text-indigo-500 transition-colors">Terms of Service</Link> and <Link to="/privacy-policy" className="underline hover:text-indigo-500 transition-colors">Privacy Policy</Link>.
             </p>
           </div>
-        )}
       </div>
     </div>
   );
